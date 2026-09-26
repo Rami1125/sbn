@@ -14,13 +14,15 @@ import {
   Tag,
   FileText,
   Star,
-  ChevronLeft
+  ChevronLeft,
+  Building2
 } from 'lucide-react';
 import { GoogleMerchantProduct } from '../../types/product';
 import { SABAN_BRANCHES } from '../../data/initialProducts';
 import { useCart } from '../../context/CartContext';
 import { useProducts } from '../../context/ProductContext';
 import { NoaAiConsultantModal } from '../../components/store/NoaAiConsultantModal';
+import { QuickPickupModal } from '../../components/store/QuickPickupModal';
 import { WhatsAppOrderButton } from '../../components/common/WhatsAppOrderButton';
 import { WhatsAppOrderParams } from '../../lib/whatsappDeepLink';
 
@@ -53,6 +55,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
   } | undefined>(product.availableShades?.[0]);
   const [quantity, setQuantity] = useState<number>(1);
   const [isNoaModalOpen, setIsNoaModalOpen] = useState<boolean>(false);
+  const [isQuickPickupOpen, setIsQuickPickupOpen] = useState<boolean>(false);
   const [showFloatingBar, setShowFloatingBar] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'instructions' | 'specs' | 'stock'>('instructions');
@@ -252,6 +255,12 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] pb-28 pt-4">
+      {/* Schema.org Structured Data in DOM for Googlebot / Merchant Center */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaProductJson) }}
+      />
+
       {/* Breadcrumb Navigation & SKU Selector */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
         <div className="flex flex-wrap items-center justify-between gap-3 py-3 border-b border-slate-200/80 text-xs">
@@ -417,21 +426,25 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
             <div className="bg-gradient-to-r from-slate-900 via-[#0F3E7A] to-[#124b94] text-white rounded-2xl p-5 shadow-lg flex flex-wrap items-center justify-between gap-4">
               <div>
                 <div className="text-xs text-blue-200 font-medium">מחיר מחירון רשמי סבן (כולל מע״מ):</div>
-                <div className="flex items-baseline gap-3 mt-0.5">
+                <div className="flex items-baseline gap-2.5 mt-0.5">
                   <span className="text-3xl sm:text-4xl font-black text-white">
                     ₪{currentPrice.toFixed(2)}
                   </span>
+                  <span className="text-sm font-black text-amber-300 font-mono tracking-wider">
+                    ILS
+                  </span>
                   {originalPrice && (
-                    <span className="text-lg text-slate-300 line-through">
-                      ₪{originalPrice.toFixed(2)}
+                    <span className="text-lg text-slate-300 line-through mr-1">
+                      ₪{originalPrice.toFixed(2)} ILS
                     </span>
                   )}
                   <span className="text-xs text-amber-300 font-semibold bg-white/10 px-2 py-0.5 rounded">
                     הנחת סיטונאי בקופה
                   </span>
                 </div>
-                <div className="text-[11px] text-blue-200 mt-1">
-                  קוד סניף מוביל: <strong className="text-white">{product.store_code}</strong> | איסוף חינם
+                <div className="text-[11px] text-blue-200 mt-1 flex flex-wrap items-center gap-2">
+                  <span>קוד סניף מוביל: <strong className="text-white">{product.store_code}</strong> | איסוף חינם</span>
+                  <span className="text-emerald-300 font-bold">• מחיר תואם 100% לפיד Google Merchant</span>
                 </div>
               </div>
 
@@ -570,18 +583,29 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
                 </button>
               </div>
 
-              {/* Main Add to Cart Button */}
+              {/* Primary Explicit BOPIS Action Button */}
+              <button
+                type="button"
+                onClick={() => setIsQuickPickupOpen(true)}
+                className="flex-1 w-full bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white py-4 px-6 rounded-2xl font-black text-base shadow-xl shadow-blue-950/20 hover:shadow-2xl transition-all flex items-center justify-center gap-3 cursor-pointer group"
+              >
+                <Building2 className="w-5 h-5 text-amber-300 group-hover:scale-110 transition-transform" />
+                <span>הזמנה לאיסוף עצמי מהסניף • ₪{(currentPrice * quantity).toFixed(2)} ILS</span>
+              </button>
+
+              {/* Add to Cart secondary button */}
               <button
                 type="button"
                 onClick={handleAddToCart}
-                className="flex-1 w-full bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white py-3.5 px-6 rounded-xl font-extrabold text-base shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3 cursor-pointer"
+                className="bg-white hover:bg-slate-50 text-[#0F3E7A] border-2 border-[#0F3E7A]/20 hover:border-[#0F3E7A] py-3.5 px-5 rounded-2xl font-extrabold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
+                title="הוסף לסל להזמנה מרוכזת"
               >
-                <ShoppingBag className="w-5 h-5 text-amber-300" />
-                <span>הוסף לסל איסוף מהיר • ₪{(currentPrice * quantity).toFixed(2)}</span>
+                <ShoppingBag className="w-4 h-4 text-[#0F3E7A]" />
+                <span>הוסף לסל</span>
               </button>
             </div>
 
-            {/* Smart WhatsApp Deep-Link BOPIS Button */}
+            {/* Smart WhatsApp Deep-Link BOPIS Direct Option */}
             <div className="pt-1">
               <WhatsAppOrderButton
                 params={whatsAppOrderParams}
@@ -759,6 +783,15 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3 mr-auto">
+            <button
+              type="button"
+              onClick={() => setIsQuickPickupOpen(true)}
+              className="bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white px-4 py-2.5 rounded-xl font-black text-xs shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <Building2 className="w-3.5 h-3.5 text-amber-300" />
+              <span>הזמנה לאיסוף עצמי</span>
+            </button>
+
             <WhatsAppOrderButton
               params={whatsAppOrderParams}
               variant="compact"
@@ -778,10 +811,10 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
             <button
               type="button"
               onClick={handleAddToCart}
-              className="bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white text-xs font-extrabold px-6 py-3 rounded-xl shadow-md flex items-center gap-2 cursor-pointer"
+              className="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-extrabold px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-1.5 cursor-pointer border border-slate-200"
             >
-              <ShoppingBag className="w-4 h-4 text-amber-300" />
-              <span>הוסף לסל מהיר</span>
+              <ShoppingBag className="w-4 h-4 text-slate-600" />
+              <span className="hidden sm:inline">הוסף לסל</span>
             </button>
           </div>
         </div>
@@ -794,6 +827,21 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
         onClose={() => setIsNoaModalOpen(false)}
         onSelectShade={(s) => setSelectedShade(s)}
         onSelectPackaging={(pkgId) => setSelectedPackagingId(pkgId)}
+      />
+
+      {/* Quick Pickup BOPIS Modal */}
+      <QuickPickupModal
+        isOpen={isQuickPickupOpen}
+        onClose={() => setIsQuickPickupOpen(false)}
+        product={product}
+        currentPrice={currentPrice}
+        quantity={quantity}
+        selectedPackagingLabel={selectedPackage?.label}
+        selectedShade={selectedShade ? {
+          code: selectedShade.code,
+          name: selectedShade.name,
+          hex: selectedShade.hex
+        } : undefined}
       />
     </div>
   );

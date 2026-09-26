@@ -191,26 +191,40 @@ export const SabanStoreCartDrawer: React.FC = () => {
               </div>
 
               {/* Actions */}
-              <div className="flex flex-col sm:flex-row gap-2 pt-2">
+              <div className="space-y-2 pt-2">
                 <a
-                  href={`https://wa.me/972${lastCompletedOrder.customerPhone.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(
-                    `שלום מסבן חומרי בניין! הזמנתך מספר ${lastCompletedOrder.pickupCode} עבור ${lastCompletedOrder.customerName} נקלטה בסניף ${getBranchDetails(lastCompletedOrder.pickupBranch).name}. סה״כ לתשלום: ₪${lastCompletedOrder.total.toFixed(2)}.`
+                  href={`https://wa.me/972508860896?text=${encodeURIComponent(
+                    `🏗️ *הזמנה חדשה לאיסוף עצמי (BOPIS) - ח. סבן חומרי בניין*\nמספר הזמנה: *#${lastCompletedOrder.pickupCode}*\n\n📍 סניף לאיסוף: ${getBranchDetails(lastCompletedOrder.pickupBranch).name} (${getBranchDetails(lastCompletedOrder.pickupBranch).subName})\n👤 שם לקוח: ${lastCompletedOrder.customerName}\n📞 טלפון: ${lastCompletedOrder.customerPhone}\n💰 סה״כ לתשלום: ₪${lastCompletedOrder.total.toFixed(2)} ILS\n💳 אופן תשלום: תשלום טלפוני לפני איסוף / תשלום בדלפק בעת המסירה\n\nשלום לנציג הדלפק, אשמח לתיאום וחיוב טלפוני כדי שההזמנה תמתין לי מוכנה ברציף האיסוף ללא תור. תודה!`
                   )}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition-colors"
+                  className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white py-3.5 px-4 rounded-xl text-xs font-black flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
                 >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>שלח שובר ב-WhatsApp</span>
+                  <MessageCircle className="w-5 h-5 fill-current" />
+                  <span>📲 פתח שיחת WhatsApp עם נציג הדלפק לתיאום וחיוב טלפוני</span>
                 </a>
 
-                <button
-                  onClick={() => window.print()}
-                  className="bg-slate-800 hover:bg-slate-900 text-white py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
-                >
-                  <Printer className="w-4 h-4" />
-                  <span>הדפס שובר איסוף</span>
-                </button>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <a
+                    href={`https://wa.me/972${lastCompletedOrder.customerPhone.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(
+                      `שלום מסבן חומרי בניין! הזמנתך מספר ${lastCompletedOrder.pickupCode} עבור ${lastCompletedOrder.customerName} נקלטה בסניף ${getBranchDetails(lastCompletedOrder.pickupBranch).name}. סה״כ לתשלום: ₪${lastCompletedOrder.total.toFixed(2)}.`
+                    )}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 border border-slate-200 transition-colors"
+                  >
+                    <MessageCircle className="w-4 h-4 text-emerald-600" />
+                    <span>שלח שובר לטלפון הלקוח</span>
+                  </a>
+
+                  <button
+                    onClick={() => window.print()}
+                    className="bg-slate-800 hover:bg-slate-900 text-white py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <Printer className="w-4 h-4" />
+                    <span>הדפס שובר איסוף</span>
+                  </button>
+                </div>
               </div>
 
               <button
