@@ -1,0 +1,6 @@
+{
+  "name": "Saban Pro Storefront & Google Merchant Center Integration",
+  "description": "חנות דיגיטלית חכמה, מהודרת ומתקדמת לח. סבן חומרי בניין (1994) בע״מ עם אינטגרציית Google Merchant Center, סל קניות לאיסוף מהיר מסניפי סבן ויועצת AI נועה.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
