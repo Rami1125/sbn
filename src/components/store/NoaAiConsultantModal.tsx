@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Sparkles, Calculator, Paintbrush, X, Check, ArrowRight, ShieldCheck, Info, MessageSquare } from 'lucide-react';
 import { GoogleMerchantProduct } from '../../types/product';
 import { useCart } from '../../context/CartContext';
+import { WhatsAppOrderButton } from '../common/WhatsAppOrderButton';
 
 interface NoaAiConsultantModalProps {
   product: GoogleMerchantProduct;
@@ -27,6 +28,7 @@ export const NoaAiConsultantModal: React.FC<NoaAiConsultantModalProps> = ({
   const [selectedShadeCode, setSelectedShadeCode] = useState<string>(
     product.availableShades?.[0]?.code || ''
   );
+  const selectedShadeObj = product.availableShades?.find((s) => s.code === selectedShadeCode);
   const [userCustomQuestion, setUserCustomQuestion] = useState<string>('');
   const [aiCustomAnswer, setAiCustomAnswer] = useState<string | null>(null);
   const [isThinking, setIsThinking] = useState(false);
@@ -323,14 +325,35 @@ export const NoaAiConsultantModal: React.FC<NoaAiConsultantModalProps> = ({
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={handleApplyAndAddToCart}
-                className="bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white px-5 py-3 rounded-xl font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <span>הוסף {calcResult.quantity} יח׳ ישירות לסל</span>
-                <ArrowRight className="w-4 h-4 rotate-180" />
-              </button>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <button
+                  type="button"
+                  onClick={handleApplyAndAddToCart}
+                  className="bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white px-5 py-3 rounded-xl font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>הוסף {calcResult.quantity} יח׳ לסל</span>
+                  <ArrowRight className="w-4 h-4 rotate-180" />
+                </button>
+
+                <WhatsAppOrderButton
+                  params={{
+                    sku: product.id,
+                    productName: product.title,
+                    quantity: calcResult.quantity,
+                    unitLabel: calcResult.unitName,
+                    colorDetails: selectedShadeObj ? {
+                      code: selectedShadeObj.code,
+                      name: selectedShadeObj.name,
+                      hex: selectedShadeObj.hex
+                    } : undefined,
+                    branch: 'סניף החרש 10 (מחסן 4 - מרכז לוגיסטי)',
+                    notes: `חישוב נועה AI עבור שטח של ${areaM2} מ״ר (${coats} שכבות, ${surfaceType})`,
+                    isContractor: true,
+                  }}
+                  variant="compact"
+                  label="הזמן כמות זו ב-WhatsApp"
+                />
+              </div>
             </div>
 
             <div className="text-xs text-slate-600 bg-white/80 border border-slate-200 rounded-xl p-3 flex items-start gap-2">

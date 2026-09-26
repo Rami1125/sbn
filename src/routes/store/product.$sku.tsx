@@ -21,6 +21,8 @@ import { SABAN_BRANCHES } from '../../data/initialProducts';
 import { useCart } from '../../context/CartContext';
 import { useProducts } from '../../context/ProductContext';
 import { NoaAiConsultantModal } from '../../components/store/NoaAiConsultantModal';
+import { WhatsAppOrderButton } from '../../components/common/WhatsAppOrderButton';
+import { WhatsAppOrderParams } from '../../lib/whatsappDeepLink';
 
 interface ProductLandingPageProps {
   sku?: string;
@@ -92,6 +94,21 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
 
   // Canonical base URL for production on Vercel
   const canonicalUrl = `https://sbn-xi.vercel.app/product/${product.id}`;
+
+  // WhatsApp Deep Link Order Parameters
+  const whatsAppOrderParams: WhatsAppOrderParams = {
+    sku: product.id,
+    productName: product.title,
+    quantity,
+    unitLabel: selectedPackage ? selectedPackage.label : (product.size || 'יח׳'),
+    colorDetails: selectedShade ? {
+      code: selectedShade.code,
+      name: selectedShade.name,
+      hex: selectedShade.hex
+    } : undefined,
+    branch: 'סניף החרש 10 (מחסן 4 - מרכז לוגיסטי)',
+    isContractor: true,
+  };
 
   // Schema.org Structured Data Generation (Product JSON-LD compliant with Google Shopping)
   const schemaProductJson = {
@@ -564,6 +581,15 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
               </button>
             </div>
 
+            {/* Smart WhatsApp Deep-Link BOPIS Button */}
+            <div className="pt-1">
+              <WhatsAppOrderButton
+                params={whatsAppOrderParams}
+                variant="full"
+                showPhoneBadge={true}
+              />
+            </div>
+
             {/* Engineering Specs & Standards Highlights Tabs */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
               <div className="flex border-b border-slate-200 text-xs font-bold">
@@ -732,7 +758,14 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-3 mr-auto">
+          <div className="flex items-center gap-2 sm:gap-3 mr-auto">
+            <WhatsAppOrderButton
+              params={whatsAppOrderParams}
+              variant="compact"
+              label="הזמן ב-WhatsApp"
+              showCopyButton={false}
+            />
+
             <button
               type="button"
               onClick={() => setIsNoaModalOpen(true)}

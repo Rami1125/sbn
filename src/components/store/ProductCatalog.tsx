@@ -19,6 +19,7 @@ import { SABAN_BRANCHES } from '../../data/initialProducts';
 import { useCart } from '../../context/CartContext';
 import { useProducts } from '../../context/ProductContext';
 import { NoaAiConsultantModal } from './NoaAiConsultantModal';
+import { WhatsAppOrderButton } from '../common/WhatsAppOrderButton';
 
 interface ProductCatalogProps {
   onSelectProduct: (sku: string) => void;
@@ -292,6 +293,22 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                         <ShoppingBag className="w-3.5 h-3.5 text-amber-300" />
                         <span>הוסף לסל</span>
                       </button>
+                    </div>
+
+                    {/* Quick WhatsApp Deep-Link BOPIS */}
+                    <div className="pt-1">
+                      <WhatsAppOrderButton
+                        params={{
+                          sku: product.id,
+                          productName: product.title,
+                          quantity: 1,
+                          unitLabel: product.size || 'יח׳',
+                          branch: 'סניף החרש 10 (מחסן 4 - מרכז לוגיסטי)',
+                          isContractor: true,
+                        }}
+                        variant="card"
+                        label="הזמן ב-WhatsApp"
+                      />
                     </div>
 
                     {/* View Full Landing Page with Schema */}
