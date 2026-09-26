@@ -73,6 +73,25 @@ export default function App() {
     }
   };
 
+  // Google tag (gtag.js) SPA dynamic page_view tracking
+  useEffect(() => {
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+      const pagePath =
+        currentView === 'product'
+          ? `/product/${currentSku}`
+          : currentView === 'returns'
+          ? '/returns'
+          : currentView === 'feed-studio'
+          ? '/admin'
+          : '/';
+
+      window.gtag('config', 'GT-NFR3NJHD', {
+        page_path: pagePath,
+        page_title: document.title,
+      });
+    }
+  }, [currentView, currentSku]);
+
   return (
     <CartProvider>
       <div className="min-h-screen bg-[#F8F9FA] text-[#1E293B] flex flex-col font-['Heebo','Assistant',sans-serif]">
