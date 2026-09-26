@@ -88,7 +88,10 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
     ? parseFloat(product.price.replace(/[^\d.]/g, ''))
     : undefined;
 
-  // Schema.org Structured Data Generation (Product JSON-LD)
+  // Canonical base URL for production on Vercel
+  const canonicalUrl = `https://sbn-xi.vercel.app/product/${product.id}`;
+
+  // Schema.org Structured Data Generation (Product JSON-LD compliant with Google Shopping)
   const schemaProductJson = {
     '@context': 'https://schema.org/',
     '@type': 'Product',
@@ -97,13 +100,18 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
     description: product.description,
     sku: product.id,
     mpn: product.mpn,
+    category: product.google_product_category,
+    color: product.color,
+    material: product.material,
     brand: {
       '@type': 'Brand',
       name: product.brand
     },
     offers: {
       '@type': 'Offer',
-      url: typeof window !== 'undefined' ? window.location.href : product.link,
+      url: typeof window !== 'undefined' && window.location.origin.includes('sbn-xi.vercel.app') 
+        ? canonicalUrl 
+        : typeof window !== 'undefined' ? window.location.href : canonicalUrl,
       priceCurrency: 'ILS',
       price: currentPrice.toFixed(2),
       priceValidUntil: '2026-12-31',
@@ -116,13 +124,54 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
         '@type': 'Organization',
         name: 'ח. סבן חומרי בניין (1994) בע״מ'
       },
-      availableAtOrFrom: {
-        '@type': 'Place',
-        name: 'סבן מרכז לוגיסטי - סניף החרש 10',
-        address: {
-          '@type': 'PostalAddress',
-          streetAddress: 'החרש 10',
+      availableAtOrFrom: [
+        {
+          '@type': 'Place',
+          name: 'סבן מרכז לוגיסטי - סניף החרש 10',
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: 'החרש 10',
+            addressLocality: 'אזור התעשייה',
+            addressCountry: 'IL'
+          }
+        },
+        {
+          '@type': 'Place',
+          name: 'סבן סניף התלמיד 6 - גבס וצבע',
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: 'התלמיד 6',
+            addressLocality: 'אזור התעשייה',
+            addressCountry: 'IL'
+          }
+        }
+      ],
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: 'IL',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 30,
+        returnMethod: 'https://schema.org/ReturnInStore'
+      },
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingRate: {
+          '@type': 'MonetaryAmount',
+          value: '0.00',
+          currency: 'ILS'
+        },
+        shippingDestination: {
+          '@type': 'DefinedRegion',
           addressCountry: 'IL'
+        },
+        deliveryTime: {
+          '@type': 'ShippingDeliveryTime',
+          handlingTime: {
+            '@type': 'QuantitativeValue',
+            minValue: 0,
+            maxValue: 1,
+            unitCode: 'DAY'
+          }
         }
       }
     },
@@ -133,7 +182,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
     }
   };
 
-  // Inject or update Schema.org JSON-LD in document head
+  // Inject or update Schema.org JSON-LD & meta tags in document head
   useEffect(() => {
     const existingScript = document.getElementById('saban-product-schema-ld');
     if (existingScript) {
@@ -148,7 +197,13 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
 
     // Dynamic document title for SEO
     const prevTitle = document.title;
-    document.title = `${product.title} | מחיר סיטונאי סבן חומרי בניין`;
+    document.title = `${product.title} | מחיר סיטונאי סבן חומרי בניין (1994)`;
+
+    // Update OpenGraph / meta description dynamically
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', `${product.title} - ${product.description.slice(0, 150)}... זמין לאיסוף מהיר בסניפי סבן.`);
+    }
 
     return () => {
       document.title = prevTitle;

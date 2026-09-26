@@ -14,44 +14,54 @@ export default function App() {
   const [currentSku, setCurrentSku] = useState<string>('10701');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Check URL on load for direct SKU parameter (e.g. ?sku=10701 or /store/product/...)
+  // Check URL on load and on popstate for path or query parameters (e.g. /product/10701, /store/10701, ?sku=10701)
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const skuParam = params.get('sku');
-    const viewParam = params.get('view');
+    const parseCurrentLocation = () => {
+      const pathname = window.location.pathname;
+      const params = new URLSearchParams(window.location.search);
+      const skuParam = params.get('sku');
+      const viewParam = params.get('view');
 
-    if (skuParam) {
-      setCurrentSku(skuParam);
-      setCurrentView('product');
-    } else if (viewParam === 'feed' || viewParam === 'admin') {
-      setCurrentView('feed-studio');
-    }
+      // Check path patterns like /product/10701 or /store/10701 or /store/product/10701
+      const pathMatch = pathname.match(/\/(?:product|store)(?:\/product)?\/([a-zA-Z0-9_-]+)/);
+      if (pathMatch && pathMatch[1]) {
+        setCurrentSku(pathMatch[1]);
+        setCurrentView('product');
+        return;
+      }
+
+      if (skuParam) {
+        setCurrentSku(skuParam);
+        setCurrentView('product');
+      } else if (viewParam === 'feed' || viewParam === 'admin' || pathname.startsWith('/admin') || pathname.startsWith('/feed')) {
+        setCurrentView('feed-studio');
+      } else {
+        setCurrentView('catalog');
+      }
+    };
+
+    parseCurrentLocation();
+    window.addEventListener('popstate', parseCurrentLocation);
+    return () => window.removeEventListener('popstate', parseCurrentLocation);
   }, []);
 
   // Update URL history state when selecting product or view
   const handleSelectProduct = (sku: string) => {
     setCurrentSku(sku);
     setCurrentView('product');
-    const url = new URL(window.location.href);
-    url.searchParams.set('sku', sku);
-    url.searchParams.delete('view');
-    window.history.pushState({}, '', url.toString());
+    const targetUrl = `/product/${sku}`;
+    window.history.pushState({ sku }, '', targetUrl);
   };
 
   const handleChangeView = (view: 'catalog' | 'product' | 'feed-studio') => {
     setCurrentView(view);
-    const url = new URL(window.location.href);
     if (view === 'product') {
-      url.searchParams.set('sku', currentSku);
-      url.searchParams.delete('view');
+      window.history.pushState({ sku: currentSku }, '', `/product/${currentSku}`);
     } else if (view === 'feed-studio') {
-      url.searchParams.set('view', 'admin');
-      url.searchParams.delete('sku');
+      window.history.pushState({ view: 'admin' }, '', '/admin');
     } else {
-      url.searchParams.delete('sku');
-      url.searchParams.delete('view');
+      window.history.pushState({}, '', '/');
     }
-    window.history.pushState({}, '', url.toString());
   };
 
   return (

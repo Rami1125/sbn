@@ -3,9 +3,23 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
 
+const googleVerificationPlugin = () => ({
+  name: 'google-verification',
+  configureServer(server: any) {
+    server.middlewares.use((req: any, res: any, next: any) => {
+      if (req.url?.split('?')[0] === '/google4fccee9f84731cf5.html') {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+        res.end('google-site-verification: google4fccee9f84731cf5.html\n');
+        return;
+      }
+      next();
+    });
+  },
+});
+
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), googleVerificationPlugin()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
