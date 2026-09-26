@@ -15,8 +15,9 @@ import {
   Filter
 } from 'lucide-react';
 import { GoogleMerchantProduct } from '../../types/product';
-import { INITIAL_PRODUCTS, SABAN_BRANCHES } from '../../data/initialProducts';
+import { SABAN_BRANCHES } from '../../data/initialProducts';
 import { useCart } from '../../context/CartContext';
+import { useProducts } from '../../context/ProductContext';
 import { NoaAiConsultantModal } from './NoaAiConsultantModal';
 
 interface ProductCatalogProps {
@@ -31,12 +32,13 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   setSearchQuery
 }) => {
   const { addToCart } = useCart();
+  const { products, syncStatus, lastSyncTime } = useProducts();
   const [selectedBrand, setSelectedBrand] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [consultingProduct, setConsultingProduct] = useState<GoogleMerchantProduct | null>(null);
 
-  // Filter products
-  const filteredProducts = INITIAL_PRODUCTS.filter((p) => {
+  // Filter products from live synced state
+  const filteredProducts = products.filter((p) => {
     const matchesSearch =
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.id.toLowerCase().includes(searchQuery.toLowerCase()) ||

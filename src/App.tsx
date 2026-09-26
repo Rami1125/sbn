@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ProductProvider } from './context/ProductContext';
 import { CartProvider } from './context/CartContext';
 import { SabanHeader } from './components/layout/SabanHeader';
 import { ProductLandingPage } from './routes/store/product.$sku';
@@ -6,6 +7,7 @@ import { SabanStoreCartDrawer } from './components/store/SabanStoreCartDrawer';
 import { MerchantFeedStudio } from './components/admin/MerchantFeedStudio';
 import { ProductCatalog } from './components/store/ProductCatalog';
 import { ReturnsPolicyPage } from './routes/store/ReturnsPolicyPage';
+import { WhatsAppFloatingButton } from './components/common/WhatsAppFloatingButton';
 import { SabanLogo } from './components/layout/SabanLogo';
 import { MapPin, Phone, Clock, FileSpreadsheet, ShieldCheck, RotateCcw } from 'lucide-react';
 import { SABAN_BRANCHES } from './data/initialProducts';
@@ -93,8 +95,9 @@ export default function App() {
   }, [currentView, currentSku]);
 
   return (
-    <CartProvider>
-      <div className="min-h-screen bg-[#F8F9FA] text-[#1E293B] flex flex-col font-['Heebo','Assistant',sans-serif]">
+    <ProductProvider>
+      <CartProvider>
+        <div className="min-h-screen bg-[#F8F9FA] text-[#1E293B] flex flex-col font-['Heebo','Assistant',sans-serif]">
         
         {/* Main Header */}
         <SabanHeader
@@ -137,6 +140,13 @@ export default function App() {
 
         {/* Global Cart Slide-Over Drawer */}
         <SabanStoreCartDrawer />
+
+        {/* WhatsApp Direct Branch Chat Floating Action Button */}
+        <WhatsAppFloatingButton
+          phoneNumber="97297602010"
+          defaultMessage="שלום לח. סבן חומרי בניין (סניף הוד השרון), ברצוני לברר לגבי מוצרים / הזמנה לאיסוף מהסניף."
+          branchName="דלפק הוד השרון (09-7602010)"
+        />
 
         {/* Corporate Footer */}
         <footer className="bg-[#0A2E5C] text-white border-t border-blue-950 mt-auto">
@@ -248,5 +258,6 @@ export default function App() {
 
       </div>
     </CartProvider>
+  </ProductProvider>
   );
 }

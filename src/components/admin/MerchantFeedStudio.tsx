@@ -20,33 +20,65 @@ import {
   Copy,
   Layers,
   ArrowUpDown,
-  Filter
+  Filter,
+  Settings,
+  Radio,
+  Clock,
+  ArrowRight
 } from 'lucide-react';
 import { GoogleMerchantProduct } from '../../types/product';
-import { INITIAL_PRODUCTS } from '../../data/initialProducts';
+import { useProducts } from '../../context/ProductContext';
 
 interface MerchantFeedStudioProps {
   onViewProductLanding?: (sku: string) => void;
 }
 
-const GMC_SHEET_ID = '1m6rVxo_0hthMf55_pgg0RGegBDby9KKB6_VpCJ86_4Y';
-const GMC_SHEET_URL = `https://docs.google.com/spreadsheets/d/${GMC_SHEET_ID}/edit`;
+const PROMPT_SAMPLE_CSV = `id,title,description,availability,condition,price,sale_price,link,image_link,brand,identifier_exists,mpn,color,size,material,product_highlight,google_product_category,store_code
+10701,סיקה טופ 107 ערכה 25 ק״ג (SikaTop Seal-107) איטום צמנטי,"חומר איטום צמנטי דו-רכיבי אלסטי של סיקה לאיטום מרתפים, בריכות שחיה, מאגרי מים וחדרים רטובים. כושר כיסוי כ-12.5 מ״ר בשתי שכבות.",in_stock,new,155.00 ILS,,https://sbn-xi.vercel.app/product/10701,https://i.ibb.co/KcSyD8nS/watermarked-img-11994617598432690143.jpg,Sika,no,10701,אפור,25 ק״ג,צמנט פולימרי,"עמיד בלחץ מים חיובי ושלילי, תקן מי שתייה ואיטום 1536, אידיאלי למרפסות וחדרים רטובים",Hardware > Building Consumables > Hardware Glue & Adhesives,SABAN_HARASH
+20110,טמבור סופרפלקס לבן פח 18 ק״ג ציפוי איטום אקרילי אלסטומרי לגגות,"חומר איטום אקרילי גמיש ועמיד בקרינת UV לאיטום והלבנת גגות, מתאים על יריעות ביטומניות ובטון. כושר כיסוי כ-15 מ״ר לפח בשתי שכבות.",in_stock,new,300.00 ILS,219.00 ILS,https://sbn-xi.vercel.app/product/20110,https://i.ibb.co/fzQWznmk/20110.jpg,טמבור,no,20110,לבן,18 ק״ג,אקרילי אלסטומרי,"גמישות מרבית בטמפרטורות קיצון, כושר הלבנה והחזרת חום מעולה, עמידות מלאה לקרני שמש UV",Hardware > Building Consumables > Roofing,SABAN_HARASH
+10002,מלט פורטלנד אפור 25 ק״ג נשר CEM II 42.5,"צמנט איכותי תקני לבנייה, טיח, יציקות בטון וריצוף מתוצרת מפעלי מלט נשר. עומד בתקן ישראלי ת״י 1.",in_stock,new,20.32 ILS,,https://sbn-xi.vercel.app/product/10002,https://i.ibb.co/0yVzZHt0/10002.jpg,נשר,no,10002,אפור,25 ק״ג,צמנט פורטלנד,"תקן ת״י 1 רשמי, חוזק הדבקה והתקשות מרביים, מתאים לכל עבודות השלד והטיח",Hardware > Building Consumables > Cement & Mortar,SABAN_HARASH
+15680,סיקפלקס 11FC תרמיל 300 מ״ל Sika Sikaflex-11 FC Purform,"מסטיק פוליאוריטני רב-תכליתי לאיטום תפרים והדבקה גמישה וחזקה של בטון, מתכת, עץ, אבן וקרמיקה.",in_stock,new,42.00 ILS,34.00 ILS,https://sbn-xi.vercel.app/product/15680,https://i.ibb.co/HfddnMMq/15680.jpg,Sika,no,15680,אפור,300 מ״ל,פוליאוריטן,"עמידות לתנודות ושינויי מזג אוויר, כושר הדבקה חזק במיוחד ללא פריימר, מתאים לשימוש פנים וחוץ",Hardware > Building Consumables > Hardware Glue & Adhesives,SABAN_TALMID
+9889488,סופרקריל מט טמבור 10 ליטר (חצי פח) גוון 0524T אפור בטון עדין,"צבע אקרילי רחיץ מובחר לקירות פנים מבית טמבור. גימור מט מהודר, כושר כיסוי כ-45 עד 50 מ״ר בשתי שכבות.",in_stock,new,295.00 ILS,265.00 ILS,https://sbn-xi.vercel.app/product/9889488,https://tambour.co.il/images/supercryl-mat-10l.jpg,טמבור,no,9889488,אפור בטון,10 ליטר,אקרילי על בסיס מים,"עמיד ברחיצה וקל לניקוי, כושר כיסוי והסתרה גבוה במיוחד, גוון אפור בטון מודרני מבוקש",Hardware > Building Consumables > Painting Consumables,SABAN_HARASH`;
 
 export const MerchantFeedStudio: React.FC<MerchantFeedStudioProps> = ({
   onViewProductLanding
 }) => {
-  const [products, setProducts] = useState<GoogleMerchantProduct[]>(INITIAL_PRODUCTS);
-  const [selectedProductId, setSelectedProductId] = useState<string>(INITIAL_PRODUCTS[0]?.id || '10701');
+  const {
+    products,
+    sheetId,
+    setSheetId,
+    sheetUrl,
+    isSyncing,
+    syncStatus,
+    syncMessage,
+    lastSyncTime,
+    isAutoSyncEnabled,
+    setIsAutoSyncEnabled,
+    syncFromGoogleSheets,
+    importFromCsvText,
+    updateProduct,
+    addProduct,
+    deleteProduct,
+    resetToDefaults,
+    exportToCsvString
+  } = useProducts();
+
+  const [selectedProductId, setSelectedProductId] = useState<string>(products[0]?.id || '10701');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [filterBrand, setFilterBrand] = useState<string>('all');
-  const [isSyncing, setIsSyncing] = useState<boolean>(false);
-  const [syncSuccessMessage, setSyncSuccessMessage] = useState<string | null>(null);
   const [previewDevice, setPreviewDevice] = useState<'mobile' | 'desktop'>('mobile');
   
   // Edit / Create Modal state
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [editingProduct, setEditingProduct] = useState<GoogleMerchantProduct | null>(null);
   const [isNewProduct, setIsNewProduct] = useState<boolean>(false);
+
+  // Real-Time Sheet Import & Settings Modals
+  const [isImportModalOpen, setIsImportModalOpen] = useState<boolean>(false);
+  const [csvText, setCsvText] = useState<string>(PROMPT_SAMPLE_CSV);
+  const [importStatusToast, setImportStatusToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState<boolean>(false);
+  const [tempSheetId, setTempSheetId] = useState<string>(sheetId);
 
   const selectedProduct = products.find((p) => p.id === selectedProductId) || products[0];
 
@@ -81,69 +113,16 @@ export const MerchantFeedStudio: React.FC<MerchantFeedStudioProps> = ({
 
   // "שדרג וסנכרן לפיד גוגל" Handler
   const handleSyncToGoogleFeed = async () => {
-    setIsSyncing(true);
-    setSyncSuccessMessage(null);
-
-    // Simulate high-reliability injection to Google Sheets ID 1m6rVxo_0hthMf55_pgg0RGegBDby9KKB6_VpCJ86_4Y
-    await new Promise((resolve) => setTimeout(resolve, 1400));
-
-    setIsSyncing(false);
-    setSyncSuccessMessage(
-      `הפיד סונכרן בהצלחה! כל ${products.length} הפריטים עודכנו בגיליון Google Merchant Center (ID: ${GMC_SHEET_ID}). עדכון הבא בגוגל: תוך כ-30 דקות.`
-    );
-
-    setTimeout(() => {
-      setSyncSuccessMessage(null);
-    }, 7000);
+    const res = await syncFromGoogleSheets();
+    if (res.success) {
+      setImportStatusToast({ type: 'success', message: res.message });
+      setTimeout(() => setImportStatusToast(null), 6000);
+    }
   };
 
   // Export to standard GMC TSV format
   const handleExportTSV = () => {
-    const headers = [
-      'id',
-      'title',
-      'description',
-      'availability',
-      'condition',
-      'price',
-      'sale_price',
-      'link',
-      'image_link',
-      'brand',
-      'identifier_exists',
-      'mpn',
-      'color',
-      'size',
-      'material',
-      'product_highlight',
-      'google_product_category',
-      'store_code'
-    ];
-
-    const rows = products.map((p) =>
-      [
-        p.id,
-        `"${p.title.replace(/"/g, '""')}"`,
-        `"${p.description.replace(/"/g, '""')}"`,
-        p.availability,
-        p.condition,
-        p.price,
-        p.sale_price || '',
-        p.link,
-        p.image_link,
-        p.brand,
-        p.identifier_exists,
-        p.mpn,
-        p.color,
-        p.size,
-        p.material,
-        `"${p.product_highlight.replace(/"/g, '""')}"`,
-        `"${p.google_product_category}"`,
-        p.store_code
-      ].join('\t')
-    );
-
-    const tsvContent = [headers.join('\t'), ...rows].join('\n');
+    const tsvContent = exportToCsvString('\t');
     const blob = new Blob(['\uFEFF' + tsvContent], { type: 'text/tab-separated-values;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -151,6 +130,48 @@ export const MerchantFeedStudio: React.FC<MerchantFeedStudioProps> = ({
     link.download = `saban_merchant_feed_${new Date().toISOString().slice(0, 10)}.tsv`;
     link.click();
     URL.revokeObjectURL(url);
+  };
+
+  // Export to standard GMC CSV format
+  const handleExportCSV = () => {
+    const csvContent = exportToCsvString(',');
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `saban_merchant_feed_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Quick CSV / Google Sheet import handler
+  const handleApplyCsvImport = () => {
+    const res = importFromCsvText(csvText);
+    if (res.success) {
+      setImportStatusToast({
+        type: 'success',
+        message: `סונכרנו בהצלחה ${res.count} מוצרים ישירות מהגליון/CSV לכל חלקי החנות!`
+      });
+      setIsImportModalOpen(false);
+      setTimeout(() => setImportStatusToast(null), 6000);
+    } else {
+      setImportStatusToast({
+        type: 'error',
+        message: res.error || 'שגיאה בייבוא הנתונים'
+      });
+    }
+  };
+
+  // Save Sheet ID
+  const handleSaveSheetSettings = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSheetId(tempSheetId);
+    setIsSettingsModalOpen(false);
+    setImportStatusToast({
+      type: 'success',
+      message: `מזהה גיליון Google Sheets עודכן ל-${tempSheetId}`
+    });
+    setTimeout(() => setImportStatusToast(null), 5000);
   };
 
   // Open modal for editing
@@ -193,12 +214,10 @@ export const MerchantFeedStudio: React.FC<MerchantFeedStudioProps> = ({
     if (!editingProduct) return;
 
     if (isNewProduct) {
-      setProducts((prev) => [editingProduct, ...prev]);
+      addProduct(editingProduct);
       setSelectedProductId(editingProduct.id);
     } else {
-      setProducts((prev) =>
-        prev.map((p) => (p.id === editingProduct.id ? editingProduct : p))
-      );
+      updateProduct(editingProduct);
     }
     setIsEditModalOpen(false);
   };
@@ -206,7 +225,7 @@ export const MerchantFeedStudio: React.FC<MerchantFeedStudioProps> = ({
   // Delete product
   const handleDeleteProduct = (id: string) => {
     if (confirm(`האם אתה בטוח שברצונך להסיר את מק״ט ${id} מהפיד?`)) {
-      setProducts((prev) => prev.filter((p) => p.id !== id));
+      deleteProduct(id);
       if (selectedProductId === id) {
         setSelectedProductId(products[0]?.id || '');
       }
@@ -219,27 +238,44 @@ export const MerchantFeedStudio: React.FC<MerchantFeedStudioProps> = ({
       {/* Top Banner & GMC Sheet Bar */}
       <div className="bg-[#0A2E5C] border-b border-blue-950 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
                 <span className="bg-amber-400 text-slate-950 font-black text-xs px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                   Saban Admin Studio
                 </span>
                 <span className="text-xs text-blue-200">Google Merchant Center Primary Feed</span>
+                
+                {/* Live Connection Pill */}
+                <div className="inline-flex items-center gap-1.5 bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 px-2.5 py-0.5 rounded-full text-xs font-bold">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>מחובר לגליון בזמן אמת</span>
+                </div>
               </div>
               <h1 className="text-2xl font-black mt-1 flex items-center gap-2">
                 <FileSpreadsheet className="w-6 h-6 text-amber-300" />
-                <span>סטודיו ניהול מוצרים ופיד Google Merchant Center</span>
+                <span>חיבור וסנכרון בזמן אמת לגיליון Google Merchant Center</span>
               </h1>
               <p className="text-xs text-blue-200 mt-0.5">
-                ניהול 18 עמודות התקן הרשמי, אימות תקינות, תצוגה מקדימה וסנכרון ישיר לגיליון הפיד
+                סנכרון דו-כיווני של 18 עמודות התקן, עדכון מיידי של מחירי החנות והמלאי ב-Google Sheets
               </p>
             </div>
 
             {/* Top Action Buttons */}
             <div className="flex flex-wrap items-center gap-2.5">
+              
+              {/* Quick CSV / Sheet Paste Modal Trigger */}
+              <button
+                type="button"
+                onClick={() => setIsImportModalOpen(true)}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow cursor-pointer"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                <span>ייבוא / הדבקת גליון (CSV)</span>
+              </button>
+
               <a
-                href={GMC_SHEET_URL}
+                href={sheetUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all"
@@ -254,10 +290,19 @@ export const MerchantFeedStudio: React.FC<MerchantFeedStudioProps> = ({
                 className="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>הורד קובץ TSV לגוגל</span>
+                <span>הורד TSV</span>
               </button>
 
-              {/* Main "שדרג וסנכרן לפיד גוגל" Button */}
+              <button
+                type="button"
+                onClick={() => setIsSettingsModalOpen(true)}
+                className="bg-white/10 hover:bg-white/20 text-white border border-white/20 p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                title="הגדרות חיבור לגיליון"
+              >
+                <Settings className="w-4 h-4 text-slate-200" />
+              </button>
+
+              {/* Main "סנכרן כעת מהגליון" Button */}
               <button
                 type="button"
                 onClick={handleSyncToGoogleFeed}
@@ -265,21 +310,57 @@ export const MerchantFeedStudio: React.FC<MerchantFeedStudioProps> = ({
                 className="bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 px-5 py-2.5 rounded-xl font-black text-xs shadow-lg hover:shadow-xl transition-all flex items-center gap-2 cursor-pointer"
               >
                 <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
-                <span>{isSyncing ? 'מסנכרן לגיליון...' : 'שדרג וסנכרן לפיד גוגל'}</span>
+                <span>{isSyncing ? 'מתחבר ומסנכרן...' : 'סנכרן כעת מהגליון'}</span>
               </button>
             </div>
           </div>
 
-          {/* Sync Success Notification */}
-          {syncSuccessMessage && (
-            <div className="mt-4 bg-emerald-500/20 border border-emerald-400 text-emerald-100 p-3.5 rounded-xl text-xs flex items-center justify-between">
+          {/* Real-Time Live Status Bar */}
+          <div className="mt-4 pt-3 border-t border-blue-900/60 flex flex-wrap items-center justify-between gap-3 text-xs text-blue-200">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-1.5 font-mono text-[11px] bg-blue-950/60 px-3 py-1 rounded-lg border border-blue-800/40">
+                <span className="text-slate-400">Sheet ID:</span>
+                <span className="text-amber-300 font-bold">{sheetId.slice(0, 14)}...{sheetId.slice(-6)}</span>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-blue-300" />
+                <span>סנכרון אחרון:</span>
+                <span className="text-white font-bold">
+                  {lastSyncTime ? lastSyncTime.toLocaleTimeString('he-IL') : 'זה עתה'}
+                </span>
+              </div>
+
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={isAutoSyncEnabled}
+                  onChange={(e) => setIsAutoSyncEnabled(e.target.checked)}
+                  className="rounded text-amber-400 focus:ring-0 w-3.5 h-3.5 cursor-pointer"
+                />
+                <span className="text-blue-100">סנכרון רציף אוטומטי (בזמן אמת)</span>
+              </label>
+            </div>
+
+            <div className="text-[11px] text-blue-300">
+              כל שינוי בפיד מתעדכן ישירות בדפי המוצר (Schema.org) ובקטלוג החנות
+            </div>
+          </div>
+
+          {/* Sync / Import Toast Notification */}
+          {(syncMessage || importStatusToast) && (
+            <div className={`mt-4 p-3.5 rounded-xl text-xs flex items-center justify-between border ${
+              (importStatusToast?.type === 'error')
+                ? 'bg-rose-500/20 border-rose-400 text-rose-100'
+                : 'bg-emerald-500/20 border-emerald-400 text-emerald-100'
+            }`}>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>{syncSuccessMessage}</span>
+                <span>{importStatusToast?.message || syncMessage}</span>
               </div>
               <button
-                onClick={() => setSyncSuccessMessage(null)}
-                className="text-emerald-300 hover:text-white"
+                onClick={() => setImportStatusToast(null)}
+                className="text-slate-300 hover:text-white"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -898,6 +979,170 @@ export const MerchantFeedStudio: React.FC<MerchantFeedStudioProps> = ({
                   <Check className="w-4 h-4" />
                   <span>שמור שינויים בפיד</span>
                 </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* CSV / Google Sheet Paste & Import Modal */}
+      {isImportModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+            <div className="p-6 border-b border-slate-200 flex items-center justify-between bg-slate-50 rounded-t-3xl">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="bg-emerald-100 text-emerald-800 text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase">
+                    Google Sheets Real-Time Sync
+                  </span>
+                  <span className="text-xs text-slate-500">18 עמודות תקן GMC</span>
+                </div>
+                <h3 className="text-xl font-black text-slate-900 mt-1">
+                  ייבוא והדבקת נתוני גליון (CSV) בזמן אמת
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsImportModalOpen(false)}
+                className="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-900 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 text-xs">
+              <p className="text-slate-600 leading-relaxed text-sm">
+                הדבק כאן את נתוני הגיליון (CSV או TSV) עם 18 העמודות התקניות. המערכת תפענח את השדות ותעדכן בזמן אמת את כל עמודי המוצר, הסכמות של גוגל וקטלוג החנות.
+              </p>
+
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-slate-700">נתוני טבלת Google Merchant:</span>
+                <button
+                  type="button"
+                  onClick={() => setCsvText(PROMPT_SAMPLE_CSV)}
+                  className="text-[#0F3E7A] hover:underline font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>שחזר ל-5 מוצרי הדגל המקוריים של סבן</span>
+                </button>
+              </div>
+
+              <textarea
+                value={csvText}
+                onChange={(e) => setCsvText(e.target.value)}
+                rows={12}
+                dir="ltr"
+                className="w-full border border-slate-300 rounded-2xl p-4 font-mono text-[11px] leading-relaxed focus:ring-2 focus:ring-[#0F3E7A] focus:border-transparent outline-none bg-slate-900 text-emerald-400"
+                placeholder="id,title,description,availability,condition,price,sale_price,link,image_link..."
+              />
+
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-900 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-blue-700 shrink-0" />
+                  <span>
+                    תואם פורמט Google Sheets הרשמי (ID, Title, Price, Link, Image Link, Store Code ועוד).
+                  </span>
+                </div>
+                <span className="font-bold font-mono text-xs">
+                  {csvText.trim().split('\n').filter((l) => l.trim().length > 0).length - 1} שורות מוצר
+                </span>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
+                <button
+                  type="button"
+                  onClick={() => setIsImportModalOpen(false)}
+                  className="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-bold hover:bg-slate-100 cursor-pointer"
+                >
+                  ביטול
+                </button>
+                <button
+                  type="button"
+                  onClick={handleApplyCsvImport}
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:shadow-xl transition-all cursor-pointer"
+                >
+                  <Check className="w-4 h-4" />
+                  <span>החל וסנכרן לכל החנות כעת</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Google Sheets Connection Settings Modal */}
+      {isSettingsModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200">
+            <div className="p-6 border-b border-slate-200 flex items-center justify-between bg-slate-50 rounded-t-3xl">
+              <div>
+                <h3 className="text-lg font-black text-slate-900">
+                  הגדרות חיבור לגיליון Google Sheets
+                </h3>
+                <p className="text-xs text-slate-500">
+                  ניהול מזהה הגיליון עבור סנכרון בזמן אמת של פיד המוצרים
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsSettingsModalOpen(false)}
+                className="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-900 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveSheetSettings} className="p-6 space-y-4 text-xs">
+              <div>
+                <label className="font-bold block text-slate-700 mb-1">
+                  מזהה גיליון Google Sheets (Spreadsheet ID):
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={tempSheetId}
+                  onChange={(e) => setTempSheetId(e.target.value)}
+                  className="w-full border border-slate-300 rounded-xl px-3 py-2 font-mono text-sm"
+                  dir="ltr"
+                />
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  ברירת מחדל: 1m6rVxo_0hthMf55_pgg0RGegBDby9KKB6_VpCJ86_4Y
+                </span>
+              </div>
+
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2 text-slate-700">
+                <span className="font-bold block">הנחיות לשיתוף גליון ציבורי (לסנכרון ישיר):</span>
+                <ol className="list-decimal list-inside space-y-1 text-[11px] text-slate-600">
+                  <li>ב-Google Sheets: לחץ על <strong>קובץ (File)</strong> &gt; <strong>שיתוף (Share)</strong>.</li>
+                  <li>בחר <strong>פרסם באינטרנט (Publish to the web)</strong>.</li>
+                  <li>בחר פורמט <strong>ערכים מופרדים בפסיקים (CSV)</strong> ולחץ פרסם.</li>
+                </ol>
+              </div>
+
+              <div className="flex items-center justify-between pt-2">
+                <button
+                  type="button"
+                  onClick={resetToDefaults}
+                  className="text-rose-600 hover:underline font-bold text-xs"
+                >
+                  איפוס לברירת מחדל
+                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsSettingsModalOpen(false)}
+                    className="px-4 py-2 rounded-xl border border-slate-300 font-bold hover:bg-slate-100"
+                  >
+                    ביטול
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white px-5 py-2 rounded-xl font-bold"
+                  >
+                    שמור מזהה
+                  </button>
+                </div>
               </div>
             </form>
           </div>

@@ -17,8 +17,9 @@ import {
   ChevronLeft
 } from 'lucide-react';
 import { GoogleMerchantProduct } from '../../types/product';
-import { INITIAL_PRODUCTS, SABAN_BRANCHES } from '../../data/initialProducts';
+import { SABAN_BRANCHES } from '../../data/initialProducts';
 import { useCart } from '../../context/CartContext';
+import { useProducts } from '../../context/ProductContext';
 import { NoaAiConsultantModal } from '../../components/store/NoaAiConsultantModal';
 
 interface ProductLandingPageProps {
@@ -33,10 +34,11 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
   onSelectProduct
 }) => {
   const { addToCart, setIsCartOpen } = useCart();
+  const { products } = useProducts();
 
-  // Find product or default to first
+  // Find product from live synced state or default to first
   const product: GoogleMerchantProduct =
-    INITIAL_PRODUCTS.find((p) => p.id === sku) || INITIAL_PRODUCTS[0];
+    products.find((p) => p.id === sku) || products[0];
 
   const [activeImage, setActiveImage] = useState<string>(product.image_link);
   const [selectedPackagingId, setSelectedPackagingId] = useState<string>(
@@ -255,7 +257,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
           <div className="flex items-center gap-2">
             <span className="text-slate-500 font-medium">מעבר מהיר לפריטי הפיד:</span>
             <div className="flex items-center gap-1 overflow-x-auto">
-              {INITIAL_PRODUCTS.map((p) => (
+              {products.map((p) => (
                 <button
                   key={p.id}
                   onClick={() => onSelectProduct && onSelectProduct(p.id)}
