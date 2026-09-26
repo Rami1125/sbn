@@ -1,16 +1,27 @@
+import fs from 'fs';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
 
-const googleVerificationPlugin = () => ({
-  name: 'google-verification',
+const staticHtmlServePlugin = () => ({
+  name: 'static-html-serve',
   configureServer(server: any) {
     server.middlewares.use((req: any, res: any, next: any) => {
-      if (req.url?.split('?')[0] === '/google4fccee9f84731cf5.html') {
+      const urlPath = req.url?.split('?')[0];
+      if (urlPath === '/google4fccee9f84731cf5.html') {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         res.end('google-site-verification: google4fccee9f84731cf5.html\n');
         return;
+      }
+      if (urlPath === '/returns.html') {
+        const filePath = path.resolve(__dirname, 'public/returns.html');
+        if (fs.existsSync(filePath)) {
+          const content = fs.readFileSync(filePath, 'utf-8');
+          res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+          res.end(content);
+          return;
+        }
       }
       next();
     });
@@ -19,7 +30,7 @@ const googleVerificationPlugin = () => ({
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss(), googleVerificationPlugin()],
+    plugins: [react(), tailwindcss(), staticHtmlServePlugin()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

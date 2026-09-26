@@ -150,8 +150,11 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
         '@type': 'MerchantReturnPolicy',
         applicableCountry: 'IL',
         returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
-        merchantReturnDays: 30,
-        returnMethod: 'https://schema.org/ReturnInStore'
+        merchantReturnDays: 14,
+        returnMethod: 'https://schema.org/ReturnInStore',
+        returnFees: 'https://schema.org/FreeReturn',
+        merchantReturnLink: 'https://sbn-xi.vercel.app/returns',
+        refundType: 'https://schema.org/FullRefund'
       },
       shippingDetails: {
         '@type': 'OfferShippingDetails',

@@ -5,22 +5,29 @@ import { ProductLandingPage } from './routes/store/product.$sku';
 import { SabanStoreCartDrawer } from './components/store/SabanStoreCartDrawer';
 import { MerchantFeedStudio } from './components/admin/MerchantFeedStudio';
 import { ProductCatalog } from './components/store/ProductCatalog';
+import { ReturnsPolicyPage } from './routes/store/ReturnsPolicyPage';
 import { SabanLogo } from './components/layout/SabanLogo';
-import { MapPin, Phone, Clock, FileSpreadsheet, ShieldCheck } from 'lucide-react';
+import { MapPin, Phone, Clock, FileSpreadsheet, ShieldCheck, RotateCcw } from 'lucide-react';
 import { SABAN_BRANCHES } from './data/initialProducts';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'catalog' | 'product' | 'feed-studio'>('catalog');
+  const [currentView, setCurrentView] = useState<'catalog' | 'product' | 'feed-studio' | 'returns'>('catalog');
   const [currentSku, setCurrentSku] = useState<string>('10701');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Check URL on load and on popstate for path or query parameters (e.g. /product/10701, /store/10701, ?sku=10701)
+  // Check URL on load and on popstate for path or query parameters (e.g. /product/10701, /store/10701, ?sku=10701, /returns)
   useEffect(() => {
     const parseCurrentLocation = () => {
       const pathname = window.location.pathname;
       const params = new URLSearchParams(window.location.search);
       const skuParam = params.get('sku');
       const viewParam = params.get('view');
+
+      // Check returns page
+      if (pathname === '/returns' || pathname.startsWith('/returns') || viewParam === 'returns') {
+        setCurrentView('returns');
+        return;
+      }
 
       // Check path patterns like /product/10701 or /store/10701 or /store/product/10701
       const pathMatch = pathname.match(/\/(?:product|store)(?:\/product)?\/([a-zA-Z0-9_-]+)/);
@@ -53,12 +60,14 @@ export default function App() {
     window.history.pushState({ sku }, '', targetUrl);
   };
 
-  const handleChangeView = (view: 'catalog' | 'product' | 'feed-studio') => {
+  const handleChangeView = (view: 'catalog' | 'product' | 'feed-studio' | 'returns') => {
     setCurrentView(view);
     if (view === 'product') {
       window.history.pushState({ sku: currentSku }, '', `/product/${currentSku}`);
     } else if (view === 'feed-studio') {
       window.history.pushState({ view: 'admin' }, '', '/admin');
+    } else if (view === 'returns') {
+      window.history.pushState({ view: 'returns' }, '', '/returns');
     } else {
       window.history.pushState({}, '', '/');
     }
@@ -99,6 +108,12 @@ export default function App() {
               onViewProductLanding={handleSelectProduct}
             />
           )}
+
+          {currentView === 'returns' && (
+            <ReturnsPolicyPage
+              onNavigateHome={() => handleChangeView('catalog')}
+            />
+          )}
         </main>
 
         {/* Global Cart Slide-Over Drawer */}
@@ -125,7 +140,7 @@ export default function App() {
               <div className="space-y-2.5 text-xs text-blue-100">
                 <div className="font-extrabold text-sm text-white flex items-center gap-1.5">
                   <MapPin className="w-4 h-4 text-amber-400" />
-                  <span>סניף החרש 10 (מרכז לוגיסטי)</span>
+                  <span>סניף החרש 10 הוד השרון</span>
                 </div>
                 <p>מחסן 4 - חומרי שלד, מלט, איטום צמנטי וגגות</p>
                 <p className="flex items-center gap-1.5 text-slate-300">
@@ -134,7 +149,8 @@ export default function App() {
                 </p>
                 <p className="flex items-center gap-1.5 font-mono text-white">
                   <Phone className="w-3.5 h-3.5 text-amber-400" />
-                  <span>03-9518888 (רב קווי)</span>
+                  <a href="tel:09-7602010" className="hover:underline font-bold">09-7602010</a>
+                  <span className="text-slate-400">/ 03-9518888</span>
                 </p>
               </div>
 
@@ -142,7 +158,7 @@ export default function App() {
               <div className="space-y-2.5 text-xs text-blue-100">
                 <div className="font-extrabold text-sm text-white flex items-center gap-1.5">
                   <MapPin className="w-4 h-4 text-amber-400" />
-                  <span>סניף התלמיד 6 (גבס וצבע)</span>
+                  <span>סניף התלמיד 6 הוד השרון</span>
                 </div>
                 <p>מחסן 1 - גבס, פרופילים, צבעי טמבור ופרזול</p>
                 <p className="flex items-center gap-1.5 text-slate-300">
@@ -151,14 +167,24 @@ export default function App() {
                 </p>
                 <p className="flex items-center gap-1.5 font-mono text-white">
                   <Phone className="w-3.5 h-3.5 text-amber-400" />
-                  <span>03-9518889</span>
+                  <a href="tel:09-7602010" className="hover:underline font-bold">09-7602010</a>
+                  <span className="text-slate-400">/ 03-9518889</span>
                 </p>
               </div>
 
-              {/* GMC & Quick Links */}
+              {/* GMC, Policy & Quick Links */}
               <div className="space-y-3 text-xs text-blue-200">
-                <div className="font-extrabold text-sm text-white">אינטגרציה וקישורים</div>
-                <ul className="space-y-1.5">
+                <div className="font-extrabold text-sm text-white">שירות לקוחות ומדיניות</div>
+                <ul className="space-y-2">
+                  <li>
+                    <button
+                      onClick={() => handleChangeView('returns')}
+                      className="hover:text-amber-300 transition-colors flex items-center gap-1.5 font-bold text-amber-200"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
+                      <span>מדיניות החזרות וביטולים (14 יום)</span>
+                    </button>
+                  </li>
                   <li>
                     <button
                       onClick={() => handleChangeView('catalog')}
