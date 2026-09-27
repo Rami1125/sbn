@@ -43,7 +43,10 @@ interface SavedShade {
   productType: string;
 }
 
-export const CustomerPortalPage: React.FC<{ onNavigateHome: () => void }> = ({ onNavigateHome }) => {
+export const CustomerPortalPage: React.FC<{
+  onNavigateHome: () => void;
+  onNavigateTrack?: (orderId: string) => void;
+}> = ({ onNavigateHome, onNavigateTrack }) => {
   const [phoneNumber, setPhoneNumber] = useState<string>('050-8860896');
   const [customerName, setCustomerName] = useState<string>('יוסי לוי (קבלן גמר ובנייה)');
   const [clientType, setClientType] = useState<'contractor' | 'private'>('contractor');
@@ -285,6 +288,16 @@ export const CustomerPortalPage: React.FC<{ onNavigateHome: () => void }> = ({ o
                         </div>
 
                         <div className="flex items-center gap-2">
+                          {onNavigateTrack && (
+                            <button
+                              type="button"
+                              onClick={() => onNavigateTrack(order.orderNumber)}
+                              className="bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white text-xs font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+                            >
+                              <Truck className="w-3.5 h-3.5 text-amber-300" />
+                              <span>מעקב חי (Live Track)</span>
+                            </button>
+                          )}
                           {isReady && (
                             <a
                               href="https://waze.com/ul?q=רחוב החרש 10 הוד השרון"

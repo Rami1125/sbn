@@ -13,7 +13,8 @@ import {
   RotateCcw,
   X,
   Building2,
-  User
+  User,
+  Truck
 } from 'lucide-react';
 import { SabanLogo } from './SabanLogo';
 import { useCart } from '../../context/CartContext';
@@ -22,8 +23,8 @@ import { HeaderSearchBar } from './HeaderSearchBar';
 import { PwaInstallButton } from '../common/PwaInstallButton';
 
 interface SabanHeaderProps {
-  currentView: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account';
-  onChangeView: (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account') => void;
+  currentView: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track';
+  onChangeView: (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track') => void;
   searchQuery?: string;
   onSearchChange?: (q: string) => void;
   onSelectProduct?: (sku: string) => void;
@@ -62,6 +63,18 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
 
           {/* Quick links & Google Merchant Indicator */}
           <div className="flex items-center gap-4 mr-auto">
+            <button
+              onClick={() => onChangeView('track')}
+              className={`flex items-center gap-1.5 font-bold transition-colors cursor-pointer px-2.5 py-0.5 rounded-lg ${
+                currentView === 'track'
+                  ? 'bg-amber-400 text-slate-950 font-black'
+                  : 'text-amber-300 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <Truck className="w-3.5 h-3.5" />
+              <span>מעקב הזמנה חי</span>
+            </button>
+
             <button
               onClick={() => onChangeView('returns')}
               className="hidden sm:flex items-center gap-1 text-slate-300 hover:text-amber-300 transition-colors cursor-pointer"

@@ -9,17 +9,19 @@ import { ProductCatalog } from './components/store/ProductCatalog';
 import { ReturnsPolicyPage } from './routes/store/ReturnsPolicyPage';
 import { CustomerPortalPage } from './routes/store/CustomerPortalPage';
 import { AboutBranchesPage } from './routes/store/AboutBranchesPage';
+import { OrderTrackingView } from './routes/store/OrderTrackingView';
 import { WhatsAppFloatingButton } from './components/common/WhatsAppFloatingButton';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 import { OfflineIndicator } from './components/common/OfflineIndicator';
 import { SabanLogo } from './components/layout/SabanLogo';
-import { MapPin, Phone, Clock, FileSpreadsheet, ShieldCheck, RotateCcw, User, Building2 } from 'lucide-react';
+import { MapPin, Phone, Clock, FileSpreadsheet, ShieldCheck, RotateCcw, User, Building2, Truck } from 'lucide-react';
 import { SABAN_BRANCHES } from './data/initialProducts';
 import { initOneSignal } from './lib/oneSignal';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account'>('catalog');
+  const [currentView, setCurrentView] = useState<'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track'>('catalog');
   const [currentSku, setCurrentSku] = useState<string>('10701');
+  const [currentOrderId, setCurrentOrderId] = useState<string>('SAB-889413');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Initialize OneSignal Push on startup
@@ -27,13 +29,23 @@ export default function App() {
     initOneSignal();
   }, []);
 
-  // Check URL on load and on popstate for path or query parameters (e.g. /product/10701, /store/10701, ?sku=10701, /returns, /branches, /account)
+  // Check URL on load and on popstate for path or query parameters (e.g. /product/10701, /store/10701, ?sku=10701, /returns, /branches, /account, /track)
   useEffect(() => {
     const parseCurrentLocation = () => {
       const pathname = window.location.pathname;
       const params = new URLSearchParams(window.location.search);
       const skuParam = params.get('sku');
       const viewParam = params.get('view');
+      const orderIdParam = params.get('orderId');
+
+      // Check track page /track or /track/:orderId
+      const trackMatch = pathname.match(/^\/track(?:\/([a-zA-Z0-9_-]+))?/);
+      if (trackMatch || viewParam === 'track') {
+        const extractedId = trackMatch?.[1] || orderIdParam || 'SAB-889413';
+        setCurrentOrderId(extractedId);
+        setCurrentView('track');
+        return;
+      }
 
       // Check returns page
       if (pathname === '/returns' || pathname.startsWith('/returns') || viewParam === 'returns') {
@@ -84,7 +96,13 @@ export default function App() {
     window.history.pushState({ sku }, '', targetUrl);
   };
 
-  const handleChangeView = (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account') => {
+  const handleNavigateTrack = (orderId: string) => {
+    setCurrentOrderId(orderId);
+    setCurrentView('track');
+    window.history.pushState({ view: 'track', orderId }, '', `/track/${orderId}`);
+  };
+
+  const handleChangeView = (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track') => {
     setCurrentView(view);
     if (view === 'product') {
       window.history.pushState({ sku: currentSku }, '', `/product/${currentSku}`);
@@ -96,6 +114,8 @@ export default function App() {
       window.history.pushState({ view: 'branches' }, '', '/branches');
     } else if (view === 'account') {
       window.history.pushState({ view: 'account' }, '', '/account');
+    } else if (view === 'track') {
+      window.history.pushState({ view: 'track', orderId: currentOrderId }, '', `/track/${currentOrderId}`);
     } else {
       window.history.pushState({}, '', '/');
     }
@@ -122,7 +142,7 @@ export default function App() {
         page_title: document.title,
       });
     }
-  }, [currentView, currentSku]);
+  }, [currentView, currentSku, currentOrderId]);
 
   return (
     <ProductProvider>
@@ -167,6 +187,14 @@ export default function App() {
 
           {currentView === 'account' && (
             <CustomerPortalPage
+              onNavigateHome={() => handleChangeView('catalog')}
+              onNavigateTrack={handleNavigateTrack}
+            />
+          )}
+
+          {currentView === 'track' && (
+            <OrderTrackingView
+              orderId={currentOrderId}
               onNavigateHome={() => handleChangeView('catalog')}
             />
           )}
@@ -276,6 +304,15 @@ export default function App() {
                     >
                       <User className="w-3.5 h-3.5 text-amber-400" />
                       <span>פורטל לקוחות וקבלנים</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleChangeView('track')}
+                      className="hover:text-amber-300 transition-colors flex items-center gap-1 text-amber-200 font-bold"
+                    >
+                      <Truck className="w-3.5 h-3.5 text-amber-400" />
+                      <span>מעקב הזמנות חי (Live Tracking)</span>
                     </button>
                   </li>
                   <li>
