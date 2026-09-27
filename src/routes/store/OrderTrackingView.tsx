@@ -74,7 +74,7 @@ export interface TrackingOrder {
     siteContactName: string;
     siteContactPhone: string;
     siteNotes?: string;
-    truckType: 'משאית מנוף (סדרה 18000, 28 מטר)' | 'משאית פלטה (סדרה 818000)';
+    truckType: 'משאית מרצדס מנוף כבד (28 מטר)' | 'משאית איסוזו חלוקה' | 'משאית מנוף (סדרה 18000, 28 מטר)' | 'משאית פלטה (סדרה 818000)' | string;
     truckNumber: string;
     driverName: 'חכמת' | 'עלי' | string;
     driverPhone: string;
@@ -158,8 +158,8 @@ const SAMPLE_ORDERS: Record<string, TrackingOrder> = {
       siteContactName: 'אלכס (מנהל עבודה)',
       siteContactPhone: '052-4419820',
       siteNotes: 'הנפה עם מנוף ישירות למרפסת קומה 4. חניה פונתה מראש למשאית.',
-      truckType: 'משאית מנוף (סדרה 18000, 28 מטר)',
-      truckNumber: '542-19-801',
+      truckType: 'משאית מרצדס מנוף כבד (28 מטר)',
+      truckNumber: '615-41-002',
       driverName: 'חכמת',
       driverPhone: '050-8860892',
       currentStep: 'on_the_way',
@@ -202,8 +202,8 @@ const SAMPLE_ORDERS: Record<string, TrackingOrder> = {
       siteContactName: 'דניאל',
       siteContactPhone: '054-9128833',
       siteNotes: 'פריקה בחניית הבית הפרטי.',
-      truckType: 'משאית פלטה (סדרה 818000)',
-      truckNumber: '818-40-202',
+      truckType: 'משאית איסוזו חלוקה',
+      truckNumber: '651-51-701',
       driverName: 'עלי',
       driverPhone: '050-8860894',
       currentStep: 'delivered',

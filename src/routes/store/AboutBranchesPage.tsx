@@ -293,34 +293,53 @@ export const AboutBranchesPage: React.FC<{ onNavigateHome: () => void }> = ({ on
             </div>
             <div>
               <h3 className="text-lg sm:text-xl font-black text-slate-900">
-                צי משאיות מנוף ואספקה ישירה לאתרי בנייה
+                צי הרכב וההובלות הרשמי של סבן (ח.פ 512001678)
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                הנפה מקצועית לקומות גבוהות ופריקת בלות ישירות למרפסות וגגות
+                שיבוץ לוגיסטי מדויק לפי נהגי ורכבי החברה לאתרי הבנייה בהוד השרון והמרכז
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs text-slate-700 pt-2">
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-1">
-              <div className="font-extrabold text-sm text-[#0F3E7A]">משאיות מנוף 28 מטר</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-700 pt-2">
+            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-extrabold text-sm text-[#0F3E7A]">נהג: חכמת (Hikmat)</span>
+                <span className="font-mono text-xs bg-slate-900 text-amber-300 font-black px-2 py-0.5 rounded-lg">
+                  615-41-002
+                </span>
+              </div>
+              <div className="font-bold text-slate-800">
+                משאית מרצדס מנוף כבד (זרוע 28 מטר)
+              </div>
               <p className="text-slate-600 text-[11px] leading-relaxed">
-                מנופים מתקדמים המגיעים עד קומה 8 עם זרועות הידראוליות ושלטים אלחוטיים להנחת משטחי בלוקים, גבס ומלט בדיוק במקום הנדרש.
+                משובץ להנפת בלות לגובה, משטחי מלט ובלוקים, פריקות מנוף לקומות גבוהות וגגות, חומרי שלד כבדים.
               </p>
+              <div className="pt-1">
+                <a href="tel:050-8860892" className="text-[#0F3E7A] font-mono font-bold hover:underline">
+                  טלפון ישיר: 050-8860892
+                </a>
+              </div>
             </div>
 
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-1">
-              <div className="font-extrabold text-sm text-[#0F3E7A]">פול-טריילרים ומשאיות דבל</div>
+            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-extrabold text-sm text-[#0F3E7A]">נהג: עלי (Ali)</span>
+                <span className="font-mono text-xs bg-slate-900 text-amber-300 font-black px-2 py-0.5 rounded-lg">
+                  651-51-701
+                </span>
+              </div>
+              <div className="font-bold text-slate-800">
+                משאית איסוזו חלוקה
+              </div>
               <p className="text-slate-600 text-[11px] leading-relaxed">
-                הובלות כבדות של ברזל בניין, רשתות, שקי מלט בתפזורת ומשטחי צמנט לאתרי תשתיות ושלד בהיקפים של עשרות טונות.
+                משובץ להובלות לוחות גבס, פרופילים, צבעים, ציוד קל, פריקה ידנית והובלות מהירות ללא פריקה ישירות לאתר.
               </p>
-            </div>
-
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-1">
-              <div className="font-extrabold text-sm text-[#0F3E7A]">טנדרי אקספרס לעבודות גמר</div>
-              <p className="text-slate-600 text-[11px] leading-relaxed">
-                מענה דחוף לצוותי צבע ואיטום הזקוקים לחומרים באותו היום: פחי צבע מגוונים, סיקפלקס, כלי עבודה וציוד מתכלה תוך זמן קצר.
-              </p>
+              <div className="pt-1">
+                <a href="tel:050-8860894" className="text-[#0F3E7A] font-mono font-bold hover:underline">
+                  טלפון ישיר: 050-8860894
+                </a>
+              </div>
             </div>
           </div>
         </div>

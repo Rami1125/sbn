@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { CartItem, BranchCode, CustomerOrder, GoogleMerchantProduct } from '../types/product';
 import { SABAN_BRANCHES } from '../data/initialProducts';
+import { calculateMandatoryDeposits, assignLogisticsFleet } from '../config/sabanEnterpriseConfig';
 
 interface CartContextType {
   cart: CartItem[];
@@ -38,6 +39,15 @@ interface CartContextType {
   taxAmount: number;
   finalTotal: number;
   totalItemCount: number;
+
+  // Mandatory Deposits
+  deposits: {
+    bagDepositCount: number;
+    palletDepositCount: number;
+    bagDepositTotal: number;
+    palletDepositTotal: number;
+    totalDepositAmount: number;
+  };
   
   // Order submission
   isSubmittingOrder: boolean;
@@ -166,12 +176,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ? 0.07
       : 0;
 
+  // Mandatory deposit calculation (Big bags & Pallets)
+  const deposits = calculateMandatoryDeposits(
+    cart.map((i) => ({ sku: i.sku, title: i.title, quantity: i.quantity }))
+  );
+
   const subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const discountAmount = subtotal * discountRate;
   const priceAfterDiscount = subtotal - discountAmount;
   // Prices in building materials in Israel include 18% VAT or standard calculation
   const vat = priceAfterDiscount * 0.18;
-  const finalTotal = priceAfterDiscount; // prices are gross consumer/contractor pricing
+  const finalTotal = priceAfterDiscount + deposits.totalDepositAmount; // products + refundable deposits
   const totalItemCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   const submitOrder = async (): Promise<CustomerOrder> => {
@@ -180,6 +195,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const pickupCode = `SBN-${new Date().getFullYear().toString().slice(-2)}${randomSuffix}`;
     const orderId = `ORD-${Date.now()}`;
+
+    const assignedFleetDriver = assignLogisticsFleet(
+      cart.map((i) => ({ sku: i.sku, title: i.title, quantity: i.quantity }))
+    );
 
     const newOrder: CustomerOrder = {
       orderId,
@@ -194,6 +213,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       discount: discountAmount,
       vat,
       total: finalTotal,
+      deposits,
+      assignedDriver: {
+        name: assignedFleetDriver.driverName,
+        truck: assignedFleetDriver.truckModel,
+        licensePlate: assignedFleetDriver.licensePlate,
+        phone: assignedFleetDriver.phone
+      },
       notes: orderNotes.trim(),
       createdAt: new Date().toISOString(),
       syncedToGoogleSheets: true,
@@ -261,6 +287,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         taxAmount: vat,
         finalTotal,
         totalItemCount,
+        deposits,
         isSubmittingOrder,
         lastCompletedOrder,
         submitOrder,

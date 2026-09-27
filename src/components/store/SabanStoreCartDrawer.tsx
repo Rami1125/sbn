@@ -50,6 +50,7 @@ export const SabanStoreCartDrawer: React.FC = () => {
     taxAmount,
     finalTotal,
     totalItemCount,
+    deposits,
     isSubmittingOrder,
     lastCompletedOrder,
     submitOrder,
@@ -556,6 +557,29 @@ export const SabanStoreCartDrawer: React.FC = () => {
                 <span>מע״מ 18% (מגולם במחיר):</span>
                 <span className="font-mono">₪{taxAmount.toFixed(2)}</span>
               </div>
+              {deposits && deposits.totalDepositAmount > 0 && (
+                <div className="bg-amber-50/80 border border-amber-200/90 rounded-xl p-2.5 space-y-1 text-[11px] my-1 text-slate-800">
+                  <div className="font-bold text-amber-900 flex items-center justify-between">
+                    <span>פקדונות חובה מוחזרים:</span>
+                    <span className="font-mono font-black">+₪{deposits.totalDepositAmount.toFixed(2)}</span>
+                  </div>
+                  {deposits.bagDepositCount > 0 && (
+                    <div className="flex items-center justify-between text-slate-600 text-[10px]">
+                      <span>• פקדון בלה (מק״ט 60002 - יחס 1:1, {deposits.bagDepositCount} יח׳):</span>
+                      <span className="font-mono">₪{deposits.bagDepositTotal.toFixed(2)}</span>
+                    </div>
+                  )}
+                  {deposits.palletDepositCount > 0 && (
+                    <div className="flex items-center justify-between text-slate-600 text-[10px]">
+                      <span>• פקדון משטח סבן (מק״ט 60060, {deposits.palletDepositCount} יח׳):</span>
+                      <span className="font-mono">₪{deposits.palletDepositTotal.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="text-[10px] text-emerald-700 font-semibold pt-0.5">
+                    ✓ זיכוי כספי מלא מובטח בהחזרת השקים והמשטחים בסניף
+                  </div>
+                </div>
+              )}
               <div className="flex items-center justify-between text-slate-900 font-black text-base pt-2 border-t border-slate-200">
                 <span>סה״כ לתשלום באיסוף:</span>
                 <span className="text-[#0F3E7A] text-xl font-mono">₪{finalTotal.toFixed(2)}</span>

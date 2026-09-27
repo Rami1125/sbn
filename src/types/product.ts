@@ -17,6 +17,7 @@ export interface GoogleMerchantProduct {
   product_highlight: string;
   google_product_category: string;
   store_code: 'SABAN_HARASH' | 'SABAN_TALMID' | string;
+  video_link?: string;
   
   // Extended rich fields for Light Luxury UI & calculations
   packagingOptions?: {
@@ -105,4 +106,17 @@ export interface CustomerOrder {
   createdAt: string;
   syncedToGoogleSheets: boolean;
   sheetRowId?: string;
+  deposits?: {
+    bagDepositCount: number;
+    palletDepositCount: number;
+    bagDepositTotal: number;
+    palletDepositTotal: number;
+    totalDepositAmount: number;
+  };
+  assignedDriver?: {
+    name: string;
+    truck: string;
+    licensePlate: string;
+    phone: string;
+  };
 }

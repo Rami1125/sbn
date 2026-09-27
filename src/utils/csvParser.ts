@@ -110,6 +110,8 @@ export function mapCsvRowsToProducts(rows: string[][]): GoogleMerchantProduct[] 
     const link = getCol(row, 'link') || existing?.link || `https://sbn-xi.vercel.app/product/${id}`;
     const imageLink = getCol(row, 'image_link') || existing?.image_link || '';
 
+    const videoLink = getCol(row, 'video_link') || existing?.video_link || '';
+
     const product: GoogleMerchantProduct = {
       id,
       title: getCol(row, 'title') || existing?.title || `מוצר ${id}`,
@@ -120,6 +122,7 @@ export function mapCsvRowsToProducts(rows: string[][]): GoogleMerchantProduct[] 
       sale_price: formattedSalePrice,
       link,
       image_link: imageLink,
+      video_link: videoLink,
       brand: getCol(row, 'brand') || existing?.brand || 'סבן',
       identifier_exists: identifierExists,
       mpn: getCol(row, 'mpn') || id,
@@ -171,7 +174,8 @@ export function exportProductsToCSV(products: GoogleMerchantProduct[], delimiter
     'material',
     'product_highlight',
     'google_product_category',
-    'store_code'
+    'store_code',
+    'video_link'
   ];
 
   const escapeField = (val: string | undefined): string => {
@@ -203,7 +207,8 @@ export function exportProductsToCSV(products: GoogleMerchantProduct[], delimiter
       escapeField(p.material),
       escapeField(p.product_highlight),
       escapeField(p.google_product_category),
-      escapeField(p.store_code)
+      escapeField(p.store_code),
+      escapeField(p.video_link || '')
     ];
     rows.push(row.join(delimiter));
   }

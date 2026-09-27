@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { GoogleMerchantProduct } from '../../types/product';
 import { useProducts } from '../../context/ProductContext';
+import { SABAN_ENTERPRISE } from '../../config/sabanEnterpriseConfig';
 
 interface MerchantFeedStudioProps {
   onViewProductLanding?: (sku: string) => void;
@@ -411,6 +412,132 @@ export const MerchantFeedStudio: React.FC<MerchantFeedStudioProps> = ({
             </div>
             <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
               <CheckCircle2 className="w-5 h-5" />
+            </div>
+          </div>
+        </div>
+
+        {/* 4 Hardcoded Live Google Sheets Operational Architecture */}
+        <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0F3E7A] flex items-center justify-center font-bold">
+                <FileSpreadsheet className="w-4 h-4" />
+              </div>
+              <div>
+                <h2 className="text-sm font-black text-slate-900">
+                  4 הגיליונות הפעילים - מזהים קשיחים בלייב (No-Cache Live Sync)
+                </h2>
+                <p className="text-[11px] text-slate-500">
+                  כל פעולה, ניתוח נתונים וסנכרון מתבצעים ישירות מול מזהי הגיליונות הקשיחים ללא תלות במטמון
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+              <span>חיבור חי ישיר (Live Feed)</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            {/* Sheet 1: GMC Products Feed */}
+            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2 hover:border-[#0F3E7A] transition-colors">
+              <div className="flex items-center justify-between">
+                <span className="font-extrabold text-[#0F3E7A] text-xs">1. פיד מוצרים ראשי לגוגל</span>
+                <span className="text-[10px] bg-blue-100 text-blue-900 px-1.5 py-0.2 rounded font-mono font-bold">
+                  20 מוצרים
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-600 line-clamp-2">
+                שורות 2 עד 21: 20 מוצרי העוגן המאומתים עם קישורי תמונה וסרטוני הדרכה (video_link).
+              </p>
+              <div className="font-mono text-[10px] text-slate-500 bg-white px-2 py-1 rounded border truncate" title={SABAN_ENTERPRISE.sheets.gmcProductsFeed.id}>
+                ID: {SABAN_ENTERPRISE.sheets.gmcProductsFeed.id}
+              </div>
+              <a
+                href={`https://docs.google.com/spreadsheets/d/${SABAN_ENTERPRISE.sheets.gmcProductsFeed.id}/edit`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[11px] font-bold text-[#0F3E7A] hover:underline flex items-center gap-1 pt-1"
+              >
+                <span>פתח ב-Google Sheets</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+
+            {/* Sheet 2: Signage & Media */}
+            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2 hover:border-[#0F3E7A] transition-colors">
+              <div className="flex items-center justify-between">
+                <span className="font-extrabold text-[#0F3E7A] text-xs">2. קטלוג שילוט ומדיה</span>
+                <span className="text-[10px] bg-amber-100 text-amber-900 px-1.5 py-0.2 rounded font-mono font-bold">
+                  שילוט
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-600 line-clamp-2">
+                טאב ראשי: 📦 קטלוג_מוצרים (שליפת מוצרים שבהם העמודה active = TRUE).
+              </p>
+              <div className="font-mono text-[10px] text-slate-500 bg-white px-2 py-1 rounded border truncate" title={SABAN_ENTERPRISE.sheets.signageCatalog.id}>
+                ID: {SABAN_ENTERPRISE.sheets.signageCatalog.id}
+              </div>
+              <a
+                href={`https://docs.google.com/spreadsheets/d/${SABAN_ENTERPRISE.sheets.signageCatalog.id}/edit`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[11px] font-bold text-[#0F3E7A] hover:underline flex items-center gap-1 pt-1"
+              >
+                <span>פתח ב-Google Sheets</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+
+            {/* Sheet 3: Operations & Dispatch */}
+            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2 hover:border-[#0F3E7A] transition-colors">
+              <div className="flex items-center justify-between">
+                <span className="font-extrabold text-[#0F3E7A] text-xs">3. מערכת תפעול וסידור</span>
+                <span className="text-[10px] bg-emerald-100 text-emerald-900 px-1.5 py-0.2 rounded font-mono font-bold">
+                  תעודות והצלבה
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-600 line-clamp-2">
+                קליטת הזמנות חדשות, שיבוץ נהגים (חכמת/עלי) וניהול איסוף עצמי ברציף.
+              </p>
+              <div className="font-mono text-[10px] text-slate-500 bg-white px-2 py-1 rounded border truncate" title={SABAN_ENTERPRISE.sheets.operationsDispatch.id}>
+                ID: {SABAN_ENTERPRISE.sheets.operationsDispatch.id}
+              </div>
+              <a
+                href={`https://docs.google.com/spreadsheets/d/${SABAN_ENTERPRISE.sheets.operationsDispatch.id}/edit`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[11px] font-bold text-[#0F3E7A] hover:underline flex items-center gap-1 pt-1"
+              >
+                <span>פתח ב-Google Sheets</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+
+            {/* Sheet 4: Noa AI Operations */}
+            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2 hover:border-[#0F3E7A] transition-colors">
+              <div className="flex items-center justify-between">
+                <span className="font-extrabold text-[#0F3E7A] text-xs">4. נועה AI תפעולית</span>
+                <span className="text-[10px] bg-purple-100 text-purple-900 px-1.5 py-0.2 rounded font-mono font-bold">
+                  AI סידור
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-600 line-clamp-2">
+                גיליון סידור וסנכרון תפעולי חכם לייעוץ כמויות וחישוב חומרים.
+              </p>
+              <div className="font-mono text-[10px] text-slate-500 bg-white px-2 py-1 rounded border truncate" title={SABAN_ENTERPRISE.sheets.noaAiOperations.id}>
+                ID: {SABAN_ENTERPRISE.sheets.noaAiOperations.id}
+              </div>
+              <a
+                href={`https://docs.google.com/spreadsheets/d/${SABAN_ENTERPRISE.sheets.noaAiOperations.id}/edit`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[11px] font-bold text-[#0F3E7A] hover:underline flex items-center gap-1 pt-1"
+              >
+                <span>פתח ב-Google Sheets</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
             </div>
           </div>
         </div>
