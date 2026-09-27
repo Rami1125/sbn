@@ -297,7 +297,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                         className="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                       >
                         <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                        <span>ייעוץ נועה AI</span>
+                        <span>ייעוץ עם נועה AI</span>
                       </button>
 
                       {/* Quick Add To Cart */}
