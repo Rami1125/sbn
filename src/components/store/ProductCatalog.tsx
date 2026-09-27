@@ -120,7 +120,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
           {/* Quick Pickup Feature Badge */}
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-center max-w-xs w-full shadow-2xl space-y-3">
-            <div className="w-12 h-12 bg-amber-400 text-slate-650 font-black rounded-2xl flex items-center justify-center mx-auto text-xl shadow-lg">
+            <div className="w-10 h-10 bg-amber-400 text-slate-650 font-black rounded-2xl flex items-center justify-center mx-auto text-xl shadow-lg">
               ח.סבן חומרי בנין
             </div>
             <div className="text-xs uppercase tracking-wider text-amber-300 font-extrabold">
