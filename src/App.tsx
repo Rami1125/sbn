@@ -10,6 +10,7 @@ import { ReturnsPolicyPage } from './routes/store/ReturnsPolicyPage';
 import { CustomerPortalPage } from './routes/store/CustomerPortalPage';
 import { AboutBranchesPage } from './routes/store/AboutBranchesPage';
 import { OrderTrackingView } from './routes/store/OrderTrackingView';
+import { BranchCounterCrm } from './routes/counter.$branchId';
 import { WhatsAppFloatingButton } from './components/common/WhatsAppFloatingButton';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 import { OfflineIndicator } from './components/common/OfflineIndicator';
@@ -19,9 +20,10 @@ import { SABAN_BRANCHES } from './data/initialProducts';
 import { initOneSignal } from './lib/oneSignal';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track'>('catalog');
+  const [currentView, setCurrentView] = useState<'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter'>('catalog');
   const [currentSku, setCurrentSku] = useState<string>('10701');
   const [currentOrderId, setCurrentOrderId] = useState<string>('SAB-889413');
+  const [currentCounterBranch, setCurrentCounterBranch] = useState<'harash' | 'talmid'>('harash');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Initialize OneSignal Push on startup
@@ -29,7 +31,7 @@ export default function App() {
     initOneSignal();
   }, []);
 
-  // Check URL on load and on popstate for path or query parameters (e.g. /product/10701, /store/10701, ?sku=10701, /returns, /branches, /account, /track)
+  // Check URL on load and on popstate for path or query parameters (e.g. /product/10701, /store/10701, ?sku=10701, /returns, /branches, /account, /track, /counter/harash)
   useEffect(() => {
     const parseCurrentLocation = () => {
       const pathname = window.location.pathname;
@@ -37,6 +39,17 @@ export default function App() {
       const skuParam = params.get('sku');
       const viewParam = params.get('view');
       const orderIdParam = params.get('orderId');
+      const branchParam = params.get('branch');
+
+      // Check counter CRM page /counter or /counter/:branchId
+      const counterMatch = pathname.match(/^\/counter(?:\/([a-zA-Z0-9_-]+))?/);
+      if (counterMatch || viewParam === 'counter') {
+        const branchFromUrl = counterMatch?.[1] || branchParam || 'harash';
+        const validBranch = branchFromUrl === 'talmid' ? 'talmid' : 'harash';
+        setCurrentCounterBranch(validBranch);
+        setCurrentView('counter');
+        return;
+      }
 
       // Check track page /track or /track/:orderId
       const trackMatch = pathname.match(/^\/track(?:\/([a-zA-Z0-9_-]+))?/);
@@ -102,7 +115,7 @@ export default function App() {
     window.history.pushState({ view: 'track', orderId }, '', `/track/${orderId}`);
   };
 
-  const handleChangeView = (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track') => {
+  const handleChangeView = (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter') => {
     setCurrentView(view);
     if (view === 'product') {
       window.history.pushState({ sku: currentSku }, '', `/product/${currentSku}`);
@@ -116,6 +129,8 @@ export default function App() {
       window.history.pushState({ view: 'account' }, '', '/account');
     } else if (view === 'track') {
       window.history.pushState({ view: 'track', orderId: currentOrderId }, '', `/track/${currentOrderId}`);
+    } else if (view === 'counter') {
+      window.history.pushState({ view: 'counter', branch: currentCounterBranch }, '', `/counter/${currentCounterBranch}`);
     } else {
       window.history.pushState({}, '', '/');
     }
@@ -133,6 +148,10 @@ export default function App() {
           ? '/branches'
           : currentView === 'account'
           ? '/account'
+          : currentView === 'track'
+          ? `/track/${currentOrderId}`
+          : currentView === 'counter'
+          ? `/counter/${currentCounterBranch}`
           : currentView === 'feed-studio'
           ? '/admin'
           : '/';
@@ -142,7 +161,7 @@ export default function App() {
         page_title: document.title,
       });
     }
-  }, [currentView, currentSku, currentOrderId]);
+  }, [currentView, currentSku, currentOrderId, currentCounterBranch]);
 
   return (
     <ProductProvider>
@@ -195,6 +214,13 @@ export default function App() {
           {currentView === 'track' && (
             <OrderTrackingView
               orderId={currentOrderId}
+              onNavigateHome={() => handleChangeView('catalog')}
+            />
+          )}
+
+          {currentView === 'counter' && (
+            <BranchCounterCrm
+              initialBranchId={currentCounterBranch}
               onNavigateHome={() => handleChangeView('catalog')}
             />
           )}
@@ -313,6 +339,15 @@ export default function App() {
                     >
                       <Truck className="w-3.5 h-3.5 text-amber-400" />
                       <span>מעקב הזמנות חי (Live Tracking)</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleChangeView('counter')}
+                      className="hover:text-amber-300 transition-colors flex items-center gap-1 text-slate-300 text-[11px]"
+                    >
+                      <Building2 className="w-3.5 h-3.5 text-amber-400" />
+                      <span>מערכת דלפק סבן CRM (מורשי סניף)</span>
                     </button>
                   </li>
                   <li>

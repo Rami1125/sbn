@@ -23,8 +23,8 @@ import { HeaderSearchBar } from './HeaderSearchBar';
 import { PwaInstallButton } from '../common/PwaInstallButton';
 
 interface SabanHeaderProps {
-  currentView: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track';
-  onChangeView: (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track') => void;
+  currentView: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter';
+  onChangeView: (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter') => void;
   searchQuery?: string;
   onSearchChange?: (q: string) => void;
   onSelectProduct?: (sku: string) => void;
@@ -83,10 +83,18 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
               <span>מדיניות החזרות (14 יום)</span>
             </button>
 
-            <span className="hidden lg:flex items-center gap-1 text-amber-300 font-bold">
-              <FileSpreadsheet className="w-3.5 h-3.5" />
-              <span>GMC פיד פעיל (18 עמודות)</span>
-            </span>
+            <button
+              onClick={() => onChangeView('counter')}
+              className={`hidden sm:flex items-center gap-1 font-bold transition-colors cursor-pointer px-2 py-0.5 rounded-lg ${
+                currentView === 'counter'
+                  ? 'bg-amber-400 text-slate-950 font-black'
+                  : 'text-blue-200 hover:text-white hover:bg-white/10'
+              }`}
+              title="כניסת צוות ומנהלי עבודה לדלפק סבן CRM (דרוש קוד PIN)"
+            >
+              <Building2 className="w-3.5 h-3.5 text-amber-300" />
+              <span>דלפק CRM</span>
+            </button>
 
             <a
               href="tel:09-7602010"
