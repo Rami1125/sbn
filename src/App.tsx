@@ -7,17 +7,27 @@ import { SabanStoreCartDrawer } from './components/store/SabanStoreCartDrawer';
 import { MerchantFeedStudio } from './components/admin/MerchantFeedStudio';
 import { ProductCatalog } from './components/store/ProductCatalog';
 import { ReturnsPolicyPage } from './routes/store/ReturnsPolicyPage';
+import { CustomerPortalPage } from './routes/store/CustomerPortalPage';
+import { AboutBranchesPage } from './routes/store/AboutBranchesPage';
 import { WhatsAppFloatingButton } from './components/common/WhatsAppFloatingButton';
+import { PwaInstallBanner } from './components/common/PwaInstallBanner';
+import { OfflineIndicator } from './components/common/OfflineIndicator';
 import { SabanLogo } from './components/layout/SabanLogo';
-import { MapPin, Phone, Clock, FileSpreadsheet, ShieldCheck, RotateCcw } from 'lucide-react';
+import { MapPin, Phone, Clock, FileSpreadsheet, ShieldCheck, RotateCcw, User, Building2 } from 'lucide-react';
 import { SABAN_BRANCHES } from './data/initialProducts';
+import { initOneSignal } from './lib/oneSignal';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'catalog' | 'product' | 'feed-studio' | 'returns'>('catalog');
+  const [currentView, setCurrentView] = useState<'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account'>('catalog');
   const [currentSku, setCurrentSku] = useState<string>('10701');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Check URL on load and on popstate for path or query parameters (e.g. /product/10701, /store/10701, ?sku=10701, /returns)
+  // Initialize OneSignal Push on startup
+  useEffect(() => {
+    initOneSignal();
+  }, []);
+
+  // Check URL on load and on popstate for path or query parameters (e.g. /product/10701, /store/10701, ?sku=10701, /returns, /branches, /account)
   useEffect(() => {
     const parseCurrentLocation = () => {
       const pathname = window.location.pathname;
@@ -28,6 +38,18 @@ export default function App() {
       // Check returns page
       if (pathname === '/returns' || pathname.startsWith('/returns') || viewParam === 'returns') {
         setCurrentView('returns');
+        return;
+      }
+
+      // Check branches page
+      if (pathname === '/branches' || pathname.startsWith('/branches') || viewParam === 'branches') {
+        setCurrentView('branches');
+        return;
+      }
+
+      // Check account / portal page
+      if (pathname === '/account' || pathname === '/portal' || pathname.startsWith('/account') || viewParam === 'account') {
+        setCurrentView('account');
         return;
       }
 
@@ -62,7 +84,7 @@ export default function App() {
     window.history.pushState({ sku }, '', targetUrl);
   };
 
-  const handleChangeView = (view: 'catalog' | 'product' | 'feed-studio' | 'returns') => {
+  const handleChangeView = (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account') => {
     setCurrentView(view);
     if (view === 'product') {
       window.history.pushState({ sku: currentSku }, '', `/product/${currentSku}`);
@@ -70,6 +92,10 @@ export default function App() {
       window.history.pushState({ view: 'admin' }, '', '/admin');
     } else if (view === 'returns') {
       window.history.pushState({ view: 'returns' }, '', '/returns');
+    } else if (view === 'branches') {
+      window.history.pushState({ view: 'branches' }, '', '/branches');
+    } else if (view === 'account') {
+      window.history.pushState({ view: 'account' }, '', '/account');
     } else {
       window.history.pushState({}, '', '/');
     }
@@ -83,6 +109,10 @@ export default function App() {
           ? `/product/${currentSku}`
           : currentView === 'returns'
           ? '/returns'
+          : currentView === 'branches'
+          ? '/branches'
+          : currentView === 'account'
+          ? '/account'
           : currentView === 'feed-studio'
           ? '/admin'
           : '/';
@@ -99,6 +129,9 @@ export default function App() {
       <CartProvider>
         <div className="min-h-screen bg-[#F8F9FA] text-[#1E293B] flex flex-col font-['Heebo','Assistant',sans-serif]">
         
+        {/* PWA Mobile Install Banner */}
+        <PwaInstallBanner />
+
         {/* Main Header */}
         <SabanHeader
           currentView={currentView}
@@ -126,6 +159,18 @@ export default function App() {
             />
           )}
 
+          {currentView === 'branches' && (
+            <AboutBranchesPage
+              onNavigateHome={() => handleChangeView('catalog')}
+            />
+          )}
+
+          {currentView === 'account' && (
+            <CustomerPortalPage
+              onNavigateHome={() => handleChangeView('catalog')}
+            />
+          )}
+
           {currentView === 'feed-studio' && (
             <MerchantFeedStudio
               onViewProductLanding={handleSelectProduct}
@@ -142,11 +187,14 @@ export default function App() {
         {/* Global Cart Slide-Over Drawer */}
         <SabanStoreCartDrawer />
 
+        {/* Offline Connectivity Notification Banner */}
+        <OfflineIndicator />
+
         {/* WhatsApp Direct Branch Chat Floating Action Button */}
         <WhatsAppFloatingButton
-          phoneNumber="97297602010"
+          phoneNumber="972508860896"
           defaultMessage="שלום לח. סבן חומרי בניין (סניף הוד השרון), ברצוני לברר לגבי מוצרים / הזמנה לאיסוף מהסניף."
-          branchName="דלפק הוד השרון (09-7602010)"
+          branchName="דלפק הוד השרון (050-8860896)"
         />
 
         {/* Corporate Footer */}
@@ -158,11 +206,11 @@ export default function App() {
               <div className="space-y-4 md:col-span-1">
                 <SabanLogo size="md" light />
                 <p className="text-xs text-blue-200 leading-relaxed">
-                  ח. סבן חומרי בניין (1994) בע״מ – מפיצים רשמיים של סיקה, טמבור, מלט נשר, מוצרי גבס ואיטום מתקדמים.
+                  ח. סבן חומרי בניין (1994) בע״מ – מפיצים רשמיים של סיקה, טמבור, מלט נשר, מוצרי גבס ואיטום מתקדמים. אספקה מהירה ברציפי איסוף (BOPIS) וצי משאיות מנוף.
                 </p>
                 <div className="flex items-center gap-2 text-xs text-amber-300 font-bold">
                   <ShieldCheck className="w-4 h-4" />
-                  <span>Google Merchant Certified Store</span>
+                  <span>Google Merchant & PWA Verified Store</span>
                 </div>
               </div>
 
@@ -172,15 +220,14 @@ export default function App() {
                   <MapPin className="w-4 h-4 text-amber-400" />
                   <span>סניף החרש 10 הוד השרון</span>
                 </div>
-                <p>מחסן 4 - חומרי שלד, מלט, איטום צמנטי וגגות</p>
+                <p>מחסן 4 - חצר בלות, מלט, איטום, ברזל שלד</p>
                 <p className="flex items-center gap-1.5 text-slate-300">
                   <Clock className="w-3.5 h-3.5" />
-                  <span>א׳-ה׳ 06:30-17:00 | ו׳ 06:30-13:00</span>
+                  <span>א׳-ה׳ 06:30-16:30 | ו׳ 06:30-12:30</span>
                 </p>
                 <p className="flex items-center gap-1.5 font-mono text-white">
                   <Phone className="w-3.5 h-3.5 text-amber-400" />
-                  <a href="tel:09-7602010" className="hover:underline font-bold">09-7602010</a>
-                  <span className="text-slate-400">/ 03-9518888</span>
+                  <a href="tel:03-9518888" className="hover:underline font-bold">03-9518888</a>
                 </p>
               </div>
 
@@ -190,54 +237,62 @@ export default function App() {
                   <MapPin className="w-4 h-4 text-amber-400" />
                   <span>סניף התלמיד 6 הוד השרון</span>
                 </div>
-                <p>מחסן 1 - גבס, פרופילים, צבעי טמבור ופרזול</p>
+                <p>מחסן 1 - אולם תצוגה, מרכז גבס, צבע ופרזול</p>
                 <p className="flex items-center gap-1.5 text-slate-300">
                   <Clock className="w-3.5 h-3.5" />
-                  <span>א׳-ה׳ 07:00-17:00 | ו׳ 07:00-13:00</span>
+                  <span>א׳-ה׳ 06:30-16:30 | ו׳ 06:30-12:30</span>
                 </p>
                 <p className="flex items-center gap-1.5 font-mono text-white">
                   <Phone className="w-3.5 h-3.5 text-amber-400" />
-                  <a href="tel:09-7602010" className="hover:underline font-bold">09-7602010</a>
-                  <span className="text-slate-400">/ 03-9518889</span>
+                  <a href="tel:03-9518889" className="hover:underline font-bold">03-9518889</a>
                 </p>
               </div>
 
-              {/* GMC, Policy & Quick Links */}
+              {/* Quick Links */}
               <div className="space-y-3 text-xs text-blue-200">
-                <div className="font-extrabold text-sm text-white">שירות לקוחות ומדיניות</div>
+                <div className="font-extrabold text-sm text-white">ניווט מהיר ושירות</div>
                 <ul className="space-y-2">
+                  <li>
+                    <button
+                      onClick={() => handleChangeView('catalog')}
+                      className="hover:text-white transition-colors"
+                    >
+                      קטלוג מוצרים והזמנה
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleChangeView('branches')}
+                      className="hover:text-amber-300 transition-colors flex items-center gap-1"
+                    >
+                      <Building2 className="w-3.5 h-3.5 text-amber-400" />
+                      <span>סניפי הוד השרון וניווט Waze</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleChangeView('account')}
+                      className="hover:text-amber-300 transition-colors flex items-center gap-1"
+                    >
+                      <User className="w-3.5 h-3.5 text-amber-400" />
+                      <span>פורטל לקוחות וקבלנים</span>
+                    </button>
+                  </li>
                   <li>
                     <button
                       onClick={() => handleChangeView('returns')}
                       className="hover:text-amber-300 transition-colors flex items-center gap-1.5 font-bold text-amber-200"
                     >
                       <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
-                      <span>מדיניות החזרות וביטולים (14 יום)</span>
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => handleChangeView('catalog')}
-                      className="hover:text-white transition-colors"
-                    >
-                      קטלוג מוצרים אונליין
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => handleChangeView('product')}
-                      className="hover:text-white transition-colors"
-                    >
-                      דפי מוצר מותאמי גוגל (Schema.org)
+                      <span>מדיניות החזרות (14 יום)</span>
                     </button>
                   </li>
                   <li>
                     <button
                       onClick={() => handleChangeView('feed-studio')}
-                      className="hover:text-amber-300 transition-colors flex items-center gap-1"
+                      className="text-slate-400 hover:text-slate-300 transition-colors text-[11px]"
                     >
-                      <FileSpreadsheet className="w-3.5 h-3.5 text-amber-400" />
-                      <span>סטודיו ניהול Google Merchant Feed</span>
+                      ניהול פיד Google Merchant (אדמין)
                     </button>
                   </li>
                 </ul>
@@ -251,7 +306,7 @@ export default function App() {
                 © {new Date().getFullYear()} ח. סבן חומרי בניין (1994) בע״מ. כל הזכויות שמורות.
               </div>
               <div className="text-[11px] text-blue-300/80">
-                סנכרון פיד ל-Google Sheets ID: 1m6rVxo_0hthMf55_pgg0RGegBDby9KKB6_VpCJ86_4Y
+                אפליקציית PWA מותאמת מובייל • איסוף מהיר מהסניפים (BOPIS)
               </div>
             </div>
           </div>

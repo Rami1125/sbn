@@ -11,16 +11,19 @@ import {
   ExternalLink,
   ChevronDown,
   RotateCcw,
-  X
+  X,
+  Building2,
+  User
 } from 'lucide-react';
 import { SabanLogo } from './SabanLogo';
 import { useCart } from '../../context/CartContext';
 import { SABAN_BRANCHES } from '../../data/initialProducts';
 import { HeaderSearchBar } from './HeaderSearchBar';
+import { PwaInstallButton } from '../common/PwaInstallButton';
 
 interface SabanHeaderProps {
-  currentView: 'catalog' | 'product' | 'feed-studio' | 'returns';
-  onChangeView: (view: 'catalog' | 'product' | 'feed-studio' | 'returns') => void;
+  currentView: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account';
+  onChangeView: (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account') => void;
   searchQuery?: string;
   onSearchChange?: (q: string) => void;
   onSelectProduct?: (sku: string) => void;
@@ -109,7 +112,7 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
             </div>
           )}
 
-          {/* View Mode Tabs (Storefront / Product Landing / GMC Studio / Returns) */}
+          {/* View Mode Tabs (Storefront / Branches / Account / Returns) */}
           <nav className="hidden lg:flex items-center bg-slate-100/90 p-1 rounded-2xl border border-slate-200 text-xs font-bold shrink-0">
             <button
               onClick={() => onChangeView('catalog')}
@@ -119,33 +122,31 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              חנות וקטלוג סבן
+              חנות וקטלוג
             </button>
 
             <button
-              onClick={() => onChangeView('product')}
+              onClick={() => onChangeView('branches')}
               className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
-                currentView === 'product'
+                currentView === 'branches'
                   ? 'bg-[#0F3E7A] text-white shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <span>דף מוצר גוגל</span>
-              <span className="text-[10px] bg-amber-400 text-slate-900 px-1.5 py-0.2 rounded font-extrabold">
-                Schema
-              </span>
+              <Building2 className="w-3.5 h-3.5 text-amber-500" />
+              <span>סניפים ואודות</span>
             </button>
 
             <button
-              onClick={() => onChangeView('feed-studio')}
+              onClick={() => onChangeView('account')}
               className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
-                currentView === 'feed-studio'
+                currentView === 'account'
                   ? 'bg-[#0F3E7A] text-white shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <FileSpreadsheet className="w-3.5 h-3.5 text-amber-500" />
-              <span>סטודיו פיד GMC</span>
+              <User className="w-3.5 h-3.5 text-blue-500" />
+              <span>אזור אישי וקבלנים</span>
             </button>
 
             <button
@@ -161,8 +162,11 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
             </button>
           </nav>
 
-          {/* Right Header Actions: Mobile Search Toggle + Cart Trigger Button */}
+          {/* Right Header Actions: PWA Install + Mobile Search + Cart */}
           <div className="flex items-center gap-2 shrink-0">
+            {/* PWA Install Button */}
+            <PwaInstallButton variant="header" />
+
             {/* Mobile Search Button Toggle */}
             {onSearchChange && (
               <button
@@ -220,39 +224,40 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
         )}
 
         {/* Mobile Navigation Row */}
-        <div className="flex md:hidden items-center justify-between border-t border-slate-100 pt-2.5 mt-2.5 text-xs font-bold overflow-x-auto gap-2">
+        <div className="flex md:hidden items-center justify-between border-t border-slate-100 pt-2 mt-2 text-xs font-bold overflow-x-auto gap-1.5 scrollbar-none">
           <button
             onClick={() => onChangeView('catalog')}
-            className={`py-1.5 px-3 rounded-xl whitespace-nowrap ${
-              currentView === 'catalog' ? 'bg-[#0F3E7A] text-white' : 'text-slate-600'
+            className={`py-1.5 px-2.5 rounded-xl whitespace-nowrap transition-colors ${
+              currentView === 'catalog' ? 'bg-[#0F3E7A] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
-            חנות וקטלוג
+            קטלוג
           </button>
           <button
-            onClick={() => onChangeView('product')}
-            className={`py-1.5 px-3 rounded-xl whitespace-nowrap ${
-              currentView === 'product' ? 'bg-[#0F3E7A] text-white' : 'text-slate-600'
+            onClick={() => onChangeView('branches')}
+            className={`py-1.5 px-2.5 rounded-xl whitespace-nowrap flex items-center gap-1 transition-colors ${
+              currentView === 'branches' ? 'bg-[#0F3E7A] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
-            דף מוצר גוגל
+            <Building2 className="w-3 h-3 text-amber-500" />
+            <span>סניפים</span>
           </button>
           <button
-            onClick={() => onChangeView('feed-studio')}
-            className={`py-1.5 px-3 rounded-xl whitespace-nowrap flex items-center gap-1 ${
-              currentView === 'feed-studio' ? 'bg-[#0F3E7A] text-white' : 'text-slate-600'
+            onClick={() => onChangeView('account')}
+            className={`py-1.5 px-2.5 rounded-xl whitespace-nowrap flex items-center gap-1 transition-colors ${
+              currentView === 'account' ? 'bg-[#0F3E7A] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-amber-500" />
-            <span>סטודיו פיד GMC</span>
+            <User className="w-3 h-3 text-blue-500" />
+            <span>אזור אישי</span>
           </button>
           <button
             onClick={() => onChangeView('returns')}
-            className={`py-1.5 px-3 rounded-xl whitespace-nowrap flex items-center gap-1 ${
-              currentView === 'returns' ? 'bg-[#0F3E7A] text-white' : 'text-slate-600'
+            className={`py-1.5 px-2.5 rounded-xl whitespace-nowrap flex items-center gap-1 transition-colors ${
+              currentView === 'returns' ? 'bg-[#0F3E7A] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
-            <RotateCcw className="w-3.5 h-3.5 text-emerald-500" />
+            <RotateCcw className="w-3 h-3 text-emerald-500" />
             <span>החזרות</span>
           </button>
         </div>

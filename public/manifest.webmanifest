@@ -37,5 +37,28 @@
       "type": "image/svg+xml",
       "purpose": "any"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "קטלוג מוצרים",
+      "short_name": "קטלוג",
+      "description": "צפייה בכל מוצרי האיטום, הגבס והמלט",
+      "url": "/?view=catalog",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "סניפים וניווט",
+      "short_name": "סניפים",
+      "description": "סניפי החרש 10 והתלמיד 6 הוד השרון",
+      "url": "/?view=branches",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "אזור אישי וקבלנים",
+      "short_name": "אזור אישי",
+      "description": "מעקב אחר הזמנות איסוף וגוונים שמורים",
+      "url": "/?view=account",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    }
   ]
 }

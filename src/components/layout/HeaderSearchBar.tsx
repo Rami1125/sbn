@@ -22,7 +22,7 @@ export interface HeaderSearchBarProps {
   searchQuery: string;
   onSearchChange: (q: string) => void;
   onSelectProduct?: (sku: string) => void;
-  onChangeView: (view: 'catalog' | 'product' | 'feed-studio' | 'returns') => void;
+  onChangeView: (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account') => void;
   className?: string;
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
