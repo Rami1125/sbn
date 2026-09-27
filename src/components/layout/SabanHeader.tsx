@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ShoppingBag,
   MapPin,
@@ -10,26 +10,31 @@ import {
   Layers,
   ExternalLink,
   ChevronDown,
-  RotateCcw
+  RotateCcw,
+  X
 } from 'lucide-react';
 import { SabanLogo } from './SabanLogo';
 import { useCart } from '../../context/CartContext';
 import { SABAN_BRANCHES } from '../../data/initialProducts';
+import { HeaderSearchBar } from './HeaderSearchBar';
 
 interface SabanHeaderProps {
   currentView: 'catalog' | 'product' | 'feed-studio' | 'returns';
   onChangeView: (view: 'catalog' | 'product' | 'feed-studio' | 'returns') => void;
   searchQuery?: string;
   onSearchChange?: (q: string) => void;
+  onSelectProduct?: (sku: string) => void;
 }
 
 export const SabanHeader: React.FC<SabanHeaderProps> = ({
   currentView,
   onChangeView,
   searchQuery = '',
-  onSearchChange
+  onSearchChange,
+  onSelectProduct
 }) => {
   const { totalItemCount, finalTotal, setIsCartOpen } = useCart();
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-sm transition-all">
@@ -80,22 +85,35 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
       </div>
 
       {/* Main Header Navigation */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
-        <div className="flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="flex items-center justify-between gap-3 lg:gap-4">
           
           {/* Brand Logo */}
           <div
             onClick={() => onChangeView('catalog')}
-            className="cursor-pointer transition-transform hover:scale-102"
+            className="cursor-pointer transition-transform hover:scale-102 shrink-0"
           >
             <SabanLogo size="md" />
           </div>
 
+          {/* Desktop/Tablet Auto-Complete Search Bar */}
+          {onSearchChange && (
+            <div className="hidden md:flex flex-1 max-w-xs lg:max-w-sm xl:max-w-md mx-2">
+              <HeaderSearchBar
+                searchQuery={searchQuery}
+                onSearchChange={onSearchChange}
+                onSelectProduct={onSelectProduct}
+                onChangeView={onChangeView}
+                className="w-full"
+              />
+            </div>
+          )}
+
           {/* View Mode Tabs (Storefront / Product Landing / GMC Studio / Returns) */}
-          <nav className="hidden md:flex items-center bg-slate-100/90 p-1 rounded-2xl border border-slate-200 text-xs font-bold">
+          <nav className="hidden lg:flex items-center bg-slate-100/90 p-1 rounded-2xl border border-slate-200 text-xs font-bold shrink-0">
             <button
               onClick={() => onChangeView('catalog')}
-              className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer ${
                 currentView === 'catalog'
                   ? 'bg-[#0F3E7A] text-white shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -106,7 +124,7 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
 
             <button
               onClick={() => onChangeView('product')}
-              className={`px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
                 currentView === 'product'
                   ? 'bg-[#0F3E7A] text-white shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -120,45 +138,48 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
 
             <button
               onClick={() => onChangeView('feed-studio')}
-              className={`px-4 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
                 currentView === 'feed-studio'
                   ? 'bg-[#0F3E7A] text-white shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <FileSpreadsheet className="w-3.5 h-3.5 text-amber-500" />
-              <span>סטודיו Google Feed</span>
+              <span>סטודיו פיד GMC</span>
             </button>
 
             <button
               onClick={() => onChangeView('returns')}
-              className={`px-3.5 py-2 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
                 currentView === 'returns'
                   ? 'bg-[#0F3E7A] text-white shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <RotateCcw className="w-3.5 h-3.5 text-emerald-600" />
-              <span>החזרות וביטולים</span>
+              <span>החזרות</span>
             </button>
           </nav>
 
-          {/* Search Input (Catalog View) */}
-          {onSearchChange && (
-            <div className="hidden xl:flex items-center relative w-64">
-              <input
-                type="text"
-                placeholder="חיפוש סיקה, טמבור, מלט..."
-                value={searchQuery}
-                onChange={(e) => onSearchChange(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 pl-8 text-xs focus:outline-none focus:ring-2 focus:ring-[#0F3E7A]"
-              />
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
-            </div>
-          )}
+          {/* Right Header Actions: Mobile Search Toggle + Cart Trigger Button */}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Mobile Search Button Toggle */}
+            {onSearchChange && (
+              <button
+                type="button"
+                onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+                className="md:hidden w-10 h-10 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center transition-colors cursor-pointer border border-slate-200"
+                aria-label="פתח חיפוש"
+              >
+                {isMobileSearchOpen ? (
+                  <X className="w-4 h-4 text-slate-700" />
+                ) : (
+                  <Search className="w-4 h-4 text-slate-700" />
+                )}
+              </button>
+            )}
 
-          {/* Cart Drawer Trigger Button */}
-          <div className="flex items-center gap-2.5">
+            {/* Cart Drawer Trigger Button */}
             <button
               type="button"
               onClick={() => setIsCartOpen(true)}
@@ -182,6 +203,21 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
           </div>
 
         </div>
+
+        {/* Mobile Search Bar Expansion Row */}
+        {onSearchChange && isMobileSearchOpen && (
+          <div className="md:hidden pt-2.5 pb-1 animate-in fade-in slide-in-from-top-2 duration-150">
+            <HeaderSearchBar
+              searchQuery={searchQuery}
+              onSearchChange={onSearchChange}
+              onSelectProduct={onSelectProduct}
+              onChangeView={onChangeView}
+              isMobileOpen={isMobileSearchOpen}
+              onCloseMobile={() => setIsMobileSearchOpen(false)}
+              className="w-full"
+            />
+          </div>
+        )}
 
         {/* Mobile Navigation Row */}
         <div className="flex md:hidden items-center justify-between border-t border-slate-100 pt-2.5 mt-2.5 text-xs font-bold overflow-x-auto gap-2">
@@ -217,7 +253,7 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
             }`}
           >
             <RotateCcw className="w-3.5 h-3.5 text-emerald-500" />
-            <span>החזרות וביטולים</span>
+            <span>החזרות</span>
           </button>
         </div>
       </div>

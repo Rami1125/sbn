@@ -40,11 +40,17 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
   // Filter products from live synced state
   const filteredProducts = products.filter((p) => {
+    const q = searchQuery.toLowerCase().trim();
     const matchesSearch =
-      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.brand.toLowerCase().includes(searchQuery.toLowerCase());
+      !q ||
+      p.title.toLowerCase().includes(q) ||
+      p.id.toLowerCase().includes(q) ||
+      p.description.toLowerCase().includes(q) ||
+      p.brand.toLowerCase().includes(q) ||
+      p.google_product_category.toLowerCase().includes(q) ||
+      (p.material && p.material.toLowerCase().includes(q)) ||
+      (p.mpn && p.mpn.toLowerCase().includes(q)) ||
+      (p.color && p.color.toLowerCase().includes(q));
 
     const matchesBrand = selectedBrand === 'all' || p.brand === selectedBrand;
     const matchesCategory =

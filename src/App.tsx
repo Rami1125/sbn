@@ -105,6 +105,7 @@ export default function App() {
           onChangeView={handleChangeView}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          onSelectProduct={handleSelectProduct}
         />
 
         {/* Dynamic View Route */}
