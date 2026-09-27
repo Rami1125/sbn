@@ -168,25 +168,25 @@ const SAMPLE_ORDERS: Record<string, TrackingOrder> = {
     },
     items: [
       {
-        sku: 'NESHER-50',
-        title: 'מלט פורטלנד כחול CEM II/B-LL 42.5N נשר',
-        packaging: 'משטח עץ מלא - 40 שקים (50 ק״ג)',
+        sku: '10002',
+        title: 'מלט פורטלנד אפור 25 ק״ג נשר CEM II 42.5',
+        packaging: 'משטח עץ מלא - 64 שקים (25 ק״ג)',
         quantity: 1,
         unitPrice: 1240,
-        image_link: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&auto=format&fit=crop&q=80'
+        image_link: 'https://i.ibb.co/0yVzZHt0/10002.jpg'
       },
       {
-        sku: 'SAND-BAG-1',
-        title: 'חול ים שטוף ומנופה בלה גדולה',
-        packaging: 'שק בלה ענק כ-1 טון',
+        sku: '11501',
+        title: 'חול ים שטוף שק גדול (בלה כ-800 ק״ג)',
+        packaging: 'שק בלה ענק כ-800 ק״ג',
         quantity: 3,
-        unitPrice: 220,
-        image_link: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80'
+        unitPrice: 120,
+        image_link: 'https://i.ibb.co/0yVzZHt0/10002.jpg'
       }
     ],
-    subtotal: 1900,
-    vat: 342,
-    total: 2242,
+    subtotal: 1600,
+    vat: 288,
+    total: 1888,
     paymentStatus: 'phone_confirmed'
   },
   'SAB-741290': {
@@ -212,22 +212,22 @@ const SAMPLE_ORDERS: Record<string, TrackingOrder> = {
     },
     items: [
       {
-        sku: 'TAMBUR-2000',
-        title: 'סופרקריל 2000 צבע אקרילי עליון לקירות פנים',
-        packaging: 'פח 18 ליטר',
+        sku: '9889488',
+        title: 'סופרקריל מט טמבור 10 ליטר (חצי פח) גוון 0524T אפור בטון עדין',
+        packaging: 'חצי פח 10 ליטר',
         quantity: 1,
-        unitPrice: 329,
+        unitPrice: 265,
         colorShade: {
-          code: 'IS 0015',
-          name: 'לבן משי יוקרתי',
-          hex: '#F4F4F0'
+          code: '0524T',
+          name: 'אפור בטון עדין',
+          hex: '#D7D6D2'
         },
-        image_link: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&auto=format&fit=crop&q=80'
+        image_link: 'https://tambour.co.il/images/supercryl-mat-10l.jpg'
       }
     ],
-    subtotal: 329,
-    vat: 59.22,
-    total: 388.22,
+    subtotal: 265,
+    vat: 47.7,
+    total: 312.7,
     paymentStatus: 'paid'
   },
   'SAB-320911': {
@@ -251,17 +251,17 @@ const SAMPLE_ORDERS: Record<string, TrackingOrder> = {
     },
     items: [
       {
-        sku: 'NIRLAT-EXTRA',
-        title: 'נירוקריל אקסטרה בגימור מט משי מהודר',
-        packaging: 'פח 18 ליטר (מכונת גיוון)',
+        sku: '9889421',
+        title: 'אקווניר ADVANCE מט לבן 15 ליטר פח נירלט',
+        packaging: 'פח 15 ליטר',
         quantity: 2,
-        unitPrice: 345,
+        unitPrice: 285,
         colorShade: {
-          code: 'NWC 020',
-          name: 'אפור אבן קטיפתי',
-          hex: '#D7D6D2'
+          code: 'ADVANCE-W',
+          name: 'לבן מט משי',
+          hex: '#F4F4F0'
         },
-        image_link: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&auto=format&fit=crop&q=80'
+        image_link: 'https://tambour.co.il/images/supercryl-mat-10l.jpg'
       }
     ],
     subtotal: 690,

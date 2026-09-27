@@ -29,17 +29,13 @@ import {
 import { GoogleMerchantProduct } from '../../types/product';
 import { useProducts } from '../../context/ProductContext';
 import { SABAN_ENTERPRISE } from '../../config/sabanEnterpriseConfig';
+import { CANONICAL_ANCHOR_CSV } from '../../data/initialProducts';
 
 interface MerchantFeedStudioProps {
   onViewProductLanding?: (sku: string) => void;
 }
 
-const PROMPT_SAMPLE_CSV = `id,title,description,availability,condition,price,sale_price,link,image_link,brand,identifier_exists,mpn,color,size,material,product_highlight,google_product_category,store_code
-10701,סיקה טופ 107 ערכה 25 ק״ג (SikaTop Seal-107) איטום צמנטי,"חומר איטום צמנטי דו-רכיבי אלסטי של סיקה לאיטום מרתפים, בריכות שחיה, מאגרי מים וחדרים רטובים. כושר כיסוי כ-12.5 מ״ר בשתי שכבות.",in_stock,new,155.00 ILS,,https://sbn-xi.vercel.app/product/10701,https://i.ibb.co/KcSyD8nS/watermarked-img-11994617598432690143.jpg,Sika,no,10701,אפור,25 ק״ג,צמנט פולימרי,"עמיד בלחץ מים חיובי ושלילי, תקן מי שתייה ואיטום 1536, אידיאלי למרפסות וחדרים רטובים",Hardware > Building Consumables > Hardware Glue & Adhesives,SABAN_HARASH
-20110,טמבור סופרפלקס לבן פח 18 ק״ג ציפוי איטום אקרילי אלסטומרי לגגות,"חומר איטום אקרילי גמיש ועמיד בקרינת UV לאיטום והלבנת גגות, מתאים על יריעות ביטומניות ובטון. כושר כיסוי כ-15 מ״ר לפח בשתי שכבות.",in_stock,new,300.00 ILS,219.00 ILS,https://sbn-xi.vercel.app/product/20110,https://i.ibb.co/fzQWznmk/20110.jpg,טמבור,no,20110,לבן,18 ק״ג,אקרילי אלסטומרי,"גמישות מרבית בטמפרטורות קיצון, כושר הלבנה והחזרת חום מעולה, עמידות מלאה לקרני שמש UV",Hardware > Building Consumables > Roofing,SABAN_HARASH
-10002,מלט פורטלנד אפור 25 ק״ג נשר CEM II 42.5,"צמנט איכותי תקני לבנייה, טיח, יציקות בטון וריצוף מתוצרת מפעלי מלט נשר. עומד בתקן ישראלי ת״י 1.",in_stock,new,20.32 ILS,,https://sbn-xi.vercel.app/product/10002,https://i.ibb.co/0yVzZHt0/10002.jpg,נשר,no,10002,אפור,25 ק״ג,צמנט פורטלנד,"תקן ת״י 1 רשמי, חוזק הדבקה והתקשות מרביים, מתאים לכל עבודות השלד והטיח",Hardware > Building Consumables > Cement & Mortar,SABAN_HARASH
-15680,סיקפלקס 11FC תרמיל 300 מ״ל Sika Sikaflex-11 FC Purform,"מסטיק פוליאוריטני רב-תכליתי לאיטום תפרים והדבקה גמישה וחזקה של בטון, מתכת, עץ, אבן וקרמיקה.",in_stock,new,42.00 ILS,34.00 ILS,https://sbn-xi.vercel.app/product/15680,https://i.ibb.co/HfddnMMq/15680.jpg,Sika,no,15680,אפור,300 מ״ל,פוליאוריטן,"עמידות לתנודות ושינויי מזג אוויר, כושר הדבקה חזק במיוחד ללא פריימר, מתאים לשימוש פנים וחוץ",Hardware > Building Consumables > Hardware Glue & Adhesives,SABAN_TALMID
-9889488,סופרקריל מט טמבור 10 ליטר (חצי פח) גוון 0524T אפור בטון עדין,"צבע אקרילי רחיץ מובחר לקירות פנים מבית טמבור. גימור מט מהודר, כושר כיסוי כ-45 עד 50 מ״ר בשתי שכבות.",in_stock,new,295.00 ILS,265.00 ILS,https://sbn-xi.vercel.app/product/9889488,https://tambour.co.il/images/supercryl-mat-10l.jpg,טמבור,no,9889488,אפור בטון,10 ליטר,אקרילי על בסיס מים,"עמיד ברחיצה וקל לניקוי, כושר כיסוי והסתרה גבוה במיוחד, גוון אפור בטון מודרני מבוקש",Hardware > Building Consumables > Painting Consumables,SABAN_HARASH`;
+const PROMPT_SAMPLE_CSV = CANONICAL_ANCHOR_CSV;
 
 export const MerchantFeedStudio: React.FC<MerchantFeedStudioProps> = ({
   onViewProductLanding
@@ -1091,6 +1087,17 @@ export const MerchantFeedStudio: React.FC<MerchantFeedStudioProps> = ({
                 />
               </div>
 
+              <div>
+                <label className="font-bold block text-slate-700 mb-1">video_link (קישור וידאו ישיר / הדרכה):</label>
+                <input
+                  type="url"
+                  value={editingProduct.video_link || ''}
+                  onChange={(e) => setEditingProduct({ ...editingProduct, video_link: e.target.value })}
+                  placeholder="https://tv-tawny-kappa.vercel.app/videos/... או https://youtu.be/..."
+                  className="w-full border border-slate-300 rounded-xl px-3 py-2 font-mono text-xs"
+                />
+              </div>
+
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
                 <button
                   type="button"
@@ -1150,7 +1157,7 @@ export const MerchantFeedStudio: React.FC<MerchantFeedStudioProps> = ({
                   className="text-[#0F3E7A] hover:underline font-bold flex items-center gap-1 cursor-pointer"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
-                  <span>שחזר ל-5 מוצרי הדגל המקוריים של סבן</span>
+                  <span>שחזר ל-20 מוצרי העוגן המאומתים (שורות 2-21)</span>
                 </button>
               </div>
 

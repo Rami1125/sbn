@@ -206,12 +206,12 @@ const INITIAL_COUNTER_ORDERS: CounterOrder[] = [
     notes: 'בגיוון במכונת נירלט - גוון NWC 020',
     items: [
       {
-        sku: 'NIRLAT-EXTRA',
-        title: 'נירוקריל אקסטרה בגימור מט משי מהודר',
-        packaging: '2 פחים 18 ליטר',
+        sku: '9889421',
+        title: 'אקווניר ADVANCE מט לבן 15 ליטר פח נירלט',
+        packaging: '2 פחים 15 ליטר',
         quantity: 2,
         locationArea: 'מכונת גיוון נירלט ממוחשבת',
-        colorShade: { code: 'NWC 020', name: 'אפור אבן קטיפתי', hex: '#D7D6D2' }
+        colorShade: { code: 'ADVANCE-W', name: 'לבן מט משי', hex: '#F4F4F0' }
       }
     ]
   },
