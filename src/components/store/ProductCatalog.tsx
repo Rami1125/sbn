@@ -77,7 +77,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
           <div className="max-w-2xl space-y-4 text-right">
             <div className="inline-flex items-center gap-2 bg-amber-400/20 border border-amber-300/30 text-amber-300 px-3 py-1 rounded-full text-xs font-black tracking-wide">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Saban Pro Storefront • Google Merchant Center 2026</span>
+              <span>העולם של החומרי בנין • ברוכים הבאים</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
@@ -89,7 +89,17 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
 
             <p className="text-sm sm:text-base text-blue-100/90 leading-relaxed font-normal">
               מלאי רשמי של סיקה, טמבור ומלט נשר במרכז הלוגיסטי סבן (החרש 10) ובסניף התלמיד 6.
-              הזמינו אונליין, קבלו קוד איסוף ומשכו את ההזמנה מרציף האיסוף ללא המתנה בתור.
+             ח. סבן חומרי בניין | מוקד האספקה של אנשי המקצוע
+
+מחלקות שלמות של חומרי בניין, אינסטלציה וכלי עבודה תחת קורת גג אחת — עם המותגים המובילים בשוק:
+🔨 כלי עבודה חשמליים: Bosch | Makita
+🛡️ איטום ודבקים: Sika | תרמוקיר | כרמית מיסטר פיקס
+🎨 צבע ושפכטל: טמבור | נירלט | רוקבונד
+🏗️ חומרי שלד ואגרגטים: מלט נשר | חול, סומסום וטיט (שקים ובלות)
+🚰 אינסטלציה וביוב: SP | פלסאון | חוליות
+📍 סניף החרש 10 (מרכז לוגיסטי וחצר אגרגטים)
+📍 סניף התלמיד 6 (חנות אספקה טכנית וגמר)
+⚡ הזמינו אונליין / בוואטסאפ ואספו תוך 60 דקות ברציף האקספרס — ללא תור!.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-2 text-xs">
@@ -114,10 +124,10 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
               SBN
             </div>
             <div className="text-xs uppercase tracking-wider text-amber-300 font-extrabold">
-              רציף איסוף מהיר לקבלנים
+              סניף איסוף מהיר לקבלנים
             </div>
             <div className="text-sm font-bold text-white">
-              הזמן עכשיו • אסוף תוך 60 דקות ברציף מס׳ 3
+              הזמן עכשיו • אסוף תוך 60 דקות סניף החרש 
             </div>
             <div className="text-[11px] text-blue-200">
               כולל תיאום מלגזה והעמסה ישירה לרכב המסחרי

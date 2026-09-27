@@ -61,7 +61,7 @@ export const AboutBranchesPage: React.FC<{ onNavigateHome: () => void }> = ({ on
     },
     {
       id: 'talmid',
-      name: 'סניף התלמיד 6 (מחסן 1)',
+      name: 'סניף התלמיד 6',
       code: 'SABAN_TALMID',
       categoryTitle: 'חנות עם מגוון ענק  חומרי בנין, מרכז גבס, צבע ואניסטלציה ועוד..',
       address: 'רחוב התלמיד 6, אזור התעשייה',
