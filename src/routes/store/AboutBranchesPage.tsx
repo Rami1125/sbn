@@ -57,7 +57,7 @@ export const AboutBranchesPage: React.FC<{ onNavigateHome: () => void }> = ({ on
       ],
       wazeUrl: 'https://waze.com/ul?q=רחוב החרש 10 הוד השרון',
       googleMapsUrl: 'https://maps.google.com/?q=החרש+10+הוד+השרון',
-      image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80'
+      image: 'https://sbn-xi.vercel.app/harash.jpg'
     },
     {
       id: 'talmid',
@@ -79,7 +79,7 @@ export const AboutBranchesPage: React.FC<{ onNavigateHome: () => void }> = ({ on
       ],
       wazeUrl: 'https://waze.com/ul?q=רחוב התלמיד 6 הוד השרון',
       googleMapsUrl: 'https://maps.google.com/?q=התלמיד+6+הוד+השרון',
-      image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&auto=format&fit=crop&q=80'
+      image: 'https://sbn-xi.vercel.app/talmid.jpg'
     }
   ];
 
