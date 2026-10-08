@@ -3,26 +3,26 @@ import { SABAN_ENTERPRISE } from '../config/sabanEnterpriseConfig';
 
 export const SABAN_BRANCHES: PickupBranch[] = [
   {
-    code: 'SABAN_HARASH',
+    code: 'פתוח',
     name: 'סניף החרש 4 / 10',
-    subName: 'מחסן 4 - מרכז לוגיסטי והפצה ראשי (שלד, מלט, איטום)',
-    address: 'רחוב החרש 4 / 10, אזור התעשייה נווה נאמן, הוד השרון',
-    hours: 'א׳-ה׳ 06:30-16:30 | ו׳ 06:30-12:30',
-    phone: '03-9518888',
-    dispatchBay: 'רציף איסוף מהיר מס׳ 3 (כניסה למשאיות ומלגזות)'
+    subName: 'מחסן 4 - מרכז לוגיסטי והפצה ראשי (בלוקים, מלט, איטום)',
+    address: 'רחוב החרש, 10, אזור התעשייה נווה נאמן, הוד השרון',
+    hours: 'א׳-ה׳ 06:30-16:00 | ו׳ 06:30-13:30',
+    phone: '09-740575',
+    dispatchBay: '/חניה ללקוחות הסניף חניה גדולה להעמסת משאיות  איסוף מהיר  (כניסה למשאיות ומלגזות)'
   },
   {
-    code: 'SABAN_TALMID',
+    code: 'פתוח',
     name: 'סניף התלמיד 6',
     subName: 'מחסן 1 - גבס, צבע ומוסך פרזול',
-    address: 'רחוב התלמיד 6, אזור התעשייה, הוד השרון',
-    hours: 'א׳-ה׳ 06:30-16:30 | ו׳ 06:30-12:30',
-    phone: '03-9518889',
-    dispatchBay: 'דלפק אקספרס ואיסוף קבלנים'
+    address: 'רחוב התלמיד 6, הוד השרון',
+    hours: 'א׳-ה׳ 06:00-18:00 | ו׳ 06:00-14:00',
+    phone: '09-7602010',
+    dispatchBay: 'דלפק מהיר ואיסוף קבלנים'
   }
 ];
 
-export const GMC_FEED_SHEET_ID = '1m6rVxo_0hthMf55_pgg0RGegBDby9KKB6_VpCJ86_4Y';
+export const GMC_FEED_SHEET_ID = '1TPKIxPzGy9xsyCI5XxaJ-TUsLq5g3ju34lFE8I3Xyvg';
 
 export const CANONICAL_ANCHOR_CSV = `id,title,description,availability,condition,price,sale_price,link,image_link,brand,identifier_exists,mpn,color,size,material,product_highlight,google_product_category,store_code,video_link
 10701,סיקה טופ 107 (SikaTop Seal-107) ערכה 25 ק״ג איטום צמנטי,חומר איטום צמנטי דו-רכיבי אלסטי של סיקה לאיטום מרתפים; בריכות שחיה; מאגרים וחדרים רטובים. כושר כיסוי כ-12.5 מ״ר בשתי שכבות.,in_stock,new,154.6625 ILS,,https://sbn-xi.vercel.app/product/10701,https://i.ibb.co/KcSyD8nS/watermarked-img-11994617598432690143.jpg,Sika,no,10701,אפור,25 ק״ג,צמנט פולימרי,עמיד בלחץ מים חיובי ושלילי | ת״י 1536 לאיטום צמנטי | מתאים למרפסות וחדרים רטובים,Hardware > Building Consumables > Hardware Glue & Adhesives,SABAN_HARASH,https://tv-tawny-kappa.vercel.app/videos/saban-builders.mp4
@@ -55,7 +55,7 @@ export const INITIAL_PRODUCTS: GoogleMerchantProduct[] = [
   // 1. שורה 2: מק״ט 10701 - סיקה טופ 107
   {
     id: '10701',
-    title: 'סיקה טופ 107 (SikaTop Seal-107) ערכה 25 ק״ג איטום צמנטי',
+    title: 'סיקה טופ 107  ערכה 25 ק״ג איטום צמנטי',
     description: 'חומר איטום צמנטי דו-רכיבי אלסטי של סיקה לאיטום מרתפים; בריכות שחיה; מאגרים וחדרים רטובים. כושר כיסוי כ-12.5 מ״ר בשתי שכבות.',
     availability: 'in_stock',
     condition: 'new',
@@ -101,7 +101,7 @@ export const INITIAL_PRODUCTS: GoogleMerchantProduct[] = [
     rating: 4.9,
     reviewsCount: 48,
     inStockBranches: [
-      { branchCode: 'SABAN_HARASH', branchName: 'סניף החרש 4 / 10', warehouseLocation: 'רציף איטום מחסן 4', stockQty: 180 },
+      { branchCode: 'SABAN_HARASH', branchName: 'סניף החרש  10', warehouseLocation: ' מחסן החרש', stockQty: 180 },
       { branchCode: 'SABAN_TALMID', branchName: 'סניף התלמיד 6', warehouseLocation: 'מדף איטום מרכזי B-04', stockQty: 45 }
     ]
   },
@@ -668,8 +668,8 @@ export const INITIAL_PRODUCTS: GoogleMerchantProduct[] = [
     rating: 4.9,
     reviewsCount: 78,
     inStockBranches: [
-      { branchCode: 'SABAN_TALMID', branchName: 'סניף התלמיד 6', warehouseLocation: 'מדף פרזול גבס ראשי', stockQty: 250 },
-      { branchCode: 'SABAN_HARASH', branchName: 'סניף החרש 4 / 10', warehouseLocation: 'מחסן אספקה טכנית', stockQty: 120 }
+      { branchCode: 'סניף מס:1', branchName: 'סניף התלמיד 6', warehouseLocation: 'מדף פרזול גבס ראשי', stockQty: 250 },
+      { branchCode: 'סניף מס: 2', branchName: 'סניף החרש  10', warehouseLocation: 'מחסן אספקה טכנית', stockQty: 120 }
     ]
   }
 ];
