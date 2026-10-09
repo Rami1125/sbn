@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>פתיחת כרטיס לקוח עסקי | ח. סבן חומרי בניין</title>
+<meta name="description" content="פותחים כרטיס לקוח עסקי בח. סבן ומקבלים מחירי סיטונאות, עדיפות באספקה ורציף אקספרס.">
+<meta property="og:title" content="פתיחת כרטיס לקוח עסקי | ח. סבן חומרי בניין (1994) בע״מ">
+<meta property="og:description" content="פותחים כרטיס לקוח עסקי בח. סבן ומקבלים מחירי סיטונאות, עדיפות באספקה ורציף אקספרס. סניפי הוד השרון: החרש 10 והתלמיד 6.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sbn-xi.vercel.app/business">
+<meta name="theme-color" content="#1D2124">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+:root{--asphalt:#1D2124;--concrete:#D8D5CE;--amber:#F5B301;--steel:#2F5D7C;--paper:#F6F4EF;--muted:#5d625f}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:Heebo,Arial,sans-serif;background:var(--paper);color:var(--asphalt);line-height:1.6;font-size:17px;overflow-x:hidden}
+h1,h2,h3{font-family:'Secular One',Heebo,sans-serif;font-weight:400;line-height:1.15}
+:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+.wrap{max-width:1160px;margin-inline:auto;padding-inline:22px;position:relative}
+
+/* HERO */
+.hero{color:var(--paper);position:relative;overflow:hidden;padding:24px 0 90px;background:radial-gradient(800px 420px at 12% 100%,rgba(245,179,1,.25),transparent 70%),radial-gradient(600px 400px at 90% 0,rgba(47,93,124,.45),transparent 70%),var(--asphalt)}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(216,213,206,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(216,213,206,.06) 1px,transparent 1px);background-size:54px 54px;-webkit-mask-image:linear-gradient(#000,transparent 90%);mask-image:linear-gradient(#000,transparent 90%)}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:50px}
+.brand{font-family:'Secular One';font-size:22px;display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--paper)}
+.brand i{width:13px;height:28px;background:var(--amber);transform:skewX(-14deg)}
+.top-links{display:flex;gap:12px;align-items:center}
+.top a{font-size:15px;color:var(--concrete);text-decoration:none;border:1px solid rgba(216,213,206,.35);padding:7px 18px;border-radius:99px;transition:.2s}
+.top a:hover{background:var(--amber);border-color:var(--amber);color:var(--asphalt)}
+.hgrid{display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:start}
+.hero h1{font-size:clamp(36px,5.4vw,66px);margin-bottom:16px}
+.hero .lead{font-size:20px;color:#d9d6cf;max-width:30em}
+.pill{display:inline-flex;gap:8px;align-items:center;margin-top:24px;background:rgba(245,179,1,.12);border:1px solid rgba(245,179,1,.5);color:#ffd45c;padding:7px 16px;border-radius:99px;font-size:15px}
+.pill::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 4px rgba(245,179,1,.25)}
+/* 3D member card */
+.scene{perspective:1100px;margin-top:38px;max-width:420px}
+.mc{aspect-ratio:1.586;border-radius:20px;padding:24px;position:relative;overflow:hidden;transform-style:preserve-3d;transform:rotateX(var(--rx,4deg)) rotateY(var(--ry,-10deg));transition:transform .15s ease-out;
+ background:linear-gradient(135deg,#363b3f,#15181a 60%,#2a2414);border:1px solid rgba(245,179,1,.65);box-shadow:0 40px 70px -28px #000,0 0 0 6px rgba(245,179,1,.07)}
+.mc::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,226,140,.2) 48%,transparent 60%)}
+.mc .t{display:flex;justify-content:space-between;color:var(--amber);font-family:'Secular One';font-size:17px;transform:translateZ(30px)}
+.mc .chip{width:46px;height:34px;border-radius:7px;background:linear-gradient(135deg,#ffe08a,var(--amber) 50%,#b98200);margin:20px 0 14px;transform:translateZ(36px)}
+.mc .nm{font-family:'Secular One';font-size:24px;transform:translateZ(44px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc .id{position:absolute;bottom:20px;inset-inline-start:24px;letter-spacing:.18em;color:#cfcbc2;font-size:14px;direction:ltr;transform:translateZ(30px)}
+@media (prefers-reduced-motion:no-preference){.scene{animation:float 6s ease-in-out infinite}@keyframes float{50%{translate:0 -10px}}
+ .in1,.in2,.in3{animation:up .8s cubic-bezier(.2,.8,.2,1) both}.in2{animation-delay:.12s}.in3{animation-delay:.24s}@keyframes up{from{opacity:0;transform:translateY(28px)}}}
+
+/* glass form */
+.glass{background:rgba(29,33,36,.72);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid rgba(245,179,1,.4);border-radius:18px;padding:28px;box-shadow:0 40px 80px -30px #000,inset 0 1px 0 rgba(255,255,255,.08)}
+.glass h2{font-size:28px}
+.glass .sub{color:#b9b5ab;font-size:15px;margin:2px 0 16px}
+.steps{display:flex;gap:8px;margin-bottom:20px}
+.steps b{flex:1;height:5px;border-radius:9px;background:rgba(216,213,206,.2);transition:.4s}
+.steps b.on{background:var(--amber)}
+.stl{font-size:14px;color:var(--amber);margin-bottom:12px;font-weight:500}
+.panel{display:none}.panel.on{display:block;animation:pan .35s ease both}
+@keyframes pan{from{opacity:0;transform:translateX(18px)}}
+.fld{margin-bottom:13px}
+label,legend{display:block;font-weight:500;font-size:14.5px;margin-bottom:5px;padding:0}
+input[type=text],input[type=tel],input[type=email],select{width:100%;padding:12px 14px;border:1px solid rgba(216,213,206,.3);border-radius:9px;font:inherit;background:rgba(255,255,255,.07);color:var(--paper)}
+select option{color:#111}
+input::placeholder{color:#8c8980}
+input:focus,select:focus{border-color:var(--amber);outline:none;box-shadow:0 0 0 3px rgba(245,179,1,.25)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+fieldset{border:0;padding:0;margin:0 0 13px;min-width:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{margin:0;cursor:pointer}
+.chips input{position:absolute;opacity:0}
+.chips span{display:block;padding:8px 14px;border:1px solid rgba(216,213,206,.35);border-radius:99px;font-size:14.5px;font-weight:400;transition:.2s}
+.chips span:hover{border-color:var(--amber)}
+.chips input:checked+span{background:var(--amber);border-color:var(--amber);color:var(--asphalt);font-weight:700}
+.chips input:focus-visible+span{outline:3px solid var(--amber);outline-offset:2px}
+.e{display:block;color:#ff9a8a;font-size:13.5px;min-height:1px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:13.5px;color:#b9b5ab}
+.chk input{margin-top:5px;accent-color:var(--amber)}
+.chk a{color:#ffd45c}
+.hp{position:absolute;left:-9999px}
+.nav{display:flex;gap:10px;margin-top:8px}
+.btn{border:0;border-radius:9px;padding:14px 22px;font-family:'Secular One';font-size:19px;cursor:pointer;transition:transform .15s,filter .15s}
+.btn.p{flex:1;background:linear-gradient(135deg,#ffd45c,var(--amber) 55%,#d99a00);color:var(--asphalt);box-shadow:0 10px 28px -10px rgba(245,179,1,.8)}
+.btn.s{background:transparent;color:var(--concrete);border:1px solid rgba(216,213,206,.35)}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.07)}
+.btn:disabled{opacity:.6;cursor:wait}
+#fail{display:none;margin-top:12px;background:rgba(255,120,100,.14);border:1px solid rgba(255,120,100,.5);color:#ffb4a8;padding:10px 14px;border-radius:9px;font-size:14.5px}
+#fail a{color:#fff}
+.done{display:none;text-align:center;padding:18px 0;outline:none}
+.done .ok{width:64px;height:64px;border-radius:50%;background:var(--amber);color:var(--asphalt);display:grid;place-items:center;font-size:34px;margin:0 auto 14px}
+.done h2{margin-bottom:8px}
+.done p{color:#cfcbc2}
+.done a{display:inline-block;margin-top:18px;background:#25a244;color:#fff;padding:14px 26px;border-radius:9px;text-decoration:none;font-weight:700}
+
+/* brands ticker */
+.ticker{background:var(--amber);color:var(--asphalt);overflow:hidden;border-block:2px solid var(--asphalt)}
+.track{display:flex;gap:46px;width:max-content;padding:14px 0;font-family:'Secular One';font-size:22px;animation:tick 28s linear infinite}
+.track span::after{content:"◆";margin-inline-start:46px;font-size:12px;vertical-align:middle}
+@keyframes tick{to{transform:translateX(50%)}}
+.ticker:hover .track{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){.track{animation:none;flex-wrap:wrap;width:auto;justify-content:center;padding-inline:22px}}
+
+/* sections */
+.sec{padding:88px 0}
+.t{font-size:clamp(30px,4vw,46px);margin-bottom:10px}
+.intro{color:var(--muted);max-width:36em;margin-bottom:44px}
+.adv{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.card{background:#fff;border:1px solid var(--concrete);border-top:4px solid var(--amber);border-radius:6px;padding:30px 26px;transition:transform .3s,box-shadow .3s;box-shadow:0 18px 40px -30px rgba(0,0,0,.5)}
+.card:hover{transform:translateY(-8px);box-shadow:0 34px 50px -30px rgba(0,0,0,.55)}
+.card svg{width:46px;height:46px;stroke:var(--steel);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;margin-bottom:14px}
+.card h3{font-size:24px;margin-bottom:6px}
+.card p{color:var(--muted);font-size:15.5px}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s,transform .7s}.rv.in{opacity:1;transform:none}
+.dock{background:var(--steel);color:var(--paper);position:relative;overflow:hidden}
+.dock::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 40px,rgba(255,255,255,.04) 40px 80px)}
+.dock .sec{position:relative}
+.big{font-family:'Secular One';font-size:clamp(64px,10vw,120px);line-height:1;color:var(--amber)}
+.dgrid{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:center}
+.dock p.intro{color:#d3e1ec;margin-bottom:0}
+.br{display:grid;gap:14px}
+.br div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:18px 22px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.br h3{font-size:22px}.br p{font-size:15px;color:#d3e1ec}
+footer{background:#14171a;color:#9a9890;font-size:14px;padding:22px 0;text-align:center}
+footer a{color:var(--concrete)}
+@media (max-width:900px){.hgrid,.dgrid{grid-template-columns:1fr;gap:40px}.adv{grid-template-columns:1fr}.scene{margin-inline:auto}.sec{padding:64px 0}}
+@media (max-width:520px){.two{grid-template-columns:1fr}.glass{padding:22px}.top{margin-bottom:34px}}
+</style>
+</head>
+<body>
+
+<header class="hero"><div class="wrap">
+ <div class="top">
+  <a href="./" class="brand"><i></i>ח. סבן חומרי בניין</a>
+  <div class="top-links">
+    <a href="./">לקטלוג ולחנות</a>
+    <a href="returns.html">מדיניות החזרות</a>
+  </div>
+ </div>
+ <div class="hgrid">
+  <div>
+   <h1 class="in1">ח. סבן: מוקד האספקה של אנשי המקצוע</h1>
+   <p class="lead in2">פותחים כרטיס לקוח ומקבלים מחירי סיטונאות, עדיפות באספקה ורציף אקספרס.</p>
+   <span class="pill in2">איסוף תוך 60 דקות ברציף האקספרס, ללא תור</span>
+   <div class="scene in3" id="scene" aria-hidden="true">
+    <div class="mc" id="mc"><div class="t"><span>כרטיס לקוח עסקי</span><span>SABAN</span></div><div class="chip"></div><div class="nm" id="cn">שם העסק שלך</div><div class="id" id="ci">ID •••••••••</div></div>
+   </div>
+  </div>
+  <form class="glass in3" id="form" novalidate>
+   <div id="wiz">
+    <h2>פתיחת כרטיס לקוח</h2>
+    <p class="sub">שלושה שלבים קצרים. הפרטים נקלטים ישירות לפתיחת הלקוח.</p>
+    <div class="steps" aria-hidden="true"><b class="on"></b><b></b><b></b></div>
+
+    <div class="panel on" data-s="0">
+     <div class="stl">שלב 1 מתוך 3: פרטי העסק</div>
+     <fieldset><legend>סוג ישות עסקית</legend>
+      <div class="chips">
+       <label><input type="radio" name="companyType" value="חברה בע״מ"><span>חברה בע״מ</span></label>
+       <label><input type="radio" name="companyType" value="עוסק מורשה"><span>עוסק מורשה</span></label>
+       <label><input type="radio" name="companyType" value="שותפות"><span>שותפות</span></label>
+       <label><input type="radio" name="companyType" value="קבלן רשום"><span>קבלן רשום</span></label>
+       <label><input type="radio" name="companyType" value="לקוח פרטי משפץ"><span>לקוח פרטי משפץ</span></label>
+      </div><small class="e" id="e-companyType"></small></fieldset>
+     <div class="fld"><label for="clientName">שם מלא / שם החברה</label><input type="text" id="clientName" name="clientName" autocomplete="organization"><small class="e" id="e-clientName"></small></div>
+     <div class="fld"><label for="businessId">מספר ח.פ / ע.מ / ת.ז</label><input type="text" id="businessId" name="businessId" inputmode="numeric" maxlength="9" placeholder="9 ספרות" dir="ltr" style="text-align:right"><small class="e" id="e-businessId"></small></div>
+    </div>
+
+    <div class="panel" data-s="1">
+     <div class="stl">שלב 2 מתוך 3: יצירת קשר וכתובת</div>
+     <div class="fld"><label for="phone">טלפון נייד ראשי (לוואטסאפ ועדכונים)</label><input type="tel" id="phone" name="phone" inputmode="tel" autocomplete="tel" placeholder="050-0000000" dir="ltr" style="text-align:right"><small class="e" id="e-phone"></small></div>
+     <div class="fld"><label for="email">דואר אלקטרוני (חשבוניות ירוקות ומסמכים)</label><input type="email" id="email" name="email" autocomplete="email" dir="ltr" style="text-align:right"><small class="e" id="e-email"></small></div>
+     <div class="two">
+      <div class="fld"><label for="city">עיר</label><input type="text" id="city" name="city" autocomplete="address-level2"><small class="e" id="e-city"></small></div>
+      <div class="fld"><label for="address">רחוב ומספר (לתיאום מנוף ומשאית)</label><input type="text" id="address" name="address" autocomplete="street-address"><small class="e" id="e-address"></small></div>
+     </div>
+    </div>
+
+    <div class="panel" data-s="2">
+     <div class="stl">שלב 3 מתוך 3: פעילות ואיש קשר בשטח</div>
+     <div class="fld"><label for="activityType">סיווג פעילות עיקרי</label><select id="activityType" name="activityType"><option value="">בחרו תחום</option><option>שלד ובטון</option><option>גמר וגבס</option><option>איטום ובידוד</option><option>אינסטלציה</option><option>צבע</option><option>חשמל</option><option>שיפוצים כלליים</option></select><small class="e" id="e-activityType"></small></div>
+     <div class="two">
+      <div class="fld"><label for="fieldContactName">איש קשר באתר (אופציונלי)</label><input type="text" id="fieldContactName" name="fieldContactName"></div>
+      <div class="fld"><label for="fieldContactPhone">טלפון איש הקשר</label><input type="tel" id="fieldContactPhone" name="fieldContactPhone" inputmode="tel" dir="ltr" style="text-align:right"><small class="e" id="e-fieldContactPhone"></small></div>
+     </div>
+     <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+     <label class="chk"><input type="checkbox" id="consent" name="consent">אני מאשר/ת קבלת דיוור והודעות מח. סבן חומרי בניין, וקראתי את <a href="returns.html" target="_blank" rel="noopener">התקנון</a>.</label>
+     <small class="e" id="e-consent"></small>
+    </div>
+
+    <div class="nav"><button type="button" class="btn s" id="back" hidden>חזרה</button><button type="button" class="btn p" id="next">המשך</button></div>
+    <div id="fail" role="alert"></div>
+   </div>
+   <div class="done" id="done" tabindex="-1">
+    <div class="ok">✓</div>
+    <h2>הבקשה התקבלה</h2>
+    <p id="doneTxt"></p>
+    <a id="waDone" href="#">המשיכו מול נציג סבן בוואטסאפ</a>
+   </div>
+  </form>
+ </div>
+</div></header>
+
+<div class="ticker" aria-label="מותגי איכות"><div class="track" id="track">
+ <span>Sika</span><span>מלט נשר</span><span>טמבור</span><span>מיסטר פיקס</span><span>תרמוקיר</span><span>אורבונד</span><span>בוש</span><span>מקיטה</span>
+ <span>Sika</span><span>מלט נשר</span><span>טמבור</span><span>מיסטר פיקס</span><span>תרמוקיר</span><span>אורבונד</span><span>בוש</span><span>מקיטה</span>
+</div></div>
+
+<section class="sec"><div class="wrap">
+ <h2 class="t">שלושה יתרונות לחברי כרטיס לקוח</h2>
+ <p class="intro">מה שאנשי מקצוע צריכים כדי שהאתר ימשיך לרוץ בלי עיכובים.</p>
+ <div class="adv">
+  <div class="card rv"><svg viewBox="0 0 48 48"><path d="M6 24 24 6h16v16L22 40z"/><circle cx="32" cy="16" r="2.5"/></svg><h3>מחירי סיטונאות קבועים</h3><p>תמחור קבוע ללקוחות הכרטיס, בלי להתמקח על כל הזמנה.</p></div>
+  <div class="card rv"><svg viewBox="0 0 48 48"><path d="M4 12h26v22H4zM30 20h9l5 7v7H30z"/><circle cx="14" cy="36" r="4"/><circle cx="37" cy="36" r="4"/></svg><h3>עדיפות בלוגיסטיקה ובמנופים</h3><p>תיעדוף בלוח האספקה ובשיבוץ מנופים ומשאיות.</p></div>
+  <div class="card rv"><svg viewBox="0 0 48 48"><path d="M6 10h36v24H20l-9 8v-8H6z"/><path d="M14 19h20M14 26h12"/></svg><h3>הזמנה ישירה בוואטסאפ</h3><p>שולחים רשימה בהודעה, בלי תורים ובלי טלפונים.</p></div>
+ </div>
+</div></section>
+
+<section class="dock"><div class="sec wrap"><div class="dgrid">
+ <div><div class="big">60</div><h2 class="t">דקות לאיסוף ברציף האקספרס</h2><p class="intro">מזמינים מראש, מגיעים ואוספים ללא תור.</p></div>
+ <div class="br">
+  <div class="rv"><h3>סניף החרש 10</h3><p>מרלו״ג וחצר אגרגטים</p></div>
+  <div class="rv"><h3>סניף התלמיד 6</h3><p>אספקה טכנית וגמר</p></div>
+ </div>
+</div></div></section>
+
+<footer>ח. סבן חומרי בניין (1994) בע״מ. כל הזכויות שמורות. <a href="returns.html">מדיניות החזרות, ביטולים וזיכויים</a></footer>
+
+<script>
+// ===== קונפיגורציה =====
+// כתובת ה-Apps Script Web App של מועדון וכרטיסי לקוח סבן
+const SCRIPT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbwDtPX29zb2CCuCS_79FjzndoHSuBqmvE4QDjUy7cBCDC6ljquhZzcMnC-p4bPVlrcZ/exec";
+// מספר הוואטסאפ הרשמי של דלפקי סבן (פורמט בינלאומי ללא +)
+const WA_NUMBER = '97297602010';
+
+const form = document.getElementById('form');
+const $ = id => document.getElementById(id);
+const val = n => { const e = form.elements[n]; return e ? (e.type === 'checkbox' ? e.checked : (e.value || '').trim()) : ''; };
+const digits = s => String(s).replace(/\D/g, '');
+
+// ולידציית מספר זיהוי ישראלי (ח.פ / ע.מ / ת.ז): 8-9 ספרות + ספרת ביקורת
+function idOk(v) {
+  let d = digits(v);
+  if (d.length < 8 || d.length > 9 || d !== String(v).trim()) return false;
+  d = d.padStart(9, '0');
+  let sum = 0;
+  for (let i = 0; i < 9; i++) { let x = +d[i] * (i % 2 + 1); if (x > 9) x -= 9; sum += x; }
+  return sum % 10 === 0;
+}
+const mobileOk = v => /^05\d{8}$/.test(digits(v).replace(/^972/, '0'));
+const emailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+
+const RULES = {
+  companyType: v => v ? '' : 'בחרו סוג ישות עסקית',
+  clientName: v => v.length >= 2 ? '' : 'נא להזין שם מלא או שם חברה',
+  businessId: v => idOk(v) ? '' : 'מספר לא תקין. הזינו 8-9 ספרות בלבד',
+  phone: v => mobileOk(v) ? '' : 'נא להזין נייד תקין, למשל 0501234567',
+  email: v => emailOk(v) ? '' : 'נא להזין כתובת מייל תקינה',
+  city: v => v.length >= 2 ? '' : 'נא להזין עיר',
+  address: v => /\d/.test(v) && v.length >= 3 ? '' : 'נא להזין רחוב ומספר',
+  activityType: v => v ? '' : 'בחרו סיווג פעילות',
+  fieldContactPhone: v => !v || digits(v).length >= 9 ? '' : 'מספר טלפון לא תקין',
+  consent: v => v ? '' : 'יש לאשר דיוור ותקנון כדי להמשיך'
+};
+const STEPS = [['companyType', 'clientName', 'businessId'], ['phone', 'email', 'city', 'address'], ['activityType', 'fieldContactPhone', 'consent']];
+let step = 0;
+
+function validate(names) {
+  let first = null;
+  names.forEach(n => {
+    const msg = RULES[n](val(n));
+    $('e-' + n).textContent = msg;
+    if (msg && !first) first = n;
+  });
+  if (first) { const el = form.elements[first]; (el.length && el[0] ? el[0] : el).focus(); }
+  return !first;
+}
+function show(i) {
+  step = i;
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('on', +p.dataset.s === i));
+  document.querySelectorAll('.steps b').forEach((b, k) => b.classList.toggle('on', k <= i));
+  $('back').hidden = i === 0;
+  $('next').textContent = i === 2 ? 'פתיחת כרטיס לקוח' : 'המשך';
+  $('fail').style.display = 'none';
+}
+$('back').addEventListener('click', () => show(step - 1));
+$('next').addEventListener('click', () => { if (validate(STEPS[step])) step < 2 ? show(step + 1) : submit(); });
+form.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') { e.preventDefault(); $('next').click(); } });
+form.addEventListener('input', e => { const n = e.target.name; if (n && $('e-' + n)) $('e-' + n).textContent = ''; });
+
+// כרטיס חי
+$('clientName').addEventListener('input', e => $('cn').textContent = e.target.value.trim() || 'שם העסק שלך');
+$('businessId').addEventListener('input', e => { const d = digits(e.target.value); $('ci').textContent = d ? 'ID ' + '•'.repeat(Math.max(d.length - 4, 0)) + d.slice(-4) : 'ID •••••••••'; });
+
+async function submit() {
+  const btn = $('next'), fail = $('fail');
+  fail.style.display = 'none';
+  if (form.elements.website.value) return; // honeypot
+  const payload = {
+    companyType: val('companyType'),
+    clientName: val('clientName'),
+    businessId: digits(val('businessId')).padStart(9, '0'),
+    phone: digits(val('phone')).replace(/^972/, '0'),
+    email: val('email'),
+    city: val('city'),
+    address: val('address'),
+    activityType: val('activityType'),
+    fieldContactName: val('fieldContactName'),
+    fieldContactPhone: digits(val('fieldContactPhone')),
+    source: 'comax-web-portal',
+    createdAt: new Date().toISOString()
+  };
+  btn.disabled = true; btn.textContent = 'שולח...';
+  try {
+    if (!SCRIPT_WEBHOOK_URL || SCRIPT_WEBHOOK_URL.includes('XXXXX')) throw new Error('SCRIPT_WEBHOOK_URL לא הוגדר');
+    // text/plain = "simple request": בלי preflight, ו-Apps Script קורא את ה-Body כ-JSON
+    const r = await fetch(SCRIPT_WEBHOOK_URL, { method: 'POST', mode: 'cors', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
+    const j = await r.json();
+    if (!j || j.ok !== true) throw new Error((j && j.error) || 'השרת סירב לבקשה');
+    $('wiz').style.display = 'none';
+    const done = $('done'); done.style.display = 'block'; done.focus();
+    $('doneTxt').textContent = 'תודה ' + payload.clientName + '. פרטי הלקוח התקבלו ונציג סבן יחזור אליכם לאישור פתיחת הכרטיס.';
+    $('waDone').href = waLink('שלום, אני ' + payload.clientName + ', ח.פ/ע.מ/ת.ז ' + payload.businessId + '. פתחתי כרטיס לקוח באתר ואשמח להמשך טיפול.');
+  } catch (err) {
+    console.error(err);
+    fail.innerHTML = 'לא הצלחנו לשלוח את הבקשה. נסו שוב, או <a href="' + waLink('שלום, ניסיתי לפתוח כרטיס לקוח באתר ולא הצלחתי. שם: ' + payload.clientName + ', ח.פ/ת.ז: ' + payload.businessId) + '">כתבו לנו בוואטסאפ</a>.';
+    fail.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'פתיחת כרטיס לקוח';
+  }
+}
+function waLink(t) { return 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(t); }
+
+// הטיית כרטיס תלת-ממדית
+const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+if (!reduce && matchMedia('(hover:hover)').matches) {
+  const mc = $('mc'), sc = $('scene');
+  sc.addEventListener('pointermove', e => { const b = sc.getBoundingClientRect(); mc.style.setProperty('--ry', ((e.clientX - b.left) / b.width - .5) * -28 + 'deg'); mc.style.setProperty('--rx', ((e.clientY - b.top) / b.height - .5) * 20 + 'deg'); });
+  sc.addEventListener('pointerleave', () => { mc.style.setProperty('--ry', '-10deg'); mc.style.setProperty('--rx', '4deg'); });
+}
+// חשיפה בגלילה
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .2 });
+document.querySelectorAll('.rv').forEach((el, i) => { el.style.transitionDelay = (i % 3) * 90 + 'ms'; io.observe(el); });
+</script>
+</body>
+</html>

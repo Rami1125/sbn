@@ -12,16 +12,17 @@ import { AboutBranchesPage } from './routes/store/AboutBranchesPage';
 import { OrderTrackingView } from './routes/store/OrderTrackingView';
 import { BranchCounterCrm } from './routes/counter.$branchId';
 import { SabanClubLandingPage } from './routes/store/SabanClubLandingPage';
+import { BusinessCustomerRegistrationPage } from './routes/store/BusinessCustomerRegistrationPage';
 import { WhatsAppFloatingButton } from './components/common/WhatsAppFloatingButton';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 import { OfflineIndicator } from './components/common/OfflineIndicator';
 import { SabanLogo } from './components/layout/SabanLogo';
-import { MapPin, Phone, Clock, FileSpreadsheet, ShieldCheck, RotateCcw, User, Building2, Truck, Award } from 'lucide-react';
+import { MapPin, Phone, Clock, FileSpreadsheet, ShieldCheck, RotateCcw, User, Building2, Truck, Award, CreditCard } from 'lucide-react';
 import { SABAN_BRANCHES } from './data/initialProducts';
 import { initOneSignal } from './lib/oneSignal';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter' | 'club'>('catalog');
+  const [currentView, setCurrentView] = useState<'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter' | 'club' | 'business'>('catalog');
   const [currentSku, setCurrentSku] = useState<string>('10701');
   const [currentOrderId, setCurrentOrderId] = useState<string>('SAB-889413');
   const [currentCounterBranch, setCurrentCounterBranch] = useState<'harash' | 'talmid'>('harash');
@@ -85,6 +86,12 @@ export default function App() {
         return;
       }
 
+      // Check business customer registration (Comax)
+      if (pathname === '/business' || pathname === '/comax' || pathname.startsWith('/business') || viewParam === 'business' || viewParam === 'comax') {
+        setCurrentView('business');
+        return;
+      }
+
       // Check path patterns like /product/10701 or /store/10701 or /store/product/10701
       const pathMatch = pathname.match(/\/(?:product|store)(?:\/product)?\/([a-zA-Z0-9_-]+)/);
       if (pathMatch && pathMatch[1]) {
@@ -122,7 +129,7 @@ export default function App() {
     window.history.pushState({ view: 'track', orderId }, '', `/track/${orderId}`);
   };
 
-  const handleChangeView = (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter' | 'club') => {
+  const handleChangeView = (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter' | 'club' | 'business') => {
     setCurrentView(view);
     if (view === 'product') {
       window.history.pushState({ sku: currentSku }, '', `/product/${currentSku}`);
@@ -140,6 +147,8 @@ export default function App() {
       window.history.pushState({ view: 'counter', branch: currentCounterBranch }, '', `/counter/${currentCounterBranch}`);
     } else if (view === 'club') {
       window.history.pushState({ view: 'club' }, '', '/club');
+    } else if (view === 'business') {
+      window.history.pushState({ view: 'business' }, '', '/business');
     } else {
       window.history.pushState({}, '', '/');
     }
@@ -255,6 +264,12 @@ export default function App() {
               onNavigateHome={() => handleChangeView('catalog')}
             />
           )}
+
+          {currentView === 'business' && (
+            <BusinessCustomerRegistrationPage
+              onNavigateHome={() => handleChangeView('catalog')}
+            />
+          )}
         </main>
 
         {/* Global Cart Slide-Over Drawer */}
@@ -340,6 +355,15 @@ export default function App() {
                     >
                       <Award className="w-3.5 h-3.5 text-amber-400" />
                       <span>הצטרפות למועדון סבן VIP</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleChangeView('business')}
+                      className="hover:text-amber-300 transition-colors flex items-center gap-1 text-amber-300 font-bold"
+                    >
+                      <CreditCard className="w-3.5 h-3.5 text-amber-400" />
+                      <span>פתיחת כרטיס לקוח עסקי (Comax)</span>
                     </button>
                   </li>
                   <li>

@@ -7,6 +7,18 @@
       "destination": "/google4fccee9f84731cf5.html"
     },
     {
+      "source": "/business",
+      "destination": "/business.html"
+    },
+    {
+      "source": "/business.html",
+      "destination": "/business.html"
+    },
+    {
+      "source": "/comax",
+      "destination": "/business.html"
+    },
+    {
       "source": "/returns",
       "destination": "/returns.html"
     },
@@ -38,6 +50,15 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/business",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=utf-8"
         }
       ]
     },

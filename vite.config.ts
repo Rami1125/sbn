@@ -23,6 +23,15 @@ const staticHtmlServePlugin = () => ({
           return;
         }
       }
+      if (urlPath === '/business' || urlPath === '/business.html' || urlPath === '/comax') {
+        const filePath = path.resolve(__dirname, 'public/business.html');
+        if (fs.existsSync(filePath)) {
+          const content = fs.readFileSync(filePath, 'utf-8');
+          res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+          res.end(content);
+          return;
+        }
+      }
       next();
     });
   },

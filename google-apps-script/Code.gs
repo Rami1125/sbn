@@ -1,426 +1,401 @@
 /**
- * ============================================================================
- * ח. סבן חומרי בניין (1994) בע״מ - מערכת קליטת לידים מועדון לקוחות וקבלנים
- * Google Apps Script Web App API (Code.gs)
- * ============================================================================
- * 
- * תיאור:
- * מודול עצמאי ומאובטח לקליטת לידים מדף הנחיתה (Vercel / React / Webhook),
- * הזרקתם ישירות ל-Google Sheets עם נעילת Concurrency, עיצוב אוטומטי (RTL),
- * ושליחת התראות מיידיות בדוא״ל ובוואטסאפ/Webhook.
+ * מועדון לקוחות ח. סבן חומרי בניין - קליטת לידים מדף נחיתה
+ * Web App: doPost מקבל JSON, כותב ל-Google Sheets, שולח מייל והתראה אופציונלית ל-Webhook.
  */
 
-// ==========================================
-// 1. הגדרות וקונפיגורציה מרכזית (CONFIG)
-// ==========================================
-const CONFIG = {
-  // שם הטאב הייעודי בגיליון
+// ===================== קונפיגורציה =====================
+var CONFIG = {
+  SPREADSHEET_ID: '',            // ריק = הגיליון שאליו הסקריפט מקושר (Extensions > Apps Script). לסקריפט עצמאי: הדביקו כאן את מזהה הגיליון.
   SHEET_NAME: 'לידים מועדון',
-
-  // כתובת מייל לקבלת התראות מיידיות על כל ליד חדש
-  NOTIFICATION_EMAIL: 'rami.msarwa1@gmail.com',
-
-  // כתובת Webhook אופציונלית (Make / Zapier / WhatsApp Gateway)
-  // השאר ריק אם אינך משתמש ב-Webhook חיצוני כעת
-  EXTERNAL_WEBHOOK_URL: '',
-
-  // אזור זמן ישראלי
   TIMEZONE: 'Asia/Jerusalem',
-
-  // פורמט תאריך ושעה
   DATE_FORMAT: 'yyyy-MM-dd HH:mm:ss',
-
-  // סטטוס ברירת מחדל לליד חדש
-  DEFAULT_STATUS: 'חדש לטיפול',
-
-  // צבעי מיתוג לעיצוב הכותרות
-  HEADER_BG_COLOR: '#1D2124',
-  HEADER_FONT_COLOR: '#F5B301',
-
-  // רשימת שורת הכותרות
-  HEADERS: [
-    'תאריך ושעה',
-    'שם מלא',
-    'טלפון',
-    'עיר',
-    'סוג לקוח',
-    'מקור',
-    'סטטוס טיפול'
-  ]
+  NOTIFY_EMAIL: 'rami.msarwa1@gmail.com', // ריק = המייל של בעל הסקריפט. ניתן לכמה כתובות מופרדות בפסיק.
+  EXTERNAL_WEBHOOK_URL: '',      // אופציונלי: כתובת Webhook של Make / WhatsApp API וכו'. ריק = כבוי.
+  DEFAULT_STATUS: 'חדש',
+  LOCK_WAIT_MS: 30000
 };
 
-// ==========================================
-// 2. נקודת קצה לקליטת נתונים (POST Web App API)
-// ==========================================
+var COMAX_SHEET_NAME = 'כרטיסי לקוח Comax';
+var COMAX_HEADERS = ['תאריך ושעה', 'סוג ישות', 'שם / שם חברה', 'ח.פ / ע.מ / ת.ז', 'טלפון', 'אימייל', 'עיר', 'כתובת', 'סיווג פעילות', 'איש קשר בשטח', 'טלפון איש קשר', 'מקור', 'סטטוס טיפול'];
+var COMAX_WIDTHS = [160, 120, 190, 130, 120, 200, 110, 190, 130, 140, 120, 140, 120];
+var HEADERS = ['תאריך ושעה', 'שם מלא', 'טלפון', 'עיר', 'סוג לקוח', 'מקור', 'סטטוס טיפול'];
+var COLUMN_WIDTHS = [160, 170, 130, 130, 120, 160, 130];
+
+// ===================== נקודות כניסה של ה-Web App =====================
+
 function doPost(e) {
-  // הפעלת מנעול סקריפט למניעת דריסת שורות בעומס מקבילי (Concurrency Lock)
-  const lock = LockService.getScriptLock();
-  
+  var raw = null;
+  try { raw = JSON.parse((e && e.postData && e.postData.contents) || '{}'); } catch (x) {}
+  if (raw && raw.businessId !== undefined) return handleComax_(raw);
+
+  var lock = LockService.getScriptLock();
+  var lead;
+  var rowNumber;
+
   try {
-    // המתנה לקבלת מנעול עד 30 שניות
-    const hasLock = lock.tryLock(30000);
-    if (!hasLock) {
-      return createJsonResponse({
-        ok: false,
-        error: 'שרת הגיליון עמוס כעת (Lock Timeout). נסה שנית בעוד מספר שניות.'
-      }, 503);
-    }
-
-    // אימות קיום תוכן בבקשה
-    if (!e || !e.postData || !e.postData.contents) {
-      return createJsonResponse({
-        ok: false,
-        error: 'לא התקבל גוף בקשה (Payload empty)'
-      }, 400);
-    }
-
-    // פענוח ה-JSON
-    let payload;
-    try {
-      payload = JSON.parse(e.postData.contents);
-    } catch (parseErr) {
-      return createJsonResponse({
-        ok: false,
-        error: 'מבנה JSON אינו תקין: ' + parseErr.message
-      }, 400);
-    }
-
-    // פירוק ונרמול השדות מהבקשה
-    const name = (payload.name || payload.fullName || '').toString().trim();
-    const phone = (payload.phone || payload.phoneNumber || '').toString().trim();
-    const city = (payload.city || payload.preferredBranch || 'הוד השרון והסביבה').toString().trim();
-    const type = (payload.type || payload.contractorType || 'קבלן / לקוח מועדון').toString().trim();
-    const source = (payload.source || 'דף נחיתה מועדון סבן (Vercel)').toString().trim();
-    
-    // בדיקת שדות חובה בסיסיים
-    if (!name || !phone) {
-      return createJsonResponse({
-        ok: false,
-        error: 'שדות חובה חסרים: name ו-phone הינם שדות נדרשים'
-      }, 422);
-    }
-
-    // המרת תאריך לפורמט ישראלי תקני (Asia/Jerusalem)
-    const now = payload.createdAt ? new Date(payload.createdAt) : new Date();
-    const formattedDate = Utilities.formatDate(now, CONFIG.TIMEZONE, CONFIG.DATE_FORMAT);
-
-    // השגת גיליון היעד (כולל יצירה ועיצוב אם אינו קיים)
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = getOrCreateLeadsSheet(ss);
-
-    // הכנת השורה להזרקה לגיליון
-    const rowData = [
-      formattedDate,
-      name,
-      phone,
-      city,
-      type,
-      source,
-      CONFIG.DEFAULT_STATUS
-    ];
-
-    // הזרקת השורה לגיליון
-    sheet.appendRow(rowData);
-    const lastRowIndex = sheet.getLastRow();
-
-    // עיצוב שורת הנתונים החדשה: יישור לימין, גובה שורה ופונט
-    const dataRange = sheet.getRange(lastRowIndex, 1, 1, CONFIG.HEADERS.length);
-    dataRange
-      .setHorizontalAlignment('right')
-      .setVerticalAlignment('middle')
-      .setFontFamily('Arial')
-      .setFontSize(10);
-
-    // עיצוב ספציפי לעמודת הטלפון (פורמט טקסט רגיל כדי למנוע השמטת 0 מוביל)
-    sheet.getRange(lastRowIndex, 3).setNumberFormat('@');
-
-    // שחרור מנעול הסקריפט מיד לאחר כתיבת השורה
-    lock.releaseLock();
-
-    // שליחת התראת מייל מיידית
-    sendInstantEmailNotification({
-      name: name,
-      phone: phone,
-      city: city,
-      type: type,
-      source: source,
-      formattedDate: formattedDate,
-      rowIndex: lastRowIndex
-    });
-
-    // שליחת התראה ל-Webhook חיצוני (אם מוגדר)
-    if (CONFIG.EXTERNAL_WEBHOOK_URL && CONFIG.EXTERNAL_WEBHOOK_URL.trim() !== '') {
-      sendWebhookNotification({
-        name: name,
-        phone: phone,
-        city: city,
-        type: type,
-        source: source,
-        createdAt: formattedDate,
-        rowNumber: lastRowIndex
-      });
-    }
-
-    // החזרת תשובת הצלחה מלאה
-    return createJsonResponse({
-      ok: true,
-      message: 'הליד נקלט בהצלחה בגיליון מועדון סבן',
-      leadId: 'SBN-' + lastRowIndex,
-      data: {
-        row: lastRowIndex,
-        name: name,
-        phone: phone,
-        city: city,
-        type: type,
-        createdAt: formattedDate
-      }
-    }, 200);
-
+    lead = parsePayload_(e);
   } catch (err) {
-    // שחרור מנעול במקרה של שגיאה
-    if (lock.hasLock()) {
-      lock.releaseLock();
-    }
-    
-    // תיעוד השגיאה בלוג
-    Logger.log('Critical Error in doPost: ' + err.toString());
-
-    return createJsonResponse({
-      ok: false,
-      error: 'שגיאה בעיבוד הבקשה: ' + err.message
-    }, 500);
+    return jsonResponse_({ ok: false, error: String(err.message || err) });
   }
+
+  try {
+    lock.waitLock(CONFIG.LOCK_WAIT_MS);
+  } catch (err) {
+    return jsonResponse_({ ok: false, error: 'השרת עמוס, נסו שוב בעוד רגע' });
+  }
+
+  try {
+    var sheet = getOrCreateSheet_();
+    rowNumber = sheet.getLastRow() + 1;
+    var values = [[
+      lead.createdAtText,
+      lead.name,
+      lead.phone,
+      lead.city,
+      lead.type,
+      lead.source,
+      CONFIG.DEFAULT_STATUS
+    ]];
+    var range = sheet.getRange(rowNumber, 1, 1, HEADERS.length);
+    range.setNumberFormat('@');                 // שומר טלפון ותאריך כטקסט (שומר על 0 מוביל)
+    range.setValues(values);
+    range.setHorizontalAlignment('right');
+    range.setVerticalAlignment('middle');
+    SpreadsheetApp.flush();
+  } catch (err) {
+    console.error('Insert failed: ' + err);
+    return jsonResponse_({ ok: false, error: 'שגיאה בשמירת הליד: ' + String(err.message || err) });
+  } finally {
+    lock.releaseLock();
+  }
+
+  // התראות מחוץ ל-Lock: כשל בהתראה לא מבטל ליד שכבר נשמר.
+  var warnings = [];
+  try {
+    sendEmailNotification_(lead);
+  } catch (err) {
+    console.error('Email failed: ' + err);
+    warnings.push('email: ' + String(err.message || err));
+  }
+  try {
+    sendExternalWebhook_(lead, rowNumber);
+  } catch (err) {
+    console.error('Webhook failed: ' + err);
+    warnings.push('webhook: ' + String(err.message || err));
+  }
+
+  var response = { ok: true, row: rowNumber };
+  if (warnings.length) response.warnings = warnings;
+  return jsonResponse_(response);
 }
 
-// ==========================================
-// 3. נקודת קצה לבדיקת תקינות (GET Web App API)
-// ==========================================
-function doGet(e) {
-  return createJsonResponse({
-    ok: true,
-    status: 'Active',
-    service: 'Saban Building Materials - Club Leads Ingestion API',
-    company: 'ח. סבן חומרי בניין (1994) בע״מ',
-    sheetName: CONFIG.SHEET_NAME,
-    timestamp: Utilities.formatDate(new Date(), CONFIG.TIMEZONE, CONFIG.DATE_FORMAT),
-    instructions: 'שלח בקשת POST מסוג application/json עם השדות: name, phone, city, type, source'
-  }, 200);
+/** בדיקת תקינות מהדפדפן: פתחו את כתובת ה-/exec ותראו ok:true */
+function doGet() {
+  return jsonResponse_({ ok: true, service: 'saban-club-leads', sheet: CONFIG.SHEET_NAME });
 }
 
-// ==========================================
-// 4. יצירה ועיצוב טאב "לידים מועדון" (RTL)
-// ==========================================
-function getOrCreateLeadsSheet(ss) {
-  let sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
+// ===================== פירוק ואימות Payload =====================
 
+function parsePayload_(e) {
+  if (!e || !e.postData || !e.postData.contents) {
+    throw new Error('לא התקבל מידע (Body ריק)');
+  }
+  var data;
+  try {
+    data = JSON.parse(e.postData.contents);
+  } catch (err) {
+    throw new Error('JSON לא תקין');
+  }
+
+  var name = cleanText_(data.name, 80);
+  var phone = cleanText_(data.phone, 30);
+  var digits = phone.replace(/\D/g, '');
+
+  if (!name) throw new Error('חסר שם מלא');
+  if (digits.length < 9) throw new Error('מספר טלפון לא תקין');
+
+  var created = data.createdAt ? new Date(data.createdAt) : new Date();
+  if (isNaN(created.getTime())) created = new Date();
+
+  return {
+    name: name,
+    phone: phone,
+    city: cleanText_(data.city, 60),
+    type: cleanText_(data.type, 40),
+    source: cleanText_(data.source, 60) || 'landing-page',
+    createdAtText: Utilities.formatDate(created, CONFIG.TIMEZONE, CONFIG.DATE_FORMAT)
+  };
+}
+
+/** ניקוי טקסט + הגנה מהזרקת נוסחאות לגיליון (= + - @ בתחילת תא) */
+function cleanText_(value, maxLen) {
+  var s = (value === undefined || value === null) ? '' : String(value);
+  s = s.replace(/[\u0000-\u001F\u007F]/g, ' ').trim();
+  if (s.length > maxLen) s = s.substring(0, maxLen);
+  if (/^[=+\-@]/.test(s)) s = "'" + s;
+  return s;
+}
+
+// ===================== יצירה ועיצוב הטאב =====================
+
+function getOrCreateSheet_(name, headers, widths) {
+  name = name || CONFIG.SHEET_NAME;
+  var ss = CONFIG.SPREADSHEET_ID
+    ? SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID)
+    : SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) {
+    throw new Error('לא נמצא גיליון. קשרו את הסקריפט לגיליון או הגדירו SPREADSHEET_ID');
+  }
+
+  var sheet = ss.getSheetByName(name);
   if (!sheet) {
-    // יצירת הטאב אם אינו קיים
-    sheet = ss.insertSheet(CONFIG.SHEET_NAME);
-    
-    // הגדרת כיוון מימין לשמאל (RTL)
+    sheet = ss.insertSheet(name);
     sheet.setRightToLeft(true);
-
-    // הזרקת שורת הכותרות
-    const headerRange = sheet.getRange(1, 1, 1, CONFIG.HEADERS.length);
-    headerRange.setValues([CONFIG.HEADERS]);
-
-    // עיצוב שורת הכותרות לפי הדרישות:
-    // רקע כהה (#1D2124), פונט צהוב/זהב (#F5B301), טקסט מודגש וממורכז
-    headerRange
-      .setBackground(CONFIG.HEADER_BG_COLOR)
-      .setFontColor(CONFIG.HEADER_FONT_COLOR)
-      .setFontWeight('bold')
-      .setFontFamily('Arial')
-      .setFontSize(11)
-      .setHorizontalAlignment('center')
-      .setVerticalAlignment('middle')
-      .setWrap(false);
-
-    // גובה שורת הכותרת: 36 פיקסלים
-    sheet.setRowHeight(1, 36);
-
-    // הקפאת שורת הכותרת (Freeze Row 1)
-    sheet.setFrozenRows(1);
-
-    // התאמת רוחב עמודות בסיסי ראשוני לקריאות מרבית
-    const initialWidths = [160, 180, 140, 160, 200, 220, 130];
-    for (let i = 0; i < initialWidths.length; i++) {
-      sheet.setColumnWidth(i + 1, initialWidths[i]);
-    }
+    formatHeader_(sheet, headers, widths);
+  } else if (sheet.getLastRow() === 0) {
+    sheet.setRightToLeft(true);
+    formatHeader_(sheet, headers, widths);
   }
-
   return sheet;
 }
 
-// ==========================================
-// 5. התראת מייל מיידית (MailApp)
-// ==========================================
-function sendInstantEmailNotification(lead) {
-  try {
-    if (!CONFIG.NOTIFICATION_EMAIL) return;
+function formatHeader_(sheet, headers, widths) {
+  headers = headers || HEADERS;
+  widths = widths || COLUMN_WIDTHS;
+  var maxCols = sheet.getMaxColumns();
+  if (maxCols < headers.length) {
+    sheet.insertColumnsAfter(maxCols, headers.length - maxCols);
+  }
 
-    const subject = '⭐ ליד חדש הצטרף למועדון: ' + lead.name;
-    const cleanPhone = lead.phone.replace(/[^0-9]/g, '');
+  var header = sheet.getRange(1, 1, 1, headers.length);
+  header.setValues([headers]);
+  header.setBackground('#1D2124');
+  header.setFontColor('#F5B301');
+  header.setFontWeight('bold');
+  header.setFontSize(12);
+  header.setHorizontalAlignment('center');
+  header.setVerticalAlignment('middle');
 
-    // גוף המייל בפורמט HTML יוקרתי ומעוצב
-    const htmlBody = `
-      <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-        
-        <!-- Header -->
-        <div style="background-color: ${CONFIG.HEADER_BG_COLOR}; padding: 20px 24px; text-align: center; border-bottom: 3px solid ${CONFIG.HEADER_FONT_COLOR};">
-          <h2 style="color: ${CONFIG.HEADER_FONT_COLOR}; margin: 0; font-size: 20px; font-weight: 800;">
-            ח. סבן חומרי בניין (1994) בע״מ
-          </h2>
-          <p style="color: #cbd5e1; margin: 4px 0 0 0; font-size: 13px;">
-            התקבלה הצטרפות חדשה למועדון הלקוחות והקבלנים
-          </p>
-        </div>
+  sheet.setFrozenRows(1);
+  sheet.setRowHeight(1, 36);
 
-        <!-- Content Body -->
-        <div style="padding: 24px; color: #1e293b;">
-          <h3 style="color: #0f3e7a; margin-top: 0; font-size: 18px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">
-            פרטי הליד שהתקבל:
-          </h3>
-
-          <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin: 16px 0;">
-            <tr style="border-bottom: 1px solid #f1f5f9;">
-              <td style="padding: 10px 8px; font-weight: bold; color: #64748b; width: 35%;">שם מלא:</td>
-              <td style="padding: 10px 8px; font-weight: bold; color: #0f172a; font-size: 16px;">${lead.name}</td>
-            </tr>
-            <tr style="border-bottom: 1px solid #f1f5f9;">
-              <td style="padding: 10px 8px; font-weight: bold; color: #64748b;">טלפון ליצירת קשר:</td>
-              <td style="padding: 10px 8px;">
-                <a href="tel:${cleanPhone}" style="color: #0f3e7a; font-weight: bold; font-family: monospace; font-size: 16px; text-decoration: none; background: #f8fafc; padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1;">
-                  📞 ${lead.phone}
-                </a>
-              </td>
-            </tr>
-            <tr style="border-bottom: 1px solid #f1f5f9;">
-              <td style="padding: 10px 8px; font-weight: bold; color: #64748b;">עיר / סניף מועדף:</td>
-              <td style="padding: 10px 8px; color: #334155;">${lead.city}</td>
-            </tr>
-            <tr style="border-bottom: 1px solid #f1f5f9;">
-              <td style="padding: 10px 8px; font-weight: bold; color: #64748b;">סוג לקוח / תחום:</td>
-              <td style="padding: 10px 8px; color: #334155;">
-                <span style="background: #fef3c7; color: #92400e; padding: 3px 8px; border-radius: 6px; font-weight: bold; font-size: 12px;">
-                  ${lead.type}
-                </span>
-              </td>
-            </tr>
-            <tr style="border-bottom: 1px solid #f1f5f9;">
-              <td style="padding: 10px 8px; font-weight: bold; color: #64748b;">מקור ההרשמה:</td>
-              <td style="padding: 10px 8px; color: #64748b;">${lead.source}</td>
-            </tr>
-            <tr style="border-bottom: 1px solid #f1f5f9;">
-              <td style="padding: 10px 8px; font-weight: bold; color: #64748b;">תאריך ושעת רישום:</td>
-              <td style="padding: 10px 8px; color: #64748b; font-family: monospace;">${lead.formattedDate}</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px 8px; font-weight: bold; color: #64748b;">מיקום בגיליון:</td>
-              <td style="padding: 10px 8px; color: #64748b;">שורה מס׳ ${lead.rowIndex} בטאב "${CONFIG.SHEET_NAME}"</td>
-            </tr>
-          </table>
-
-          <!-- Action Buttons in Email -->
-          <div style="margin-top: 24px; text-align: center;">
-            <a href="tel:${cleanPhone}" style="display: inline-block; background-color: #0f3e7a; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; margin-left: 8px;">
-              חיוג ישיר ללקוח
-            </a>
-            <a href="https://wa.me/972${cleanPhone.replace(/^0/, '')}" style="display: inline-block; background-color: #22c55e; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px;">
-              פתיחת שיחת WhatsApp
-            </a>
-          </div>
-        </div>
-
-        <!-- Footer -->
-        <div style="background-color: #f8fafc; padding: 14px 24px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
-          מערכת ניהול לידים אוטומטית • סבן חומרי בניין (החרש 10 / התלמיד 6 הוד השרון)
-        </div>
-
-      </div>
-    `;
-
-    // גרסת טקסט פשוט כגיבוי
-    const plainBody = 
-      'ליד חדש הצטרף למועדון סבן!\n\n' +
-      'שם מלא: ' + lead.name + '\n' +
-      'טלפון: ' + lead.phone + '\n' +
-      'עיר/סניף: ' + lead.city + '\n' +
-      'סוג לקוח: ' + lead.type + '\n' +
-      'מקור: ' + lead.source + '\n' +
-      'תאריך רישום: ' + lead.formattedDate + '\n' +
-      'שורה בגיליון: ' + lead.rowIndex;
-
-    MailApp.sendEmail({
-      to: CONFIG.NOTIFICATION_EMAIL,
-      subject: subject,
-      body: plainBody,
-      htmlBody: htmlBody
-    });
-
-  } catch (mailErr) {
-    Logger.log('Warning: Email notification failed: ' + mailErr.toString());
+  for (var i = 0; i < widths.length; i++) {
+    sheet.setColumnWidth(i + 1, widths[i]);
   }
 }
 
-// ==========================================
-// 6. שליחת התראה ל-Webhook חיצוני (אופציונלי)
-// ==========================================
-function sendWebhookNotification(data) {
+/** הרצה ידנית אחת מהעורך: יוצרת את הטאב ומאשרת הרשאות */
+function setupSheet() {
+  var sheet = getOrCreateSheet_();
+  Logger.log('הטאב מוכן: ' + sheet.getName());
+}
+
+// ===================== התראות =====================
+
+function sendEmailNotification_(lead) {
+  var to = CONFIG.NOTIFY_EMAIL || Session.getEffectiveUser().getEmail();
+  if (!to) throw new Error('לא הוגדרה כתובת מייל להתראה');
+
+  var telDigits = lead.phone.replace(/[^\d+]/g, '');
+  var subject = 'ליד חדש הצטרף למועדון: ' + lead.name;
+
+  var rows = [
+    ['שם מלא', escapeHtml_(lead.name)],
+    ['טלפון', '<a href="tel:' + escapeHtml_(telDigits) + '">' + escapeHtml_(lead.phone) + '</a>'],
+    ['עיר', escapeHtml_(lead.city) || '-'],
+    ['סוג לקוח', escapeHtml_(lead.type) || '-'],
+    ['מקור', escapeHtml_(lead.source)],
+    ['תאריך רישום', escapeHtml_(lead.createdAtText)]
+  ];
+
+  var tableRows = rows.map(function (r) {
+    return '<tr>' +
+      '<td style="padding:8px 14px;background:#F6F4EF;font-weight:bold;border-bottom:1px solid #D8D5CE;">' + r[0] + '</td>' +
+      '<td style="padding:8px 14px;border-bottom:1px solid #D8D5CE;">' + r[1] + '</td>' +
+      '</tr>';
+  }).join('');
+
+  var htmlBody =
+    '<div dir="rtl" style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#1D2124;max-width:520px;">' +
+    '<div style="background:#1D2124;color:#F5B301;padding:14px 18px;font-size:18px;font-weight:bold;">ליד חדש במועדון הלקוחות</div>' +
+    '<table style="width:100%;border-collapse:collapse;border:1px solid #D8D5CE;">' + tableRows + '</table>' +
+    '<p style="color:#5D625F;font-size:13px;">הליד נוסף לטאב "' + escapeHtml_(CONFIG.SHEET_NAME) + '" בסטטוס "' + escapeHtml_(CONFIG.DEFAULT_STATUS) + '".</p>' +
+    '</div>';
+
+  var plainBody =
+    'ליד חדש הצטרף למועדון\n\n' +
+    'שם מלא: ' + lead.name + '\n' +
+    'טלפון: ' + lead.phone + '\n' +
+    'עיר: ' + (lead.city || '-') + '\n' +
+    'סוג לקוח: ' + (lead.type || '-') + '\n' +
+    'מקור: ' + lead.source + '\n' +
+    'תאריך רישום: ' + lead.createdAtText + '\n';
+
+  MailApp.sendEmail({
+    to: to,
+    subject: subject,
+    body: plainBody,
+    htmlBody: htmlBody,
+    name: 'מועדון לקוחות ח. סבן'
+  });
+}
+
+function sendExternalWebhook_(lead, rowNumber) {
+  if (!CONFIG.EXTERNAL_WEBHOOK_URL) return;
+
+  var payload = {
+    event: 'new_club_lead',
+    name: lead.name,
+    phone: lead.phone,
+    city: lead.city,
+    type: lead.type,
+    source: lead.source,
+    createdAt: lead.createdAtText,
+    sheet: CONFIG.SHEET_NAME,
+    row: rowNumber
+  };
+
+  var res = UrlFetchApp.fetch(CONFIG.EXTERNAL_WEBHOOK_URL, {
+    method: 'post',
+    contentType: 'application/json',
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  });
+  var code = res.getResponseCode();
+  if (code < 200 || code >= 300) {
+    throw new Error('Webhook החזיר סטטוס ' + code);
+  }
+}
+
+
+// ===================== פורטל כרטיס לקוח עסקי (Comax) =====================
+
+function handleComax_(d) {
+  var rec;
   try {
-    const options = {
-      method: 'post',
-      contentType: 'application/json',
-      payload: JSON.stringify(data),
-      muteHttpExceptions: true
+    var bid = String(d.businessId || '').replace(/\D/g, '');
+    var phone = cleanText_(d.phone, 30);
+    var name = cleanText_(d.clientName, 100);
+    if (!name) throw new Error('חסר שם לקוח / שם חברה');
+    if (bid.length < 8 || bid.length > 9) throw new Error('מספר ח.פ / ע.מ / ת.ז לא תקין');
+    if (phone.replace(/\D/g, '').length < 9) throw new Error('מספר טלפון לא תקין');
+    var created = d.createdAt ? new Date(d.createdAt) : new Date();
+    if (isNaN(created.getTime())) created = new Date();
+    rec = {
+      createdAtText: Utilities.formatDate(created, CONFIG.TIMEZONE, CONFIG.DATE_FORMAT),
+      companyType: cleanText_(d.companyType, 40), clientName: name, businessId: bid, phone: phone,
+      email: cleanText_(d.email, 120), city: cleanText_(d.city, 60), address: cleanText_(d.address, 120),
+      activityType: cleanText_(d.activityType, 60), fieldContactName: cleanText_(d.fieldContactName, 80),
+      fieldContactPhone: cleanText_(d.fieldContactPhone, 30), source: cleanText_(d.source, 60) || 'comax-web-portal'
     };
-    UrlFetchApp.fetch(CONFIG.EXTERNAL_WEBHOOK_URL, options);
-  } catch (webhookErr) {
-    Logger.log('Warning: External Webhook dispatch failed: ' + webhookErr.toString());
+  } catch (err) {
+    return jsonResponse_({ ok: false, error: String(err.message || err) });
   }
+
+  var lock = LockService.getScriptLock();
+  try { lock.waitLock(CONFIG.LOCK_WAIT_MS); } catch (err) { return jsonResponse_({ ok: false, error: 'השרת עמוס, נסו שוב בעוד רגע' }); }
+  var rowNumber;
+  try {
+    var sheet = getOrCreateSheet_(COMAX_SHEET_NAME, COMAX_HEADERS, COMAX_WIDTHS);
+    rowNumber = sheet.getLastRow() + 1;
+    var range = sheet.getRange(rowNumber, 1, 1, COMAX_HEADERS.length);
+    range.setNumberFormat('@');
+    range.setValues([[rec.createdAtText, rec.companyType, rec.clientName, rec.businessId, rec.phone, rec.email, rec.city,
+      rec.address, rec.activityType, rec.fieldContactName, rec.fieldContactPhone, rec.source, CONFIG.DEFAULT_STATUS]]);
+    range.setHorizontalAlignment('right');
+    range.setVerticalAlignment('middle');
+    SpreadsheetApp.flush();
+  } catch (err) {
+    console.error('Comax insert failed: ' + err);
+    return jsonResponse_({ ok: false, error: 'שגיאה בשמירת הלקוח: ' + String(err.message || err) });
+  } finally {
+    lock.releaseLock();
+  }
+
+  var warnings = [];
+  try { sendComaxEmail_(rec); } catch (err) { console.error(err); warnings.push('email: ' + String(err.message || err)); }
+  try {
+    sendExternalWebhook_({ name: rec.clientName, phone: rec.phone, city: rec.city, type: rec.companyType, source: rec.source, createdAtText: rec.createdAtText }, rowNumber);
+  } catch (err) { console.error(err); warnings.push('webhook: ' + String(err.message || err)); }
+
+  var out = { ok: true, row: rowNumber };
+  if (warnings.length) out.warnings = warnings;
+  return jsonResponse_(out);
 }
 
-// ==========================================
-// 7. עזר להחזרת תשובת JSON תקנית
-// ==========================================
-function createJsonResponse(data, statusCode) {
-  const jsonString = JSON.stringify(data);
+function sendComaxEmail_(r) {
+  var to = CONFIG.NOTIFY_EMAIL || Session.getEffectiveUser().getEmail();
+  if (!to) throw new Error('לא הוגדרה כתובת מייל להתראה');
+  var rows = [
+    ['סוג ישות', escapeHtml_(r.companyType)], ['שם / חברה', escapeHtml_(r.clientName)],
+    ['ח.פ / ע.מ / ת.ז', escapeHtml_(r.businessId)],
+    ['טלפון', '<a href="tel:' + escapeHtml_(r.phone.replace(/[^\d+]/g, '')) + '">' + escapeHtml_(r.phone) + '</a>'],
+    ['אימייל', '<a href="mailto:' + escapeHtml_(r.email) + '">' + escapeHtml_(r.email) + '</a>'],
+    ['כתובת', escapeHtml_(r.address + ', ' + r.city)], ['סיווג פעילות', escapeHtml_(r.activityType)],
+    ['איש קשר בשטח', escapeHtml_((r.fieldContactName + ' ' + r.fieldContactPhone).trim()) || '-'],
+    ['תאריך רישום', escapeHtml_(r.createdAtText)]
+  ];
+  var tr = rows.map(function (x) {
+    return '<tr><td style="padding:8px 14px;background:#F6F4EF;font-weight:bold;border-bottom:1px solid #D8D5CE;">' + x[0] +
+      '</td><td style="padding:8px 14px;border-bottom:1px solid #D8D5CE;">' + x[1] + '</td></tr>';
+  }).join('');
+  MailApp.sendEmail({
+    to: to,
+    subject: 'בקשה חדשה לפתיחת כרטיס לקוח: ' + r.clientName,
+    body: rows.map(function (x) { return x[0] + ': ' + x[1].replace(/<[^>]+>/g, ''); }).join('\n'),
+    htmlBody: '<div dir="rtl" style="font-family:Arial,sans-serif;font-size:15px;color:#1D2124;max-width:540px;">' +
+      '<div style="background:#1D2124;color:#F5B301;padding:14px 18px;font-size:18px;font-weight:bold;">פתיחת כרטיס לקוח עסקי (Comax)</div>' +
+      '<table style="width:100%;border-collapse:collapse;border:1px solid #D8D5CE;">' + tr + '</table></div>',
+    name: 'פורטל לקוחות ח. סבן'
+  });
+}
+
+// ===================== עזרים =====================
+
+function jsonResponse_(obj) {
   return ContentService
-    .createTextOutput(jsonString)
+    .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// ==========================================
-// 8. פונקציית בדיקה ידנית (Test Function)
-// ==========================================
+function escapeHtml_(value) {
+  return String(value === undefined || value === null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// ===================== בדיקה ידנית =====================
+
 /**
- * הרץ פונקציה זו ישירות מעורך הסקריפט (Run -> testLeadInsertion)
- * כדי לבדוק יצירת טאב, הזרקת ליד, עיצוב שורות ושליחת מייל.
+ * הרצה מהעורך (Run > testLeadInsertion). מוסיפה ליד בדיקה לגיליון,
+ * שולחת מייל התראה ומדפיסה את התשובה ל-Logs.
  */
 function testLeadInsertion() {
-  Logger.log('--- מתחיל בדיקת הזרקת ליד לדוגמה ---');
-
-  const mockEvent = {
+  var fakeEvent = {
     postData: {
       contents: JSON.stringify({
-        name: 'ישראל ישראלי (בדיקת מערכת)',
-        phone: '050-8860896',
-        city: 'הוד השרון',
-        type: 'קבלן שלד ואיטום',
-        source: 'בדיקת מערכת יזומה - Apps Script Test',
+        name: 'ישראל ישראלי (בדיקה)',
+        phone: '050-1234567',
+        city: 'תל אביב',
+        type: 'קבלן',
+        source: 'test-from-editor',
         createdAt: new Date().toISOString()
       })
     }
   };
+  var output = doPost(fakeEvent);
+  Logger.log(output.getContent());
+}
 
-  const response = doPost(mockEvent);
-  const resultText = response.getContent();
-  Logger.log('תשובת המערכת: ' + resultText);
-
-  const resultObj = JSON.parse(resultText);
-  if (resultObj.ok) {
-    Logger.log('✅ הבדיקה עברה בהצלחה! השורה נוספה לגיליון ונשלח מייל התראה.');
-  } else {
-    Logger.log('❌ הבדיקה נכשלה: ' + resultObj.error);
-  }
+/** בדיקה ידנית לפורטל Comax: מוסיפה שורת בדיקה לטאב "כרטיסי לקוח Comax" */
+function testComaxInsertion() {
+  var out = doPost({ postData: { contents: JSON.stringify({
+    companyType: 'חברה בע״מ', clientName: 'בדיקה בע״מ', businessId: '514000000', phone: '0501234567',
+    email: 'test@example.com', city: 'הוד השרון', address: 'החרש 10', activityType: 'שלד ובטון',
+    fieldContactName: 'דני', fieldContactPhone: '0521234567', source: 'comax-web-portal', createdAt: new Date().toISOString()
+  }) } });
+  Logger.log(out.getContent());
 }

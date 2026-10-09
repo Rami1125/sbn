@@ -15,7 +15,8 @@ import {
   Building2,
   User,
   Truck,
-  Award
+  Award,
+  CreditCard
 } from 'lucide-react';
 import { SabanLogo } from './SabanLogo';
 import { useCart } from '../../context/CartContext';
@@ -24,8 +25,8 @@ import { HeaderSearchBar } from './HeaderSearchBar';
 import { PwaInstallButton } from '../common/PwaInstallButton';
 
 interface SabanHeaderProps {
-  currentView: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter' | 'club';
-  onChangeView: (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter' | 'club') => void;
+  currentView: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter' | 'club' | 'business';
+  onChangeView: (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter' | 'club' | 'business') => void;
   searchQuery?: string;
   onSearchChange?: (q: string) => void;
   onSelectProduct?: (sku: string) => void;
@@ -94,6 +95,19 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
             >
               <Award className="w-3.5 h-3.5 text-amber-300" />
               <span>מועדון סבן VIP</span>
+            </button>
+
+            <button
+              onClick={() => onChangeView('business')}
+              className={`flex items-center gap-1 font-bold transition-colors cursor-pointer px-2 py-0.5 rounded-lg ${
+                currentView === 'business'
+                  ? 'bg-amber-400 text-slate-950 font-black'
+                  : 'text-amber-300 hover:text-white hover:bg-white/10'
+              }`}
+              title="פתיחת כרטיס לקוח עסקי (Comax B2B)"
+            >
+              <CreditCard className="w-3.5 h-3.5 text-amber-300" />
+              <span>כרטיס לקוח עסקי</span>
             </button>
 
             <button
@@ -197,14 +211,26 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
 
             <button
               onClick={() => onChangeView('club')}
-              className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
                 currentView === 'club'
                   ? 'bg-amber-400 text-slate-950 font-black shadow-sm'
                   : 'text-amber-700 hover:text-amber-900 bg-amber-50/70 border border-amber-200/50'
               }`}
             >
               <Award className="w-3.5 h-3.5 text-amber-500" />
-              <span>מועדון לקוחות</span>
+              <span>מועדון סבן VIP</span>
+            </button>
+
+            <button
+              onClick={() => onChangeView('business')}
+              className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
+                currentView === 'business'
+                  ? 'bg-[#1D2124] text-amber-400 font-black shadow-sm border border-amber-400/60'
+                  : 'text-slate-700 hover:text-slate-950 bg-slate-100/90 border border-slate-200'
+              }`}
+            >
+              <CreditCard className="w-3.5 h-3.5 text-amber-500" />
+              <span>כרטיס עסקי Comax</span>
             </button>
           </nav>
 
