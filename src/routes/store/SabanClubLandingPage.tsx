@@ -91,14 +91,17 @@ export const SabanClubLandingPage: React.FC<{
       // ignore localStorage quota errors
     }
 
-    // Optional Google Apps Script Web App sync
-    const appsScriptUrl = import.meta.env.VITE_GOOGLE_APPS_SCRIPT_LEADS_URL;
+    // Google Apps Script Web App sync (Active Live Google Sheet)
+    const appsScriptUrl =
+      import.meta.env.VITE_GOOGLE_APPS_SCRIPT_LEADS_URL ||
+      'https://script.google.com/macros/s/AKfycbwDtPX29zb2CCuCS_79FjzndoHSuBqmvE4QDjUy7cBCDC6ljquhZzcMnC-p4bPVlrcZ/exec';
+
     if (appsScriptUrl) {
       try {
         fetch(appsScriptUrl, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             name: formData.fullName.trim(),
             phone: formData.phone.trim(),
@@ -624,7 +627,7 @@ export const SabanClubLandingPage: React.FC<{
                   </span>
                 </div>
                 <div className="text-xs text-slate-300">
-                  משאית מרצדס מנוף כבד (זרוע 28 מטר) לפריקות מנוף לגגות וקומות גבוהות, בלות ומשטחי מלט.
+                  משאית מרצדס מנוף כבד (מנוף 10 מטר) לפריקות מנוף לגגות וקומות גבוהות, בלות ומשטחי מלט.
                 </div>
                 <div className="text-xs font-mono text-amber-200 pt-1">
                   טלפון לתיאום: 09-7602010
