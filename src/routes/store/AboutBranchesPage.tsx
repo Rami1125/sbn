@@ -18,6 +18,38 @@ import {
 import { SABAN_WHATSAPP_PHONE } from '../../lib/whatsappDeepLink';
 import { WhatsAppIcon } from '../../components/common/WhatsAppOrderButton';
 
+export const GoogleMapsPinIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
+  <svg
+    viewBox="0 0 92 130"
+    className={`${className} shrink-0`}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M46 0C20.596 0 0 20.596 0 46c0 10.667 3.667 20.485 9.808 28.326L46 130l36.192-55.674C88.333 66.485 92 56.667 92 46 92 20.596 71.404 0 46 0Z"
+      fill="#FFFFFF"
+    />
+    <path
+      d="M46 0C20.596 0 0 20.596 0 46c0 10.22 3.328 19.67 8.986 27.327L46 46V0Z"
+      fill="#EA4335"
+    />
+    <path
+      d="M46 0v46l37.014 27.327C88.672 65.67 92 56.22 92 46 92 20.596 71.404 0 46 0Z"
+      fill="#FBBC04"
+    />
+    <path
+      d="M46 46v84l37.014-56.673L46 46Z"
+      fill="#34A853"
+    />
+    <path
+      d="M46 46 8.986 73.327 46 130V46Z"
+      fill="#4285F4"
+    />
+    <circle cx="46" cy="46" r="18" fill="#1A73E8" />
+    <circle cx="46" cy="46" r="11" fill="#FFFFFF" />
+  </svg>
+);
+
 interface BranchInfo {
   id: string;
   name: string;
@@ -246,34 +278,78 @@ export const AboutBranchesPage: React.FC<{ onNavigateHome: () => void }> = ({ on
                 {/* Actions: Direct Waze & Google Maps Navigation */}
                 <div className="p-6 pt-0 border-t border-slate-100 mt-2 space-y-2">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <a
-                      href={branch.wazeUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white py-3 px-4 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition-colors shadow-sm cursor-pointer"
-                    >
-                      <Navigation className="w-4 h-4 text-amber-300" />
-                      <span>נווט לסניף ב-Waze</span>
-                    </a>
+<a
+  href={branch.googleMapsUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex items-center justify-center gap-2.5 bg-white hover:bg-slate-50 text-slate-800 py-2.5 px-4 rounded-xl font-bold text-xs transition-all border border-slate-200 hover:border-slate-300 shadow-xs hover:shadow-sm cursor-pointer group select-none"
+  title="פתח מיקום מדויק ב-Google Maps"
+>
+  {/* אייקון Google Maps Pin מקורי מרובה-צבעים */}
+  <svg
+    viewBox="0 0 92 132"
+    className="w-4 h-5 group-hover:scale-110 transition-transform duration-200 shrink-0"
+    aria-hidden="true"
+  >
+    <path
+      d="M46 0C20.6 0 0 20.6 0 46c0 10.6 3.6 20.4 9.7 28.2L46 132l36.3-57.8C88.4 66.4 92 56.6 92 46 92 20.6 71.4 0 46 0z"
+      fill="#EA4335"
+    />
+    <path
+      d="M46 0C20.6 0 0 20.6 0 46c0 10.6 3.6 20.4 9.7 28.2l36.3 57.8 1-1.6L12.5 73.1C6.9 65.5 3.5 56.1 3.5 46 3.5 22.5 22.5 3.5 46 3.5V0z"
+      fill="#D93025"
+    />
+    <path
+      d="M46 132l36.3-57.8C88.4 66.4 92 56.6 92 46c0-9.2-2.7-17.7-7.4-24.9L46 132z"
+      fill="#4285F4"
+    />
+    <path
+      d="M84.6 21.1C76 8.3 62 0 46 0v132l38.6-110.9z"
+      fill="#1A73E8"
+    />
+    <path
+      d="M46 92.5l22-35.1C73.4 48.6 76 39.5 76 29.8 76 13.3 62.7 0 46 0v92.5z"
+      fill="#34A853"
+    />
+    <circle cx="46" cy="46" r="17.5" fill="#FFFFFF" />
+    <path
+      d="M46 32a14 14 0 1014 14 14 14 0 00-14-14zm0 21a7 7 0 117-7 7 7 0 01-7 7z"
+      fill="#FBBC04"
+    />
+  </svg>
 
-                    <a
-                      href={branch.googleMapsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-slate-100 hover:bg-slate-200 text-slate-800 py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-colors border border-slate-300 cursor-pointer"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                      <span>Google Maps</span>
-                    </a>
+  {/* טקסט: גוגל - מפות בצבעי המותג הרשמיים */}
+  <span className="font-black flex items-center gap-1.5 tracking-tight text-xs">
+    {/* גוגל */}
+    <span className="flex items-center gap-[1px]">
+      <span className="text-[#4285F4]">ג</span>
+      <span className="text-[#EA4335]">ו</span>
+      <span className="text-[#FBBC05]">ג</span>
+      <span className="text-[#34A853]">ל</span>
+    </span>
+
+    {/* מקף מפריד */}
+    <span className="text-slate-400 font-normal px-0.5">-</span>
+
+    {/* מפות */}
+    <span className="flex items-center gap-[1px]">
+      <span className="text-[#4285F4]">מ</span>
+      <span className="text-[#EA4335]">פ</span>
+      <span className="text-[#FBBC05]">ו</span>
+      <span className="text-[#34A853]">ת</span>
+    </span>
+  </span>
+</a>
                   </div>
 
                   <a
+                    style={{ width: '340px' }}
                     href={`https://wa.me/${SABAN_WHATSAPP_PHONE}?text=${encodeURIComponent(
                       `שלום לנציג סבן ${branch.name}, ברצוני לתאם הגעה / איסוף עצמי מהסניף.`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white py-2.5 px-4 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                    className="bg-[#25D366] hover:bg-[#20ba5a] text-white py-2.5 px-4 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer mx-auto"
                   >
                     <WhatsAppIcon className="w-4 h-4 fill-current" />
                     <span>שיחה ישירה בוואטסאפ עם דלפק הסניף</span>

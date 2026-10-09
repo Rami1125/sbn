@@ -34,8 +34,25 @@
   </head>
   <body class="bg-[#F8F9FA] text-[#1E293B] antialiased font-['Heebo','Assistant',sans-serif]">
     <div id="root"></div>
+
+    <!-- Fallback / Static Footer Link -->
+    <noscript>
+      <footer style="background-color: #0A2E5C; color: #BFDBFE; padding: 1.5rem; text-align: center; font-size: 0.85rem;">
+        <p>© 2026 ח. סבן חומרי בניין (1994) בע״מ</p>
+        <p style="margin-top: 0.5rem;">
+          <a href="/returns" style="color: #F5B301; font-weight: bold; text-decoration: underline;">מדיניות החזרות וביטולים</a>
+        </p>
+      </footer>
+    </noscript>
+
     <script type="module" src="/src/main.tsx"></script>
     <script>
+      // ==========================================
+      // הגדרת מספר וואטסאפ רשמי של ח. סבן חומרי בניין
+      // תזכורת: יש להחליף במספר הוואטסאפ האמיתי במידת הצורך
+      // ==========================================
+      const WA_NUMBER = "97297602010";
+
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js').catch((err) => {

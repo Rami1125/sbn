@@ -1,10 +1,14 @@
 {
-  "cleanUrls": false,
+  "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
     {
       "source": "/google4fccee9f84731cf5.html",
       "destination": "/google4fccee9f84731cf5.html"
+    },
+    {
+      "source": "/returns",
+      "destination": "/returns.html"
     },
     {
       "source": "/returns.html",
@@ -13,6 +17,10 @@
     {
       "source": "/manifest.json",
       "destination": "/manifest.json"
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "destination": "/manifest.webmanifest"
     },
     {
       "source": "/(.*)",
@@ -30,6 +38,15 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/returns",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/html; charset=utf-8"
         }
       ]
     }

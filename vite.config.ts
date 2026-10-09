@@ -14,7 +14,7 @@ const staticHtmlServePlugin = () => ({
         res.end('google-site-verification: google4fccee9f84731cf5.html\n');
         return;
       }
-      if (urlPath === '/returns.html') {
+      if (urlPath === '/returns' || urlPath === '/returns.html') {
         const filePath = path.resolve(__dirname, 'public/returns.html');
         if (fs.existsSync(filePath)) {
           const content = fs.readFileSync(filePath, 'utf-8');

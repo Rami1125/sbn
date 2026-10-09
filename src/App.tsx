@@ -379,13 +379,13 @@ export default function App() {
                     </button>
                   </li>
                   <li>
-                    <button
-                      onClick={() => handleChangeView('returns')}
+                    <a
+                      href="/returns"
                       className="hover:text-amber-300 transition-colors flex items-center gap-1.5 font-bold text-amber-200"
                     >
                       <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
-                      <span>מדיניות החזרות (14 יום)</span>
-                    </button>
+                      <span>מדיניות החזרות וביטולים</span>
+                    </a>
                   </li>
                   <li>
                     <button
