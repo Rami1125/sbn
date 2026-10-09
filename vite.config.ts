@@ -23,6 +23,11 @@ const staticHtmlServePlugin = () => ({
           return;
         }
       }
+      if (urlPath === '/api/lead') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true }));
+        return;
+      }
       if (urlPath === '/business' || urlPath === '/business.html' || urlPath === '/comax') {
         const filePath = path.resolve(__dirname, 'public/business.html');
         if (fs.existsSync(filePath)) {

@@ -53,13 +53,13 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               <span className="font-semibold text-white">החרש 10 הוד השרון:</span>
-              <span className="text-blue-200 hidden sm:inline">פתוח עד 17:00 (חומרי שלד, מלט, איטום)</span>
+              <span className="text-blue-200 hidden sm:inline">פתוח עד 16:00 (חומרי שלד, מלט, איטום)</span>
             </div>
 
             <div className="hidden md:flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
               <span className="font-semibold text-white">התלמיד 6 הוד השרון:</span>
-              <span className="text-blue-200">פתוח עד 17:00 (גבס, צבע ופרזול)</span>
+              <span className="text-blue-200">פתוח עד 18:00 (גבס, צבע ופרזול)</span>
             </div>
           </div>
 
