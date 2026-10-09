@@ -60,7 +60,7 @@ export const SabanLogo: React.FC<{ className?: string; size?: 'sm' | 'md' | 'lg'
             isSm ? 'text-lg' : isLg ? 'text-2xl' : 'text-xl'
           }`}
         >
-          ח.סבן
+        ח.סבן חומרי בנין
         </span>
         <span
           className={`font-extrabold tracking-wide ${subTextColor} ${

@@ -354,7 +354,7 @@ export default function App() {
                       className="hover:text-amber-300 transition-colors flex items-center gap-1 text-amber-300 font-bold"
                     >
                       <Award className="w-3.5 h-3.5 text-amber-400" />
-                      <span>הצטרפות למועדון סבן VIP</span>
+                      <span>הצטרפות למועדון סבן.ח </span>
                     </button>
                   </li>
                   <li>

@@ -515,7 +515,7 @@ export const SabanStoreCartDrawer: React.FC = () => {
                   onChange={(e) => setPickupTime(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#0F3E7A]"
                 >
-                  <option value="תוך 60 דקות (VIP אקספרס)">תוך 60 דקות (VIP אקספרס ברציף)</option>
+                  <option value="תוך 60 דקות ( אקספרס)">תוך 60 דקות ( אקספרס ברציף)</option>
                   <option value="היום ב-12:00">היום ב-12:00</option>
                   <option value="היום ב-15:00">היום ב-15:00</option>
                   <option value="היום לפני סגירה (עד 17:00)">היום לפני סגירה (עד 17:00)</option>

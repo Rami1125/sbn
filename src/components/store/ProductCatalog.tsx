@@ -128,7 +128,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                   className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm px-5 py-2.5 rounded-xl shadow-lg transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer"
                 >
                   <Star className="w-4 h-4 fill-slate-950" />
-                  <span>הצטרפות למועדון הלקוחות והקבלנים VIP</span>
+                  <span>הצטרפות למועדון הלקוחות והקבלנים </span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               )}

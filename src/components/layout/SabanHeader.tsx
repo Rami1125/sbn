@@ -94,7 +94,7 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
               }`}
             >
               <Award className="w-3.5 h-3.5 text-amber-300" />
-              <span>מועדון סבן VIP</span>
+              <span>ח.סבן חומרי בנין </span>
             </button>
 
             <button
@@ -117,7 +117,7 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
                   ? 'bg-amber-400 text-slate-950 font-black'
                   : 'text-blue-200 hover:text-white hover:bg-white/10'
               }`}
-              title="כניסת צוות ומנהלי עבודה לדלפק סבן CRM (דרוש קוד PIN)"
+              title="כניסת צוות "
             >
               <Building2 className="w-3.5 h-3.5 text-amber-300" />
               <span>דלפק CRM</span>
@@ -218,7 +218,7 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
               }`}
             >
               <Award className="w-3.5 h-3.5 text-amber-500" />
-              <span>מועדון סבן VIP</span>
+              <span>ח.סבן חומרי בנין</span>
             </button>
 
             <button
