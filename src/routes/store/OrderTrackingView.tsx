@@ -899,10 +899,31 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({
                       <strong className="text-slate-900 block">{order.deliveryDetails.truckType}</strong>
                     </div>
 
-                    <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-1">
-                      <span className="text-slate-500 block">נהג המשאית:</span>
-                      <strong className="text-slate-900 block text-xs">{order.deliveryDetails.driverName}</strong>
-                      <span className="text-slate-500 font-mono">{order.deliveryDetails.driverPhone}</span>
+                    <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 flex items-center gap-3">
+                      {/* Driver Avatar Frame with design shadow */}
+                      <div className="relative shrink-0 w-12 h-12 rounded-xl p-0.5 bg-gradient-to-tr from-amber-400 via-amber-200 to-[#0F3E7A] shadow-[0_4px_14px_rgba(15,62,122,0.35)] ring-2 ring-white">
+                        <div className="w-full h-full rounded-[10px] overflow-hidden bg-slate-900">
+                          <img
+                            src={
+                              order.deliveryDetails?.driverName?.includes('עלי')
+                                ? 'https://i.postimg.cc/tCNbgXK3/Screenshot-20250623-200744-Tik-Tok.jpg'
+                                : '/drivers/hakmat.svg'
+                            }
+                            alt={order.deliveryDetails?.driverName || 'נהג'}
+                            className="w-full h-full object-cover object-top"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = order.deliveryDetails?.driverName?.includes('עלי')
+                                ? '/drivers/ali.jpg'
+                                : '/drivers/hakmat.jpg';
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-0.5 min-w-0">
+                        <span className="text-slate-500 block text-[10px]">נהג המשאית:</span>
+                        <strong className="text-slate-900 block text-xs truncate">{order.deliveryDetails.driverName}</strong>
+                        <span className="text-slate-600 font-mono text-[11px] block">{order.deliveryDetails.driverPhone}</span>
+                      </div>
                     </div>
                   </div>
                 </div>

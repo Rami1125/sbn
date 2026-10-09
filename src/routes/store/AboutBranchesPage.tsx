@@ -286,61 +286,232 @@ export const AboutBranchesPage: React.FC<{ onNavigateHome: () => void }> = ({ on
         </div>
 
         {/* Crane Truck Fleet Logistics Banner */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-black">
-              <Truck className="w-6 h-6" />
+        <div className="bg-gradient-to-b from-white to-slate-50/80 rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-[0_16px_40px_-15px_rgba(15,62,122,0.12)] space-y-6 relative overflow-hidden">
+          {/* Top Decorative Brand Gradient Stripe */}
+          <div className="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-amber-400 via-[#0F3E7A] to-amber-500" />
+
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+            <div className="flex items-center gap-3.5">
+              <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-500 text-slate-950 flex items-center justify-center font-black shadow-md shadow-amber-400/30 shrink-0">
+                <Truck className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg sm:text-xl font-black text-slate-900">
+                    צי הרכב וההובלות הרשמי של סבן (ח.פ 512001678)
+                  </h3>
+                  <span className="hidden sm:inline-flex items-center gap-1 bg-blue-50 text-[#0F3E7A] text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-blue-200/60">
+                    <ShieldCheck className="w-3 h-3 text-[#0F3E7A]" />
+                    <span>צי רשמי מבוטח</span>
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  שיבוץ לוגיסטי מדויק לפי נהגי ורכבי החברה לאתרי הבנייה בהוד השרון, השרון והמרכז
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-lg sm:text-xl font-black text-slate-900">
-                צי הרכב וההובלות הרשמי של סבן (ח.פ 512001678)
-              </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
-                שיבוץ לוגיסטי מדויק לפי נהגי ורכבי החברה לאתרי הבנייה בהוד השרון והמרכז
-              </p>
+
+            <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200/80 text-emerald-800 px-3 py-1.5 rounded-full text-xs font-bold self-start sm:self-auto shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>מערך שינוע פעיל בזמן אמת • פריקות מנוף וחלוקה</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-700 pt-2">
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-extrabold text-sm text-[#0F3E7A]">נהג: חכמת (Hikmat)</span>
-                <span className="font-mono text-xs bg-slate-900 text-amber-300 font-black px-2 py-0.5 rounded-lg">
-                  615-41-002
-                </span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 text-xs text-slate-700 pt-1">
+            
+            {/* Driver Card 1: Hakmat (Hikmat) */}
+            <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 hover:border-[#0F3E7A]/40 transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(15,23,42,0.08)] hover:shadow-[0_20px_40px_-10px_rgba(15,62,122,0.18)] flex flex-col sm:flex-row items-center sm:items-start gap-5 relative group">
+              
+              {/* Stylized Driver Portrait Frame with Prominent Design Shadow */}
+              <div className="relative shrink-0">
+                {/* Ambient Glow / Outer Design Shadow */}
+                <div className="absolute -inset-1.5 bg-gradient-to-tr from-amber-400 via-amber-200 to-[#0F3E7A] rounded-[28px] opacity-75 blur-md group-hover:opacity-100 group-hover:blur-lg transition duration-500 group-hover:scale-105" />
+
+                {/* Framed Container */}
+                <div
+                  style={{ width: '150px' }}
+                  className="relative rounded-[24px] p-1.5 bg-gradient-to-b from-amber-300 via-white to-slate-200 shadow-[0_16px_36px_-6px_rgba(15,62,122,0.45),0_6px_14px_-2px_rgba(0,0,0,0.15)] ring-4 ring-white"
+                >
+                  <div className="w-full h-full rounded-[18px] overflow-hidden bg-slate-900 border-2 border-white/80 relative shadow-inner">
+                    <img
+                      style={{ width: '150px' }}
+                      src="/drivers/hakmat.svg"
+                      alt="נהג חכמת - משאית מנוף"
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/drivers/hakmat.jpg';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* Online Status / Duty Pulse Badge */}
+                <div className="absolute -bottom-1 -left-1 sm:-left-1 bg-emerald-500 text-white p-1 sm:p-1.5 rounded-full ring-4 ring-white shadow-lg flex items-center justify-center" title="במשמרת פעילה">
+                  <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
+                </div>
               </div>
-              <div className="font-bold text-slate-800">
-                משאית מרצדס מנוף כבד (זרוע 28 מטר)
-              </div>
-              <p className="text-slate-600 text-[11px] leading-relaxed">
-                משובץ להנפת בלות לגובה, משטחי מלט ובלוקים, פריקות מנוף לקומות גבוהות וגגות, חומרי שלד כבדים.
-              </p>
-              <div className="pt-1">
-                <a href="tel:050-8860892" className="text-[#0F3E7A] font-mono font-bold hover:underline">
-                  טלפון ישיר: 050-8860892
-                </a>
+
+              {/* Driver Details & Logistics */}
+              <div className="flex-1 space-y-2.5 text-center sm:text-right w-full">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                  <div className="flex items-center justify-center sm:justify-start gap-1.5">
+                    <span className="font-extrabold text-base text-[#0F3E7A]">נהג: חכמת (Hikmat)</span>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  </div>
+                  <div className="flex items-center justify-center sm:justify-end gap-1.5">
+                    <span className="text-[10px] text-slate-500 font-bold">לוחית רישוי:</span>
+                    <span className="font-mono text-xs bg-amber-300 text-slate-950 font-black px-2.5 py-0.5 rounded-md border-2 border-slate-900 shadow-sm tracking-wider">
+                      615-41-002
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="font-black text-sm text-slate-900 flex items-center justify-center sm:justify-start gap-1.5">
+                    <span>משאית מרצדס מנוף כבד</span>
+                    <span className="text-xs text-amber-600 font-bold">(זרוע 28 מטר)</span>
+                  </div>
+                  
+                  {/* Capabilities Tags */}
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 pt-1">
+                    <span className="bg-amber-100/80 text-amber-900 font-bold text-[10px] px-2 py-0.5 rounded-md">
+                      זרוע 28 מ׳
+                    </span>
+                    <span className="bg-blue-100/80 text-blue-900 font-bold text-[10px] px-2 py-0.5 rounded-md">
+                      פריקה לקומה 7
+                    </span>
+                    <span className="bg-slate-100 text-slate-700 font-bold text-[10px] px-2 py-0.5 rounded-md">
+                      עומס 26 טון
+                    </span>
+                  </div>
+                </div>
+
+                <p className="text-slate-600 text-[11px] leading-relaxed">
+                  משובץ להנפת בלות לגובה, משטחי מלט ובלוקים, פריקות מנוף מדויקות לקומות גבוהות וגגות, חומרי שלד כבדים.
+                </p>
+
+                {/* Direct Contact Actions */}
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1 border-t border-slate-100">
+                  <a
+                    href="tel:050-8860892"
+                    className="inline-flex items-center gap-1.5 bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white px-3.5 py-2 rounded-xl font-bold text-xs shadow-sm hover:shadow transition-all"
+                  >
+                    <PhoneCall className="w-3.5 h-3.5 text-amber-300" />
+                    <span className="font-mono font-bold">050-8860892</span>
+                  </a>
+
+                  <a
+                    href="https://wa.me/972508860892?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%97%D7%9B%D7%9E%D7%AA%20(%D7%A0%D7%94%D7%92%20%D7%A1%D7%91%D7%9F)%2C%20%D7%9E%D7%91%D7%A7%D7%A9%20%D7%AA%D7%99%D7%90%D7%95%D7%9D%20%D7%A4%D7%A8%D7%99%D7%A7%D7%AA%20%D7%9E%D7%A0%D7%95%D7%A3%20%D7%9C%D7%90%D7%AA%D7%A8"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-2 rounded-xl font-bold text-xs transition-colors"
+                  >
+                    <WhatsAppIcon className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>וואטסאפ לנהג</span>
+                  </a>
+                </div>
               </div>
             </div>
 
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-extrabold text-sm text-[#0F3E7A]">נהג: עלי (Ali)</span>
-                <span className="font-mono text-xs bg-slate-900 text-amber-300 font-black px-2 py-0.5 rounded-lg">
-                  651-51-701
-                </span>
+            {/* Driver Card 2: Ali */}
+            <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 hover:border-[#0F3E7A]/40 transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(15,23,42,0.08)] hover:shadow-[0_20px_40px_-10px_rgba(15,62,122,0.18)] flex flex-col sm:flex-row items-center sm:items-start gap-5 relative group">
+              
+              {/* Stylized Driver Portrait Frame with Prominent Design Shadow */}
+              <div className="relative shrink-0">
+                {/* Ambient Glow / Outer Design Shadow */}
+                <div className="absolute -inset-1.5 bg-gradient-to-tr from-amber-400 via-amber-200 to-[#0F3E7A] rounded-[28px] opacity-75 blur-md group-hover:opacity-100 group-hover:blur-lg transition duration-500 group-hover:scale-105" />
+
+                {/* Framed Container */}
+                <div
+                  style={{ width: '150px' }}
+                  className="relative rounded-[24px] p-1.5 bg-gradient-to-b from-amber-300 via-white to-slate-200 shadow-[0_16px_36px_-6px_rgba(15,62,122,0.45),0_6px_14px_-2px_rgba(0,0,0,0.15)] ring-4 ring-white"
+                >
+                  <div
+                    style={{ paddingTop: '-2px', width: '150px' }}
+                    className="w-full h-full rounded-[18px] overflow-hidden bg-slate-900 border-2 border-white/80 relative shadow-inner"
+                  >
+                    <img
+                      style={{ width: '150px', height: '131px' }}
+                      src="https://i.postimg.cc/tCNbgXK3/Screenshot-20250623-200744-Tik-Tok.jpg"
+                      alt="נהג עלי - משאית איסוזו חלוקה"
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/drivers/ali.jpg';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* Online Status / Duty Pulse Badge */}
+                <div className="absolute -bottom-1 -left-1 sm:-left-1 bg-emerald-500 text-white p-1 sm:p-1.5 rounded-full ring-4 ring-white shadow-lg flex items-center justify-center" title="במשמרת פעילה">
+                  <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse" />
+                </div>
               </div>
-              <div className="font-bold text-slate-800">
-                משאית איסוזו חלוקה
-              </div>
-              <p className="text-slate-600 text-[11px] leading-relaxed">
-                משובץ להובלות לוחות גבס, פרופילים, צבעים, ציוד קל, פריקה ידנית והובלות מהירות ללא פריקה ישירות לאתר.
-              </p>
-              <div className="pt-1">
-                <a href="tel:050-8860894" className="text-[#0F3E7A] font-mono font-bold hover:underline">
-                  טלפון ישיר: 050-8860894
-                </a>
+
+              {/* Driver Details & Logistics */}
+              <div className="flex-1 space-y-2.5 text-center sm:text-right w-full">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                  <div className="flex items-center justify-center sm:justify-start gap-1.5">
+                    <span className="font-extrabold text-base text-[#0F3E7A]">נהג: עלי (Ali)</span>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  </div>
+                  <div className="flex items-center justify-center sm:justify-end gap-1.5">
+                    <span className="text-[10px] text-slate-500 font-bold">לוחית רישוי:</span>
+                    <span className="font-mono text-xs bg-amber-300 text-slate-950 font-black px-2.5 py-0.5 rounded-md border-2 border-slate-900 shadow-sm tracking-wider">
+                      651-51-701
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="font-black text-sm text-slate-900 flex items-center justify-center sm:justify-start gap-1.5">
+                    <span>משאית איסוזו חלוקה</span>
+                    <span className="text-xs text-blue-600 font-bold">(חלוקה מהירה)</span>
+                  </div>
+
+                  {/* Capabilities Tags */}
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 pt-1">
+                    <span className="bg-emerald-100/80 text-emerald-900 font-bold text-[10px] px-2 py-0.5 rounded-md">
+                      רמפה הידראולית
+                    </span>
+                    <span className="bg-purple-100/80 text-purple-900 font-bold text-[10px] px-2 py-0.5 rounded-md">
+                      הובלת גבס וצבע
+                    </span>
+                    <span className="bg-slate-100 text-slate-700 font-bold text-[10px] px-2 py-0.5 rounded-md">
+                      אספקה תוך שעתיים
+                    </span>
+                  </div>
+                </div>
+
+                <p className="text-slate-600 text-[11px] leading-relaxed">
+                  משובץ להובלות לוחות גבס, פרופילים, צבעים, ציוד קל, פריקה ידנית והובלות מהירות ללא פריקה ישירות לאתר.
+                </p>
+
+                {/* Direct Contact Actions */}
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1 border-t border-slate-100">
+                  <a
+                    href="tel:050-8860894"
+                    className="inline-flex items-center gap-1.5 bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white px-3.5 py-2 rounded-xl font-bold text-xs shadow-sm hover:shadow transition-all"
+                  >
+                    <PhoneCall className="w-3.5 h-3.5 text-amber-300" />
+                    <span className="font-mono font-bold">050-8860894</span>
+                  </a>
+
+                  <a
+                    href="https://wa.me/972508860894?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%A2%D7%9C%D7%99%20(%D7%A0%D7%94%D7%92%20%D7%A1%D7%91%D7%9F)%2C%20%D7%9E%D7%91%D7%A7%D7%A9%20%D7%AA%D7%99%D7%90%D7%95%D7%9D%20%D7%94%D7%95%D7%91%D7%9C%D7%AA%20%D7%97%D7%9C%D7%95%D7%A7%D7%94%20%D7%9C%D7%90%D7%AA%D7%A8"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-2 rounded-xl font-bold text-xs transition-colors"
+                  >
+                    <WhatsAppIcon className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>וואטסאפ לנהג</span>
+                  </a>
+                </div>
               </div>
             </div>
+
           </div>
         </div>
 

@@ -52,7 +52,7 @@ export interface GoogleMerchantProduct {
   rating?: number;
   reviewsCount?: number;
   inStockBranches?: {
-    branchCode: 'SABAN_HARASH' | 'SABAN_TALMID';
+    branchCode: 'SABAN_HARASH' | 'SABAN_TALMID' | string;
     branchName: string;
     warehouseLocation: string;
     stockQty: number;
@@ -77,7 +77,7 @@ export interface CartItem {
   store_code: string;
 }
 
-export type BranchCode = 'SABAN_HARASH' | 'SABAN_TALMID';
+export type BranchCode = 'SABAN_HARASH' | 'SABAN_TALMID' | string;
 
 export interface PickupBranch {
   code: BranchCode;
