@@ -19,6 +19,18 @@
       "destination": "/business.html"
     },
     {
+      "source": "/club",
+      "destination": "/club.html"
+    },
+    {
+      "source": "/club.html",
+      "destination": "/club.html"
+    },
+    {
+      "source": "/vip",
+      "destination": "/club.html"
+    },
+    {
       "source": "/returns",
       "destination": "/returns.html"
     },

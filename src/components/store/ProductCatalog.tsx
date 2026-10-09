@@ -118,6 +118,21 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                 <span>2 סניפי ענק באזור התעשייה</span>
               </div>
             </div>
+
+            {/* Direct Action Buttons - Club & Business Registration */}
+            <div className="flex flex-wrap items-center gap-3 pt-3">
+              {onNavigateClub && (
+                <button
+                  type="button"
+                  onClick={onNavigateClub}
+                  className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm px-5 py-2.5 rounded-xl shadow-lg transition-all duration-200 hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer"
+                >
+                  <Star className="w-4 h-4 fill-slate-950" />
+                  <span>הצטרפות למועדון הלקוחות והקבלנים VIP</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Quick Pickup Feature Badge */}
