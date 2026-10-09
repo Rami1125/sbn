@@ -25,12 +25,14 @@ interface ProductCatalogProps {
   onSelectProduct: (sku: string) => void;
   searchQuery: string;
   setSearchQuery: (q: string) => void;
+  onNavigateClub?: () => void;
 }
 
 export const ProductCatalog: React.FC<ProductCatalogProps> = ({
   onSelectProduct,
   searchQuery,
-  setSearchQuery
+  setSearchQuery,
+  onNavigateClub
 }) => {
   const { addToCart } = useCart();
   const { products, syncStatus, lastSyncTime } = useProducts();
@@ -333,7 +335,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
                       onClick={() => onSelectProduct(product.id)}
                       className="w-full text-center text-xs text-slate-600 hover:text-[#0F3E7A] font-semibold py-1 flex items-center justify-center gap-1 transition-colors cursor-pointer"
                     >
-                      <span>צפה בדף מוצר מלא מותאם לגוגל (Schema.org)</span>
+                      <span>צפה בדף מוצר מלא</span>
                       <ArrowRight className="w-3.5 h-3.5 rotate-180" />
                     </button>
                   </div>
@@ -370,12 +372,14 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <a
-              href="tel:03-9518888"
-              className="bg-amber-400 hover:bg-amber-300 text-slate-950 px-6 py-3 rounded-xl font-black text-xs shadow-lg transition-all"
+            <button
+              type="button"
+              onClick={() => onNavigateClub?.()}
+              className="bg-amber-400 hover:bg-amber-300 text-slate-950 px-6 py-3 rounded-xl font-black text-xs shadow-lg hover:shadow-xl transition-all flex items-center gap-1.5 cursor-pointer"
             >
-              הצטרף למועדון סבן PRO
-            </a>
+              <span>הצטרף למועדון סבן</span>
+              <ArrowRight className="w-3.5 h-3.5 rotate-180" />
+            </button>
           </div>
         </div>
       </div>

@@ -44,7 +44,7 @@ export const AboutBranchesPage: React.FC<{ onNavigateHome: () => void }> = ({ on
       categoryTitle: 'ציוד טכני,מרכז לוגיסטי ראשי, חצר בלות, ברזל, מלט ואיטום',
       address: 'רחוב החרש 10, אזור התעשייה נווה נאמן',
       city: 'הוד השרון',
-      phone: '03-9518888',
+      phone: '09-740575',
       hoursSundayThursday: '06:30 – 16:00',
       hoursFriday: '06:30 – 13:00',
       dispatchBay: 'רציף איסוף מהיר מס׳ 3 (משאיות, מלגזות ומסחריות)',
@@ -66,7 +66,7 @@ export const AboutBranchesPage: React.FC<{ onNavigateHome: () => void }> = ({ on
       categoryTitle: 'חנות עם מגוון ענק  חומרי בנין, מרכז גבס, צבע ואניסטלציה ועוד..',
       address: 'רחוב התלמיד 6, אזור התעשייה',
       city: 'הוד השרון',
-      phone: '03-9518889',
+      phone: '09-7602010',
       hoursSundayThursday: '06:00 – 18:00',
       hoursFriday: '06:00 – 14:00',
       dispatchBay: 'דלפק אקספרס ואיסוף קבלנים מהיר',
@@ -103,7 +103,7 @@ export const AboutBranchesPage: React.FC<{ onNavigateHome: () => void }> = ({ on
 
           <div className="flex items-center gap-1.5 text-slate-500 font-medium">
             <span>מוקד טלפוני מרכזי:</span>
-            <strong className="text-[#0F3E7A] font-bold">03-9518888</strong>
+            <strong className="text-[#0F3E7A] font-bold">09-7602010</strong>
           </div>
         </div>
 
@@ -122,7 +122,7 @@ export const AboutBranchesPage: React.FC<{ onNavigateHome: () => void }> = ({ on
             </h1>
 
             <p className="text-sm sm:text-base text-blue-100 leading-relaxed font-normal">
-              במשך למעלה משלושה עשורים מהווה חברת ח. סבן את עמוד השדרה הלוגיסטי של מאות קבלני שלד וגמר, חברות בנייה ויזמים מובילים בשרון ובמרכז הארץ. אנו מחברים בין מותגי הבנייה הבינלאומיים והישראליים הטובים ביותר (Sika, טמבור, נשר, נירלט, אורבונד) לבין עוצמה לוגיסטית חסרת פשרות, רציפי איסוף עצמי מהירים (BOPIS) וצי משאיות מנוף מתקדם.
+              במשך למעלה משלושה עשורים מהווה חברת ח. סבן את עמוד השדרה הלוגיסטי של מאות קבלני שלד וגמר, חברות בנייה ויזמים מובילים בשרון ובמרכז הארץ. אנו מחברים בין מותגי הבנייה הבינלאומיים והישראליים הטובים ביותר (סיקה, טמבור, נשר, נירלט, אורבונד) לבין עוצמה לוגיסטית חסרת פשרות, רציפי איסוף עצמי מהירים  וצי משאיות מנוף מתקדם.
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 text-xs font-bold">
@@ -140,7 +140,7 @@ export const AboutBranchesPage: React.FC<{ onNavigateHome: () => void }> = ({ on
               </div>
               <div className="bg-white/10 backdrop-blur-md rounded-2xl p-3 border border-white/10 text-center">
                 <div className="text-amber-300 text-xl font-black">15 דק׳</div>
-                <div className="text-blue-200 text-[11px] mt-0.5">איסוף מהיר ברציף (BOPIS)</div>
+                <div className="text-blue-200 text-[11px] mt-0.5">איסוף מהיר ברציף</div>
               </div>
             </div>
           </div>
@@ -356,7 +356,7 @@ export const AboutBranchesPage: React.FC<{ onNavigateHome: () => void }> = ({ on
               <div className="flex-1 space-y-2.5 text-center sm:text-right w-full">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                   <div className="flex items-center justify-center sm:justify-start gap-1.5">
-                    <span className="font-extrabold text-base text-[#0F3E7A]">נהג: חכמת (Hikmat)</span>
+                    <span className="font-extrabold text-base text-[#0F3E7A]">נהג: חכמת </span>
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   </div>
                   <div className="flex items-center justify-center sm:justify-end gap-1.5">
@@ -394,15 +394,15 @@ export const AboutBranchesPage: React.FC<{ onNavigateHome: () => void }> = ({ on
                 {/* Direct Contact Actions */}
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1 border-t border-slate-100">
                   <a
-                    href="tel:050-8860892"
+                    href="tel:508860896"
                     className="inline-flex items-center gap-1.5 bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white px-3.5 py-2 rounded-xl font-bold text-xs shadow-sm hover:shadow transition-all"
                   >
                     <PhoneCall className="w-3.5 h-3.5 text-amber-300" />
-                    <span className="font-mono font-bold">050-8860892</span>
+                    <span className="font-mono font-bold">09-7602010</span>
                   </a>
 
                   <a
-                    href="https://wa.me/972508860892?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%97%D7%9B%D7%9E%D7%AA%20(%D7%A0%D7%94%D7%92%20%D7%A1%D7%91%D7%9F)%2C%20%D7%9E%D7%91%D7%A7%D7%A9%20%D7%AA%D7%99%D7%90%D7%95%D7%9D%20%D7%A4%D7%A8%D7%99%D7%A7%D7%AA%20%D7%9E%D7%A0%D7%95%D7%A3%20%D7%9C%D7%90%D7%AA%D7%A8"
+                    href="https://wa.me/972508860896?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%97%D7%9B%D7%9E%D7%AA%20(%D7%A0%D7%94%D7%92%20%D7%A1%D7%91%D7%9F)%2C%20%D7%9E%D7%91%D7%A7%D7%A9%20%D7%AA%D7%99%D7%90%D7%95%D7%9D%20%D7%A4%D7%A8%D7%99%D7%A7%D7%AA%20%D7%9E%D7%A0%D7%95%D7%A3%20%D7%9C%D7%90%D7%AA%D7%A8"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-2 rounded-xl font-bold text-xs transition-colors"
@@ -454,7 +454,7 @@ export const AboutBranchesPage: React.FC<{ onNavigateHome: () => void }> = ({ on
               <div className="flex-1 space-y-2.5 text-center sm:text-right w-full">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                   <div className="flex items-center justify-center sm:justify-start gap-1.5">
-                    <span className="font-extrabold text-base text-[#0F3E7A]">נהג: עלי (Ali)</span>
+                    <span className="font-extrabold text-base text-[#0F3E7A]">נהג: עלי </span>
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   </div>
                   <div className="flex items-center justify-center sm:justify-end gap-1.5">
@@ -492,15 +492,15 @@ export const AboutBranchesPage: React.FC<{ onNavigateHome: () => void }> = ({ on
                 {/* Direct Contact Actions */}
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1 border-t border-slate-100">
                   <a
-                    href="tel:050-8860894"
+                    href="tel:0508860896"
                     className="inline-flex items-center gap-1.5 bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white px-3.5 py-2 rounded-xl font-bold text-xs shadow-sm hover:shadow transition-all"
                   >
                     <PhoneCall className="w-3.5 h-3.5 text-amber-300" />
-                    <span className="font-mono font-bold">050-8860894</span>
+                    <span className="font-mono font-bold">09-7602010</span>
                   </a>
 
                   <a
-                    href="https://wa.me/972508860894?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%A2%D7%9C%D7%99%20(%D7%A0%D7%94%D7%92%20%D7%A1%D7%91%D7%9F)%2C%20%D7%9E%D7%91%D7%A7%D7%A9%20%D7%AA%D7%99%D7%90%D7%95%D7%9D%20%D7%94%D7%95%D7%91%D7%9C%D7%AA%20%D7%97%D7%9C%D7%95%D7%A7%D7%94%20%D7%9C%D7%90%D7%AA%D7%A8"
+                    href="https://wa.me/972508860896?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%A2%D7%9C%D7%99%20(%D7%A0%D7%94%D7%92%20%D7%A1%D7%91%D7%9F)%2C%20%D7%9E%D7%91%D7%A7%D7%A9%20%D7%AA%D7%99%D7%90%D7%95%D7%9D%20%D7%94%D7%95%D7%91%D7%9C%D7%AA%20%D7%97%D7%9C%D7%95%D7%A7%D7%94%20%D7%9C%D7%90%D7%AA%D7%A8"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-2 rounded-xl font-bold text-xs transition-colors"

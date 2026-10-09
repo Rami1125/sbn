@@ -11,16 +11,17 @@ import { CustomerPortalPage } from './routes/store/CustomerPortalPage';
 import { AboutBranchesPage } from './routes/store/AboutBranchesPage';
 import { OrderTrackingView } from './routes/store/OrderTrackingView';
 import { BranchCounterCrm } from './routes/counter.$branchId';
+import { SabanClubLandingPage } from './routes/store/SabanClubLandingPage';
 import { WhatsAppFloatingButton } from './components/common/WhatsAppFloatingButton';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 import { OfflineIndicator } from './components/common/OfflineIndicator';
 import { SabanLogo } from './components/layout/SabanLogo';
-import { MapPin, Phone, Clock, FileSpreadsheet, ShieldCheck, RotateCcw, User, Building2, Truck } from 'lucide-react';
+import { MapPin, Phone, Clock, FileSpreadsheet, ShieldCheck, RotateCcw, User, Building2, Truck, Award } from 'lucide-react';
 import { SABAN_BRANCHES } from './data/initialProducts';
 import { initOneSignal } from './lib/oneSignal';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter'>('catalog');
+  const [currentView, setCurrentView] = useState<'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter' | 'club'>('catalog');
   const [currentSku, setCurrentSku] = useState<string>('10701');
   const [currentOrderId, setCurrentOrderId] = useState<string>('SAB-889413');
   const [currentCounterBranch, setCurrentCounterBranch] = useState<'harash' | 'talmid'>('harash');
@@ -78,6 +79,12 @@ export default function App() {
         return;
       }
 
+      // Check customer club landing page
+      if (pathname === '/club' || pathname === '/vip' || pathname === '/join' || pathname.startsWith('/club') || viewParam === 'club' || viewParam === 'vip') {
+        setCurrentView('club');
+        return;
+      }
+
       // Check path patterns like /product/10701 or /store/10701 or /store/product/10701
       const pathMatch = pathname.match(/\/(?:product|store)(?:\/product)?\/([a-zA-Z0-9_-]+)/);
       if (pathMatch && pathMatch[1]) {
@@ -115,7 +122,7 @@ export default function App() {
     window.history.pushState({ view: 'track', orderId }, '', `/track/${orderId}`);
   };
 
-  const handleChangeView = (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter') => {
+  const handleChangeView = (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter' | 'club') => {
     setCurrentView(view);
     if (view === 'product') {
       window.history.pushState({ sku: currentSku }, '', `/product/${currentSku}`);
@@ -131,6 +138,8 @@ export default function App() {
       window.history.pushState({ view: 'track', orderId: currentOrderId }, '', `/track/${currentOrderId}`);
     } else if (view === 'counter') {
       window.history.pushState({ view: 'counter', branch: currentCounterBranch }, '', `/counter/${currentCounterBranch}`);
+    } else if (view === 'club') {
+      window.history.pushState({ view: 'club' }, '', '/club');
     } else {
       window.history.pushState({}, '', '/');
     }
@@ -152,6 +161,8 @@ export default function App() {
           ? `/track/${currentOrderId}`
           : currentView === 'counter'
           ? `/counter/${currentCounterBranch}`
+          : currentView === 'club'
+          ? '/club'
           : currentView === 'feed-studio'
           ? '/admin'
           : '/';
@@ -187,6 +198,14 @@ export default function App() {
               onSelectProduct={handleSelectProduct}
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
+              onNavigateClub={() => handleChangeView('club')}
+            />
+          )}
+
+          {currentView === 'club' && (
+            <SabanClubLandingPage
+              onNavigateHome={() => handleChangeView('catalog')}
+              onNavigateCatalog={() => handleChangeView('catalog')}
             />
           )}
 
@@ -281,7 +300,7 @@ export default function App() {
                 </p>
                 <p className="flex items-center gap-1.5 font-mono text-white">
                   <Phone className="w-3.5 h-3.5 text-amber-400" />
-                  <a href="tel:03-9518888" className="hover:underline font-bold">03-9518888</a>
+                  <a href="tel:09-740575" className="hover:underline font-bold">09-740575</a>
                 </p>
               </div>
 
@@ -294,11 +313,11 @@ export default function App() {
                 <p>מחסן 1 - אולם תצוגה, מרכז גבס, צבע ופרזול</p>
                 <p className="flex items-center gap-1.5 text-slate-300">
                   <Clock className="w-3.5 h-3.5" />
-                  <span>א׳-ה׳ 06:30-16:30 | ו׳ 06:30-12:30</span>
+                  <span>א׳-ה׳ 06:00-18:00 | ו׳ 06:00-14:00</span>
                 </p>
                 <p className="flex items-center gap-1.5 font-mono text-white">
                   <Phone className="w-3.5 h-3.5 text-amber-400" />
-                  <a href="tel:03-9518889" className="hover:underline font-bold">03-9518889</a>
+                  <a href="tel:09-7602010" className="hover:underline font-bold">09-7602010</a>
                 </p>
               </div>
 
@@ -312,6 +331,15 @@ export default function App() {
                       className="hover:text-white transition-colors"
                     >
                       קטלוג מוצרים והזמנה
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() => handleChangeView('club')}
+                      className="hover:text-amber-300 transition-colors flex items-center gap-1 text-amber-300 font-bold"
+                    >
+                      <Award className="w-3.5 h-3.5 text-amber-400" />
+                      <span>הצטרפות למועדון סבן VIP</span>
                     </button>
                   </li>
                   <li>

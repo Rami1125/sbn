@@ -340,7 +340,7 @@ export const MerchantFeedStudio: React.FC<MerchantFeedStudioProps> = ({
             </div>
 
             <div className="text-[11px] text-blue-300">
-              כל שינוי בפיד מתעדכן ישירות בדפי המוצר (Schema.org) ובקטלוג החנות
+              כל שינוי בפיד מתעדכן ישירות בדפי המוצר  ובקטלוג החנות
             </div>
           </div>
 

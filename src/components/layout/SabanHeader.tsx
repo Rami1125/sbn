@@ -14,7 +14,8 @@ import {
   X,
   Building2,
   User,
-  Truck
+  Truck,
+  Award
 } from 'lucide-react';
 import { SabanLogo } from './SabanLogo';
 import { useCart } from '../../context/CartContext';
@@ -23,8 +24,8 @@ import { HeaderSearchBar } from './HeaderSearchBar';
 import { PwaInstallButton } from '../common/PwaInstallButton';
 
 interface SabanHeaderProps {
-  currentView: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter';
-  onChangeView: (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter') => void;
+  currentView: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter' | 'club';
+  onChangeView: (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter' | 'club') => void;
   searchQuery?: string;
   onSearchChange?: (q: string) => void;
   onSelectProduct?: (sku: string) => void;
@@ -81,6 +82,18 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
             >
               <RotateCcw className="w-3 h-3 text-amber-400" />
               <span>מדיניות החזרות (14 יום)</span>
+            </button>
+
+            <button
+              onClick={() => onChangeView('club')}
+              className={`flex items-center gap-1 font-bold transition-colors cursor-pointer px-2 py-0.5 rounded-lg ${
+                currentView === 'club'
+                  ? 'bg-amber-400 text-slate-950 font-black'
+                  : 'text-amber-300 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <Award className="w-3.5 h-3.5 text-amber-300" />
+              <span>מועדון סבן VIP</span>
             </button>
 
             <button
@@ -180,6 +193,18 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
             >
               <RotateCcw className="w-3.5 h-3.5 text-emerald-600" />
               <span>החזרות</span>
+            </button>
+
+            <button
+              onClick={() => onChangeView('club')}
+              className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
+                currentView === 'club'
+                  ? 'bg-amber-400 text-slate-950 font-black shadow-sm'
+                  : 'text-amber-700 hover:text-amber-900 bg-amber-50/70 border border-amber-200/50'
+              }`}
+            >
+              <Award className="w-3.5 h-3.5 text-amber-500" />
+              <span>מועדון לקוחות</span>
             </button>
           </nav>
 
