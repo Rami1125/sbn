@@ -17,7 +17,8 @@ import {
   ChevronLeft,
   Building2,
   TrendingDown,
-  BarChart3
+  BarChart3,
+  Calculator
 } from 'lucide-react';
 import { GoogleMerchantProduct } from '../../types/product';
 import { SABAN_BRANCHES } from '../../data/initialProducts';
@@ -28,6 +29,7 @@ import { QuickPickupModal } from '../../components/store/QuickPickupModal';
 import { WhatsAppOrderButton } from '../../components/common/WhatsAppOrderButton';
 import { WhatsAppOrderParams } from '../../lib/whatsappDeepLink';
 import { ProductPriceTrendChart } from '../../components/store/ProductPriceTrendChart';
+import { SealingCalculator } from '../../components/store/SealingCalculator';
 
 interface ProductLandingPageProps {
   sku?: string;
@@ -61,7 +63,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
   const [isQuickPickupOpen, setIsQuickPickupOpen] = useState<boolean>(false);
   const [showFloatingBar, setShowFloatingBar] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<'instructions' | 'specs' | 'stock' | 'trend'>('instructions');
+  const [activeTab, setActiveTab] = useState<'calculator' | 'instructions' | 'specs' | 'stock' | 'trend'>('calculator');
 
   // Update image and options when SKU changes
   useEffect(() => {
@@ -450,8 +452,20 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
                   <span className="text-emerald-300 font-bold">• מחיר תואם 100% לפיד Google Merchant</span>
                 </div>
 
-                {/* Best Buy Trend Anchor Button */}
-                <div className="mt-2.5">
+                {/* Best Buy Trend Anchor Button & Calculator Button */}
+                <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveTab('calculator');
+                      const tabEl = document.querySelector('[role="tablist"], .overflow-x-auto');
+                      tabEl?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="inline-flex items-center gap-1.5 bg-amber-400 text-slate-950 hover:bg-amber-300 text-xs font-black py-1 px-3 rounded-xl transition-all cursor-pointer shadow-sm group"
+                  >
+                    <Calculator className="w-3.5 h-3.5 text-slate-950 group-hover:scale-110 transition-transform" />
+                    <span>מחשבון כמויות לקבלן (מ״ר / מ״א) ⚡</span>
+                  </button>
                   <button
                     type="button"
                     onClick={() => {
@@ -460,7 +474,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
                     className="inline-flex items-center gap-1.5 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/40 text-emerald-200 text-xs font-bold py-1 px-3 rounded-xl transition-all cursor-pointer group"
                   >
                     <TrendingDown className="w-3.5 h-3.5 text-emerald-400 group-hover:scale-110 transition-transform" />
-                    <span>🔥 הזדמנות קנייה מעולה (Best Buy) - צפה בגרף מגמת מחירים ↓</span>
+                    <span>🔥 הזדמנות קנייה (Best Buy) ↓</span>
                   </button>
                 </div>
               </div>
@@ -633,10 +647,21 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
 
             {/* Engineering Specs & Standards Highlights Tabs */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-              <div className="flex border-b border-slate-200 text-xs font-bold">
+              <div className="flex border-b border-slate-200 text-xs font-bold overflow-x-auto">
+                <button
+                  onClick={() => setActiveTab('calculator')}
+                  className={`py-3 px-4 text-center transition-colors cursor-pointer flex items-center justify-center gap-1.5 shrink-0 ${
+                    activeTab === 'calculator'
+                      ? 'text-[#0F3E7A] border-b-2 border-[#0F3E7A] bg-blue-50/50 font-black'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <Calculator className="w-3.5 h-3.5 text-amber-500" />
+                  <span>מחשבון כמויות לקבלן (מ״ר / מ״א)</span>
+                </button>
                 <button
                   onClick={() => setActiveTab('instructions')}
-                  className={`flex-1 py-3 px-4 text-center transition-colors cursor-pointer ${
+                  className={`py-3 px-4 text-center transition-colors cursor-pointer shrink-0 ${
                     activeTab === 'instructions'
                       ? 'text-[#0F3E7A] border-b-2 border-[#0F3E7A] bg-blue-50/50'
                       : 'text-slate-600 hover:text-slate-900'
@@ -646,7 +671,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
                 </button>
                 <button
                   onClick={() => setActiveTab('specs')}
-                  className={`flex-1 py-3 px-4 text-center transition-colors cursor-pointer ${
+                  className={`py-3 px-4 text-center transition-colors cursor-pointer shrink-0 ${
                     activeTab === 'specs'
                       ? 'text-[#0F3E7A] border-b-2 border-[#0F3E7A] bg-blue-50/50'
                       : 'text-slate-600 hover:text-slate-900'
@@ -656,7 +681,7 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
                 </button>
                 <button
                   onClick={() => setActiveTab('stock')}
-                  className={`flex-1 py-3 px-4 text-center transition-colors cursor-pointer ${
+                  className={`py-3 px-4 text-center transition-colors cursor-pointer shrink-0 ${
                     activeTab === 'stock'
                       ? 'text-[#0F3E7A] border-b-2 border-[#0F3E7A] bg-blue-50/50'
                       : 'text-slate-600 hover:text-slate-900'
@@ -666,18 +691,27 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
                 </button>
                 <button
                   onClick={() => setActiveTab('trend')}
-                  className={`flex-1 py-3 px-4 text-center transition-colors cursor-pointer flex items-center justify-center gap-1.5 ${
+                  className={`py-3 px-4 text-center transition-colors cursor-pointer flex items-center justify-center gap-1.5 shrink-0 ${
                     activeTab === 'trend'
                       ? 'text-[#0F3E7A] border-b-2 border-[#0F3E7A] bg-blue-50/50'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
                   <BarChart3 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>מגמת מחירים (Best Buy)</span>
+                  <span>מגמת מחירים</span>
                 </button>
               </div>
 
               <div className="p-5 text-sm">
+                {activeTab === 'calculator' && (
+                  <div className="space-y-4">
+                    <SealingCalculator
+                      product={product}
+                      onApplyQuantity={(newQty) => setQuantity(newQty)}
+                    />
+                  </div>
+                )}
+
                 {activeTab === 'instructions' && (
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
