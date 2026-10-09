@@ -23,6 +23,7 @@ import { useCart } from '../../context/CartContext';
 import { SABAN_BRANCHES } from '../../data/initialProducts';
 import { HeaderSearchBar } from './HeaderSearchBar';
 import { PwaInstallButton } from '../common/PwaInstallButton';
+import { LogIn, Lock } from 'lucide-react';
 
 interface SabanHeaderProps {
   currentView: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter' | 'club' | 'business';
@@ -30,6 +31,8 @@ interface SabanHeaderProps {
   searchQuery?: string;
   onSearchChange?: (q: string) => void;
   onSelectProduct?: (sku: string) => void;
+  isLoggedIn?: boolean;
+  onOpenLoginModal?: () => void;
 }
 
 export const SabanHeader: React.FC<SabanHeaderProps> = ({
@@ -37,7 +40,9 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
   onChangeView,
   searchQuery = '',
   onSearchChange,
-  onSelectProduct
+  onSelectProduct,
+  isLoggedIn = false,
+  onOpenLoginModal
 }) => {
   const { totalItemCount, finalTotal, setIsCartOpen } = useCart();
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
@@ -185,17 +190,32 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
               <span>סניפים ואודות</span>
             </button>
 
-            <button
-              onClick={() => onChangeView('account')}
-              className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
-                currentView === 'account'
-                  ? 'bg-[#0F3E7A] text-white shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <User className="w-3.5 h-3.5 text-blue-500" />
-              <span>אזור אישי וקבלנים</span>
-            </button>
+            {isLoggedIn ? (
+              <button
+                onClick={() => onChangeView('account')}
+                className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
+                  currentView === 'account'
+                    ? 'bg-[#0F3E7A] text-white shadow-sm'
+                    : 'text-[#0F3E7A] font-extrabold bg-blue-50/80 hover:bg-blue-100/80'
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <User className="w-3.5 h-3.5 text-blue-600" />
+                <span>האזור האישי שלי</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  if (onOpenLoginModal) onOpenLoginModal();
+                  else onChangeView('account');
+                }}
+                className="px-3.5 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 text-slate-700 hover:text-slate-950 hover:bg-slate-100 border border-slate-200/80"
+                title="התחברות לאזור האישי של חברי המועדון"
+              >
+                <LogIn className="w-3.5 h-3.5 text-amber-500" />
+                <span>כניסה לאזור אישי</span>
+              </button>
+            )}
 
             <button
               onClick={() => onChangeView('returns')}
@@ -314,15 +334,29 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
             <Building2 className="w-3 h-3 text-amber-500" />
             <span>סניפים</span>
           </button>
-          <button
-            onClick={() => onChangeView('account')}
-            className={`py-1.5 px-2.5 rounded-xl whitespace-nowrap flex items-center gap-1 transition-colors ${
-              currentView === 'account' ? 'bg-[#0F3E7A] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'
-            }`}
-          >
-            <User className="w-3 h-3 text-blue-500" />
-            <span>אזור אישי</span>
-          </button>
+          {isLoggedIn ? (
+            <button
+              onClick={() => onChangeView('account')}
+              className={`py-1.5 px-2.5 rounded-xl whitespace-nowrap flex items-center gap-1 transition-colors ${
+                currentView === 'account' ? 'bg-[#0F3E7A] text-white shadow-xs' : 'text-[#0F3E7A] font-extrabold bg-blue-50/90'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+              <User className="w-3 h-3 text-blue-600" />
+              <span>אזור אישי</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                if (onOpenLoginModal) onOpenLoginModal();
+                else onChangeView('account');
+              }}
+              className="py-1.5 px-2.5 rounded-xl whitespace-nowrap flex items-center gap-1 transition-colors text-slate-700 hover:bg-slate-100"
+            >
+              <LogIn className="w-3 h-3 text-amber-500" />
+              <span>כניסה</span>
+            </button>
+          )}
           <button
             onClick={() => onChangeView('returns')}
             className={`py-1.5 px-2.5 rounded-xl whitespace-nowrap flex items-center gap-1 transition-colors ${

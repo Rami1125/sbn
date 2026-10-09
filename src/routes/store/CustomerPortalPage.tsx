@@ -18,10 +18,23 @@ import {
   Truck,
   RotateCcw,
   Smartphone,
-  ChevronLeft
+  ChevronLeft,
+  LogOut,
+  BadgeCheck,
+  CreditCard,
+  Award,
+  Calendar,
+  FileText,
+  Copy,
+  Check
 } from 'lucide-react';
-import { setCustomerExternalPhone, playOrderReadyChime, triggerOrderReadySimulation } from '../../lib/oneSignal';
-import { SABAN_WHATSAPP_PHONE } from '../../lib/whatsappDeepLink';
+import { setCustomerExternalPhone, triggerOrderReadySimulation } from '../../lib/oneSignal';
+import {
+  SabanClubMember,
+  getLoggedInMember,
+  setLoggedInMember
+} from '../../types/auth';
+import { SabanLogo } from '../../components/layout/SabanLogo';
 
 interface CustomerOrder {
   id: string;
@@ -43,34 +56,70 @@ interface SavedShade {
   productType: string;
 }
 
-export const CustomerPortalPage: React.FC<{
+interface CustomerPortalPageProps {
   onNavigateHome: () => void;
   onNavigateTrack?: (orderId: string) => void;
-}> = ({ onNavigateHome, onNavigateTrack }) => {
-  const [phoneNumber, setPhoneNumber] = useState<string>('050-8860896');
-  const [customerName, setCustomerName] = useState<string>('יוסי לוי (קבלן גמר ובנייה)');
-  const [clientType, setClientType] = useState<'contractor' | 'private'>('contractor');
-  const [activeProjectAddress, setActiveProjectAddress] = useState<string>('רחוב דרך רמתיים 42, הוד השרון');
-  const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(true);
+  onRequireLogin?: () => void;
+  onLogout?: () => void;
+}
+
+export const CustomerPortalPage: React.FC<CustomerPortalPageProps> = ({
+  onNavigateHome,
+  onNavigateTrack,
+  onRequireLogin,
+  onLogout
+}) => {
+  const [member, setMember] = useState<SabanClubMember | null>(null);
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [activeProjectAddress, setActiveProjectAddress] = useState<string>('');
   const [simulationState, setSimulationState] = useState<string | null>(null);
+  const [copiedCardId, setCopiedCardId] = useState(false);
 
   useEffect(() => {
-    // Load saved phone if exists
-    const savedPhone = localStorage.getItem('saban_customer_phone');
-    if (savedPhone) {
-      setPhoneNumber(savedPhone);
+    const currentMember = getLoggedInMember();
+    if (!currentMember) {
+      if (onRequireLogin) {
+        onRequireLogin();
+      }
+      return;
     }
-  }, []);
+
+    setMember(currentMember);
+    setPhoneNumber(currentMember.phone || '');
+    setActiveProjectAddress(currentMember.projectAddress || 'רחוב דרך רמתיים 42, הוד השרון');
+  }, [onRequireLogin]);
+
+  const handleCopyCard = () => {
+    if (!member) return;
+    navigator.clipboard.writeText(member.cardId);
+    setCopiedCardId(true);
+    setTimeout(() => setCopiedCardId(false), 2000);
+  };
+
+  const handlePerformLogout = () => {
+    setLoggedInMember(null);
+    setMember(null);
+    if (onLogout) {
+      onLogout();
+    } else {
+      onNavigateHome();
+    }
+  };
 
   const handleSavePhone = (e: React.FormEvent) => {
     e.preventDefault();
     setCustomerExternalPhone(phoneNumber);
+    if (member) {
+      const updated = { ...member, phone: phoneNumber };
+      setLoggedInMember(updated);
+      setMember(updated);
+    }
     alert('מספר הטלפון עודכן ושויך בהצלחה לקבלת התראות OneSignal!');
   };
 
   const handleSimulateChime = async () => {
     setSimulationState('מפעיל התראה וצליל צ׳יימס...');
-    await triggerOrderReadySimulation('SAB-889413', 'סניף החרש 10');
+    await triggerOrderReadySimulation('SAB-889413', member?.preferredBranch || 'סניף החרש 10');
     setTimeout(() => {
       setSimulationState('✓ התראה וצליל Chime הושמעו בהצלחה!');
       setTimeout(() => setSimulationState(null), 3000);
@@ -83,7 +132,7 @@ export const CustomerPortalPage: React.FC<{
       id: 'ord-1',
       orderNumber: 'SAB-889413',
       date: '26/09/2026',
-      branch: 'סניף החרש 10 (מחסן 4 - מרכז לוגיסטי)',
+      branch: member?.preferredBranch || 'סניף החרש 10 (מחסן 4 - מרכז לוגיסטי)',
       items: ['סיקה טופ 107 ערכה 25 ק״ג (2 יח׳)', 'סיקפלקס 11FC אפור (12 יח׳)'],
       total: 674,
       status: 'מוכן לאיסוף',
@@ -129,8 +178,38 @@ export const CustomerPortalPage: React.FC<{
     }
   ];
 
+  if (!member) {
+    return (
+      <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center p-6 text-center" dir="rtl">
+        <div className="bg-white p-8 rounded-3xl shadow-xl max-w-md w-full border border-slate-200 space-y-4">
+          <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto text-amber-600">
+            <User className="w-8 h-8" />
+          </div>
+          <h2 className="text-xl font-black text-slate-900">דרושה התחברות לאזור האישי</h2>
+          <p className="text-xs text-slate-600">
+            האזור האישי שמור לחברי מועדון סבן הרשומים. יש להתחבר או להירשם לצפייה בפרטים האישיים וההזמנות.
+          </p>
+          <div className="pt-2 flex flex-col gap-2">
+            <button
+              onClick={onRequireLogin}
+              className="w-full bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white py-3 rounded-xl font-black text-sm shadow cursor-pointer"
+            >
+              התחבר / הרשם למועדון עכשיו
+            </button>
+            <button
+              onClick={onNavigateHome}
+              className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl text-xs font-bold cursor-pointer"
+            >
+              חזרה לקטלוג המוצרים
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#F8F9FA] pb-20 pt-4 font-['Heebo','Assistant',sans-serif] text-right">
+    <div className="min-h-screen bg-[#F8F9FA] pb-20 pt-4 font-['Heebo','Assistant',sans-serif] text-right" dir="rtl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         
         {/* Breadcrumb / Top Bar */}
@@ -144,238 +223,304 @@ export const CustomerPortalPage: React.FC<{
               ראשי
             </button>
             <ChevronLeft className="w-3.5 h-3.5" />
-            <span className="text-slate-900 font-extrabold">פורטל לקוחות וקבלנים</span>
+            <span className="text-slate-900 font-extrabold">האזור האישי שלי • מועדון ח. סבן</span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <span className="text-[11px] bg-emerald-50 text-emerald-800 font-black px-2.5 py-0.5 rounded-full border border-emerald-200 flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
-              מחובר: חשבון קבלן מאומת
+              מחובר: {member.fullName}
+            </span>
+
+            <button
+              type="button"
+              onClick={handlePerformLogout}
+              className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 px-2.5 py-1 rounded-xl transition-colors font-bold flex items-center gap-1 cursor-pointer border border-red-200"
+              title="התנתק מהחשבון והסתר את האזור האישי"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>התנתק</span>
+            </button>
+          </div>
+        </div>
+
+        {/* HERO: Digital Member Card Display with saved details */}
+        <div className="bg-gradient-to-r from-[#072244] via-[#0F3E7A] to-[#16529e] rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+          {/* Subtle Ambient Gold Glow */}
+          <div className="absolute top-0 right-1/4 w-80 h-80 bg-amber-400/15 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            
+            <div className="flex items-start sm:items-center gap-4">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-amber-300 font-black text-2xl shadow-inner shrink-0">
+                <Award className="w-9 h-9 sm:w-10 sm:h-10 text-amber-400" />
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="bg-amber-400 text-slate-950 font-black text-[11px] px-3 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1 shadow-xs">
+                    <BadgeCheck className="w-3.5 h-3.5" />
+                    <span>חבר מועדון סבן VIP • הנחה פעילה</span>
+                  </span>
+                  <span className="text-xs text-blue-200 font-semibold">
+                    הנחת מחירון {member.discountPercent || 12}% מוגדרת
+                  </span>
+                </div>
+
+                <h1 className="text-2xl sm:text-3xl font-black mt-1 text-white">
+                  שלום, {member.fullName}
+                </h1>
+
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-blue-100">
+                  <span className="flex items-center gap-1">
+                    <Building2 className="w-3.5 h-3.5 text-amber-300" />
+                    <strong>{member.businessName || 'קבלן עצמאי'}</strong>
+                  </span>
+                  <span>•</span>
+                  <span className="flex items-center gap-1">
+                    <Phone className="w-3.5 h-3.5 text-amber-300" />
+                    <span dir="ltr"><strong>{member.phone}</strong></span>
+                  </span>
+                  {member.email && (
+                    <>
+                      <span>•</span>
+                      <span dir="ltr">{member.email}</span>
+                    </>
+                  )}
+                </div>
+
+                <div className="pt-1 flex flex-wrap items-center gap-3 text-[11px] text-blue-200">
+                  <span>סניף ראשי: <strong>{member.preferredBranch || 'סניף החרש 10'}</strong></span>
+                  <span>•</span>
+                  <span>תחום פעילות: <strong>{member.contractorType || 'קבלן בנייה וגמר'}</strong></span>
+                  {member.joinedDate && (
+                    <>
+                      <span>•</span>
+                      <span>תאריך הצטרפות: <strong>{member.joinedDate}</strong></span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Digital Card Number Badge with Copy */}
+            <div className="bg-black/30 backdrop-blur-md border border-white/20 p-4 sm:p-5 rounded-2xl flex flex-col gap-2 shrink-0 lg:min-w-[260px]">
+              <div className="text-[10px] text-slate-300 uppercase font-mono tracking-wider flex items-center justify-between">
+                <span>MEMBERSHIP CARD</span>
+                <span className="text-emerald-300 font-bold bg-emerald-950/50 px-2 py-0.5 rounded">
+                  פעיל ומאושר
+                </span>
+              </div>
+              
+              <div className="flex items-center justify-between gap-3">
+                <span className="font-mono text-lg sm:text-xl font-black text-amber-300 tracking-wider">
+                  {member.cardId}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyCard}
+                  className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                  title="העתק מספר כרטיס חבר"
+                >
+                  {copiedCardId ? (
+                    <Check className="w-4 h-4 text-emerald-400" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+
+              <div className="text-[10px] text-blue-200 border-t border-white/10 pt-1.5 flex items-center justify-between">
+                <span>סנכרון דלפק קומקס:</span>
+                <span className="text-amber-300 font-bold">מחובר ישירות</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Saved Registration Details Review Card */}
+        <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2">
+              <FileText className="w-5 h-5 text-[#0F3E7A]" />
+              <h2 className="text-base sm:text-lg font-black text-slate-900">
+                פרטי ההתחברות והרישום שנשמרו במערכת
+              </h2>
+            </div>
+            <span className="text-xs bg-amber-50 text-amber-900 font-bold px-3 py-1 rounded-full border border-amber-200">
+              פרטי כרטיס חבר סבן
             </span>
           </div>
-        </div>
 
-        {/* Hero Customer Card */}
-        <div className="bg-gradient-to-r from-[#072244] via-[#0F3E7A] to-[#16529e] rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-amber-300 font-black text-2xl shadow-inner">
-                <User className="w-8 h-8" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="bg-amber-400 text-slate-950 font-black text-[11px] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                    קבלן רשום סבן PRO
-                  </span>
-                  <span className="text-xs text-blue-200">הנחת מחירון 12% מוגדרת</span>
-                </div>
-                <h1 className="text-2xl sm:text-3xl font-black mt-1">
-                  {customerName}
-                </h1>
-                <p className="text-xs text-blue-100 flex items-center gap-2 mt-1">
-                  <Phone className="w-3.5 h-3.5 text-amber-300" />
-                  <span>נייד רשום: <strong>{phoneNumber}</strong></span>
-                  <span>•</span>
-                  <span>סניף שיוך ראשי: <strong>סניף החרש 10</strong></span>
-                </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
+              <div className="text-slate-500 font-semibold mb-1">שם מלא רשום:</div>
+              <div className="font-extrabold text-slate-900 text-sm">{member.fullName}</div>
+            </div>
+
+            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
+              <div className="text-slate-500 font-semibold mb-1">טלפון נייד:</div>
+              <div className="font-extrabold text-slate-900 text-sm font-mono" dir="ltr">
+                {member.phone}
               </div>
             </div>
 
-            {/* Quick Chime & Push Test Button */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl flex flex-col gap-2 shrink-0">
-              <div className="flex items-center justify-between gap-3 text-xs">
-                <span className="font-bold flex items-center gap-1 text-amber-200">
-                  <Volume2 className="w-4 h-4" />
-                  התראות דלפק וצליל Chime:
-                </span>
-                <span className="text-[10px] text-emerald-300 font-bold bg-emerald-950/40 px-2 py-0.5 rounded-full">
-                  פעיל
-                </span>
+            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
+              <div className="text-slate-500 font-semibold mb-1">שם עסק / קבלן:</div>
+              <div className="font-extrabold text-slate-900 text-sm">{member.businessName || 'קבלן עצמאי'}</div>
+            </div>
+
+            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
+              <div className="text-slate-500 font-semibold mb-1">מספר חבר מועדון:</div>
+              <div className="font-extrabold text-[#0F3E7A] text-sm font-mono tracking-wider">
+                {member.cardId}
               </div>
-              <button
-                type="button"
-                onClick={handleSimulateChime}
-                className="bg-amber-400 hover:bg-amber-300 text-slate-950 px-4 py-2 rounded-xl text-xs font-black shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <BellRing className="w-4 h-4 text-[#0F3E7A]" />
-                <span>בדוק צליל "הזמנה מוכנה לאיסוף"</span>
-              </button>
-              {simulationState && (
-                <span className="text-[11px] text-amber-300 font-bold animate-in fade-in">
-                  {simulationState}
-                </span>
-              )}
+            </div>
+
+            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
+              <div className="text-slate-500 font-semibold mb-1">סניף מועדף לאיסוף:</div>
+              <div className="font-extrabold text-slate-900 text-sm">{member.preferredBranch || 'סניף החרש 10'}</div>
+            </div>
+
+            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
+              <div className="text-slate-500 font-semibold mb-1">תחום התמחות:</div>
+              <div className="font-extrabold text-slate-900 text-sm">{member.contractorType || 'קבלן שלד וגמר'}</div>
+            </div>
+
+            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
+              <div className="text-slate-500 font-semibold mb-1">תאריך הרשמה:</div>
+              <div className="font-extrabold text-slate-900 text-sm">{member.joinedDate || '2026'}</div>
+            </div>
+
+            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80">
+              <div className="text-slate-500 font-semibold mb-1">הטבת חבר פעילה:</div>
+              <div className="font-extrabold text-emerald-700 text-sm">הנחת 12% + רציף אקספרס</div>
             </div>
           </div>
+
+          {member.projectNotes && (
+            <div className="p-3 bg-blue-50/70 border border-blue-200 rounded-2xl text-xs text-blue-950">
+              <strong>הערות פרויקט שנרשמו:</strong> {member.projectNotes}
+            </div>
+          )}
         </div>
 
-        {/* 3 Main Columns / Widgets */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* 2-Columns Grid: Active Orders & Projects vs Logistics/OneSignal */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
-          {/* Column 1: Active Orders & BOPIS Pickups */}
-          <div className="lg:col-span-2 space-y-6">
+          {/* Main Column: Active BOPIS Orders & Paint Shades */}
+          <div className="lg:col-span-8 space-y-6">
             
-            {/* Orders Section */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-4">
+            {/* Active Orders Card */}
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <Package className="w-5 h-5 text-[#0F3E7A]" />
-                  <h2 className="text-lg font-black text-slate-900">
-                    הזמנות אחרונות לאיסוף מהיר מהסניף (BOPIS)
+                  <h2 className="text-base sm:text-lg font-black text-slate-900">
+                    הזמנות פעילות ואיסוף עצמי (BOPIS)
                   </h2>
                 </div>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs bg-blue-50 text-[#0F3E7A] font-bold px-3 py-1 rounded-full border border-blue-100">
                   {mockOrders.length} הזמנות רשומות
                 </span>
               </div>
 
-              <div className="space-y-3.5">
-                {mockOrders.map((order) => {
-                  const isReady = order.status === 'מוכן לאיסוף';
-                  return (
-                    <div
-                      key={order.id}
-                      className={`p-4 rounded-2xl border transition-all ${
-                        isReady
-                          ? 'bg-emerald-50/70 border-emerald-300 ring-2 ring-emerald-500/10'
-                          : 'bg-slate-50 border-slate-200'
-                      }`}
-                    >
-                      <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <div className="space-y-3">
+                {mockOrders.map((ord) => (
+                  <div
+                    key={ord.id}
+                    className="bg-slate-50 hover:bg-slate-100/80 border border-slate-200/90 rounded-2xl p-4 transition-all"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-black text-sm text-[#0F3E7A]">
-                            #{order.orderNumber}
+                          <span className="font-mono font-black text-slate-900 text-sm">
+                            {ord.orderNumber}
                           </span>
-                          <span className="text-xs text-slate-500">({order.date})</span>
-                        </div>
-
-                        <div className="flex items-center gap-2">
                           <span
-                            className={`text-xs font-black px-2.5 py-0.5 rounded-full flex items-center gap-1 ${
-                              isReady
-                                ? 'bg-emerald-500 text-white shadow-xs'
+                            className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                              ord.status === 'מוכן לאיסוף'
+                                ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                : ord.status === 'בטיפול בדלפק'
+                                ? 'bg-amber-100 text-amber-800'
                                 : 'bg-slate-200 text-slate-700'
                             }`}
                           >
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            {order.status}
+                            {ord.status}
                           </span>
+                        </div>
 
-                          <span className="font-mono font-black text-xs bg-slate-900 text-amber-300 px-2.5 py-0.5 rounded-lg">
-                            קוד איסוף: {order.pickupCode}
-                          </span>
+                        <div className="text-xs text-slate-600 flex items-center gap-2">
+                          <span>סניף: <strong>{ord.branch}</strong></span>
+                          <span>•</span>
+                          <span>תאריך: {ord.date}</span>
+                        </div>
+
+                        <div className="text-xs text-slate-700 font-medium pt-1">
+                          פריטים: {ord.items.join(', ')}
                         </div>
                       </div>
 
-                      <div className="text-xs text-slate-700 font-medium mb-2">
-                        <MapPin className="w-3.5 h-3.5 inline text-[#0F3E7A] ml-1" />
-                        <strong>סניף לאיסוף:</strong> {order.branch}
-                      </div>
-
-                      <div className="bg-white p-3 rounded-xl border border-slate-200/80 text-xs space-y-1">
-                        <div className="font-bold text-slate-600 mb-1">פירוט פריטים:</div>
-                        {order.items.map((item, idx) => (
-                          <div key={idx} className="text-slate-800 flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#0F3E7A]" />
-                            <span>{item}</span>
+                      <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200">
+                        <div className="text-right">
+                          <div className="text-[10px] text-slate-400">קוד איסוף מהיר:</div>
+                          <div className="text-lg font-mono font-black text-[#0F3E7A]">
+                            {ord.pickupCode}
                           </div>
-                        ))}
-                      </div>
-
-                      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-200/60">
-                        <div className="text-xs font-bold text-slate-900">
-                          סה״כ לתשלום: <span className="text-sm font-black text-[#0F3E7A]">₪{order.total.toFixed(2)} ILS</span>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                          {onNavigateTrack && (
-                            <button
-                              type="button"
-                              onClick={() => onNavigateTrack(order.orderNumber)}
-                              className="bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white text-xs font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
-                            >
-                              <Truck className="w-3.5 h-3.5 text-amber-300" />
-                              <span>מעקב חי (Live Track)</span>
-                            </button>
-                          )}
-                          {isReady && (
-                            <a
-                              href="https://waze.com/ul?q=רחוב החרש 10 הוד השרון"
-                              target="_blank"
-                              rel="noreferrer"
-                              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition-colors"
-                            >
-                              <span>נווט לרציף האיסוף (Waze)</span>
-                            </a>
-                          )}
-                          <a
-                            href={`https://wa.me/${SABAN_WHATSAPP_PHONE}?text=${encodeURIComponent(
-                              `שלום, ברצוני לברר לגבי הזמנה מס׳ ${order.orderNumber} על שם ${customerName}`
-                            )}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-bold px-3 py-1.5 rounded-xl flex items-center gap-1 transition-colors"
+                        {onNavigateTrack && (
+                          <button
+                            type="button"
+                            onClick={() => onNavigateTrack(ord.orderNumber)}
+                            className="bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer"
                           >
-                            <span>פנה לדלפק סבן בוואטסאפ</span>
-                          </a>
-                        </div>
+                            <Truck className="w-3.5 h-3.5" />
+                            <span>מעקב הזמנה</span>
+                          </button>
+                        )}
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Saved Color Shades & Tints Section */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-4">
+            {/* Saved Color Shades Card */}
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
-                  <Paintbrush className="w-5 h-5 text-purple-600" />
-                  <h2 className="text-lg font-black text-slate-900">
-                    גוונים שמורים והיסטוריית גיוון (מכונות טמבור ונירלט)
+                  <Paintbrush className="w-5 h-5 text-amber-500" />
+                  <h2 className="text-base sm:text-lg font-black text-slate-900">
+                    גווני צבע ומפרטים שנשמרו לפרויקט
                   </h2>
                 </div>
-                <span className="text-xs text-slate-400">
-                  שמירה אוטומטית לפי פרויקט
-                </span>
+                <span className="text-xs text-slate-500">התאמת גוונים במכונת גיוון ממוחשבת</span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {savedShades.map((shade) => (
                   <div
                     key={shade.code}
-                    className="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/50 flex flex-col justify-between space-y-2 hover:border-[#0F3E7A] transition-all"
+                    className="p-3.5 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-2"
                   >
                     <div className="flex items-center gap-2.5">
                       <div
-                        className="w-8 h-8 rounded-xl border border-slate-300 shadow-xs shrink-0"
+                        className="w-7 h-7 rounded-lg border border-slate-300 shadow-xs shrink-0"
                         style={{ backgroundColor: shade.hex }}
                       />
                       <div>
-                        <div className="font-mono font-black text-xs text-slate-900">
-                          {shade.code}
-                        </div>
-                        <div className="text-[11px] text-slate-600 font-medium">
-                          {shade.name}
-                        </div>
+                        <div className="text-xs font-extrabold text-slate-900">{shade.name}</div>
+                        <div className="text-[10px] text-slate-500">{shade.brand} • {shade.code}</div>
                       </div>
                     </div>
-
-                    <div className="text-[10px] text-slate-500 pt-1 border-t border-slate-200">
-                      <span>יצרן: <strong>{shade.brand}</strong> | {shade.productType}</span>
-                      <div className="text-slate-400 mt-0.5">נרכש: {shade.lastPurchased}</div>
+                    <div className="text-[11px] text-slate-600">
+                      מוצר: <strong>{shade.productType}</strong>
                     </div>
-
-                    <a
-                      href={`https://wa.me/${SABAN_WHATSAPP_PHONE}?text=${encodeURIComponent(
-                        `שלום למחלקת צבע סבן, אבקש להכין מראש פח בגוון השמור שלי: ${shade.code} (${shade.name}) עבור ${customerName}.`
-                      )}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="w-full bg-white hover:bg-slate-100 text-[#0F3E7A] border border-blue-200 text-[11px] font-bold py-1.5 rounded-xl text-center block transition-colors"
-                    >
-                      הזמן גוון זה שוב
-                    </a>
+                    <div className="text-[10px] text-slate-400">
+                      נרכש לאחרונה: {shade.lastPurchased}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -383,32 +528,34 @@ export const CustomerPortalPage: React.FC<{
 
           </div>
 
-          {/* Column 2: Contractor Project Site & Notification Preferences */}
-          <div className="space-y-6">
+          {/* Side Column: Waze Navigation & OneSignal Push */}
+          <div className="lg:col-span-4 space-y-6">
             
-            {/* Active Project Site Address */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-3">
+            {/* Project Navigation with Waze */}
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
               <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
-                <Truck className="w-5 h-5 text-amber-500" />
+                <MapPin className="w-5 h-5 text-rose-600" />
                 <h3 className="font-black text-sm text-slate-900">
-                  אתר בנייה פעיל (משלוחי מנוף)
+                  אתר הפרויקט הפעיל
                 </h3>
               </div>
 
-              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
-                <span className="text-[11px] text-slate-500 block">כתובת אספקה פעילה:</span>
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-slate-700">
+                  כתובת אספקה ושילוח נוכחית:
+                </label>
                 <input
                   type="text"
                   value={activeProjectAddress}
                   onChange={(e) => setActiveProjectAddress(e.target.value)}
-                  className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 font-bold outline-none focus:border-[#0F3E7A]"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 font-bold outline-none focus:border-[#0F3E7A]"
                 />
                 
                 <a
                   href={`https://waze.com/ul?q=${encodeURIComponent(activeProjectAddress)}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="w-full bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  className="w-full bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer"
                 >
                   <MapPin className="w-3.5 h-3.5 text-amber-300" />
                   <span>נווט לאתר הפרויקט ב-Waze</span>
@@ -417,7 +564,7 @@ export const CustomerPortalPage: React.FC<{
             </div>
 
             {/* Notification & Phone Sync Card */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-4">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
                 <Bell className="w-5 h-5 text-emerald-600" />
                 <h3 className="font-black text-sm text-slate-900">
@@ -441,11 +588,28 @@ export const CustomerPortalPage: React.FC<{
 
                 <button
                   type="submit"
-                  className="w-full bg-slate-900 hover:bg-slate-800 text-white py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white py-2.5 rounded-xl text-xs font-bold transition-colors cursor-pointer"
                 >
                   עדכן שיוך OneSignal במכשיר
                 </button>
               </form>
+
+              {/* Chime Simulator */}
+              <div className="pt-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={handleSimulateChime}
+                  className="w-full bg-amber-400 hover:bg-amber-300 text-slate-950 py-2.5 px-3 rounded-xl text-xs font-black shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <BellRing className="w-4 h-4 text-[#0F3E7A]" />
+                  <span>בדוק צליל התראה (Chime)</span>
+                </button>
+                {simulationState && (
+                  <p className="text-[11px] text-emerald-600 font-bold text-center mt-1.5">
+                    {simulationState}
+                  </p>
+                )}
+              </div>
 
               <div className="text-[11px] text-slate-500 leading-relaxed bg-blue-50/60 p-3 rounded-xl border border-blue-200">
                 <span className="font-bold text-blue-900">שירות בלעדי לקבלני סבן:</span> בעת סיום אריזת ההזמנה ברציף, נשלחת הודעת Push ישירה עם צליל התראה וקוד איסוף המאפשר העמסה מידית עם מלגזה ללא המתנה בדלפק.

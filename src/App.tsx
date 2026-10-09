@@ -13,6 +13,8 @@ import { OrderTrackingView } from './routes/store/OrderTrackingView';
 import { BranchCounterCrm } from './routes/counter.$branchId';
 import { SabanClubLandingPage } from './routes/store/SabanClubLandingPage';
 import { BusinessCustomerRegistrationPage } from './routes/store/BusinessCustomerRegistrationPage';
+import { SabanAuthPortalModal } from './components/auth/SabanAuthPortalModal';
+import { SabanClubMember, getLoggedInMember, setLoggedInMember } from './types/auth';
 import { WhatsAppFloatingButton } from './components/common/WhatsAppFloatingButton';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 import { OfflineIndicator } from './components/common/OfflineIndicator';
@@ -27,6 +29,11 @@ export default function App() {
   const [currentOrderId, setCurrentOrderId] = useState<string>('SAB-889413');
   const [currentCounterBranch, setCurrentCounterBranch] = useState<'harash' | 'talmid'>('harash');
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  // Authentication & Club Membership State
+  const [loggedInMember, setLoggedInMemberState] = useState<SabanClubMember | null>(() => getLoggedInMember());
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
 
   // Initialize OneSignal Push on startup
   useEffect(() => {
@@ -74,9 +81,17 @@ export default function App() {
         return;
       }
 
-      // Check account / portal page
+      // Check account / portal page (protected: requires login)
       if (pathname === '/account' || pathname === '/portal' || pathname.startsWith('/account') || viewParam === 'account') {
-        setCurrentView('account');
+        const authed = getLoggedInMember();
+        if (authed) {
+          setLoggedInMemberState(authed);
+          setCurrentView('account');
+        } else {
+          setCurrentView('catalog');
+          setAuthModalMode('login');
+          setIsAuthModalOpen(true);
+        }
         return;
       }
 
@@ -129,7 +144,30 @@ export default function App() {
     window.history.pushState({ view: 'track', orderId }, '', `/track/${orderId}`);
   };
 
+  const handleOpenAuthModal = (mode: 'login' | 'register' = 'login') => {
+    setAuthModalMode(mode);
+    setIsAuthModalOpen(true);
+  };
+
+  const handleAuthSuccess = (member: SabanClubMember) => {
+    setLoggedInMemberState(member);
+    setIsAuthModalOpen(false);
+    handleChangeView('account');
+  };
+
+  const handleLogout = () => {
+    setLoggedInMember(null);
+    setLoggedInMemberState(null);
+    handleChangeView('catalog');
+  };
+
   const handleChangeView = (view: 'catalog' | 'product' | 'feed-studio' | 'returns' | 'branches' | 'account' | 'track' | 'counter' | 'club' | 'business') => {
+    // If user tries to open personal area without being logged in, intercept and show the login modal
+    if (view === 'account' && !loggedInMember) {
+      handleOpenAuthModal('login');
+      return;
+    }
+
     setCurrentView(view);
     if (view === 'product') {
       window.history.pushState({ sku: currentSku }, '', `/product/${currentSku}`);
@@ -198,6 +236,8 @@ export default function App() {
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           onSelectProduct={handleSelectProduct}
+          isLoggedIn={!!loggedInMember}
+          onOpenLoginModal={() => handleOpenAuthModal('login')}
         />
 
         {/* Dynamic View Route */}
@@ -215,6 +255,7 @@ export default function App() {
             <SabanClubLandingPage
               onNavigateHome={() => handleChangeView('catalog')}
               onNavigateCatalog={() => handleChangeView('catalog')}
+              onNavigatePortal={() => handleChangeView('account')}
             />
           )}
 
@@ -236,6 +277,8 @@ export default function App() {
             <CustomerPortalPage
               onNavigateHome={() => handleChangeView('catalog')}
               onNavigateTrack={handleNavigateTrack}
+              onRequireLogin={() => handleOpenAuthModal('login')}
+              onLogout={handleLogout}
             />
           )}
 
@@ -435,6 +478,18 @@ export default function App() {
             </div>
           </div>
         </footer>
+
+        {/* Impressive Auth & Club Membership Entry Portal Modal */}
+        <SabanAuthPortalModal
+          isOpen={isAuthModalOpen}
+          initialMode={authModalMode}
+          onClose={() => setIsAuthModalOpen(false)}
+          onSuccessLogin={handleAuthSuccess}
+          onNavigateClub={() => {
+            setIsAuthModalOpen(false);
+            handleChangeView('club');
+          }}
+        />
 
       </div>
     </CartProvider>

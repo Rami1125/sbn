@@ -21,6 +21,11 @@ import {
 } from 'lucide-react';
 import { WhatsAppIcon } from '../../components/common/WhatsAppOrderButton';
 import { SabanLogo } from '../../components/layout/SabanLogo';
+import {
+  SabanClubMember,
+  saveMemberToList,
+  setLoggedInMember
+} from '../../types/auth';
 
 interface ClubLeadData {
   fullName: string;
@@ -35,7 +40,8 @@ interface ClubLeadData {
 export const SabanClubLandingPage: React.FC<{
   onNavigateHome: () => void;
   onNavigateCatalog?: () => void;
-}> = ({ onNavigateHome, onNavigateCatalog }) => {
+  onNavigatePortal?: () => void;
+}> = ({ onNavigateHome, onNavigateCatalog, onNavigatePortal }) => {
   const [formData, setFormData] = useState<ClubLeadData>({
     fullName: '',
     phone: '',
@@ -75,6 +81,23 @@ export const SabanClubLandingPage: React.FC<{
       contractorType: formData.contractorType,
       joinedDate: new Date().toLocaleDateString('he-IL')
     };
+
+    // Save member to authenticated club member store & set as logged in
+    const memberRecord: SabanClubMember = {
+      cardId: generatedId,
+      fullName: formData.fullName.trim(),
+      phone: formData.phone.trim(),
+      email: formData.email.trim() || undefined,
+      businessName: formData.businessName.trim() || 'קבלן רשום',
+      contractorType: formData.contractorType,
+      preferredBranch: formData.preferredBranch,
+      projectNotes: formData.projectNotes.trim() || undefined,
+      joinedDate: new Date().toLocaleDateString('he-IL'),
+      tier: 'vip',
+      discountPercent: 12
+    };
+    saveMemberToList(memberRecord);
+    setLoggedInMember(memberRecord);
 
     // Save lead to localStorage
     try {
@@ -522,7 +545,17 @@ export const SabanClubLandingPage: React.FC<{
                       🎉 ברוך הבא למועדון סבן! הכרטיס הונפק ונשמר במערכת הסניפים
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                      {onNavigatePortal && (
+                        <button
+                          onClick={onNavigatePortal}
+                          className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                        >
+                          <BadgeCheck className="w-4 h-4 text-[#0F3E7A]" />
+                          <span>כניסה לאזור האישי שלי</span>
+                        </button>
+                      )}
+
                       <button
                         onClick={sendWhatsAppWelcome}
                         className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
@@ -536,7 +569,7 @@ export const SabanClubLandingPage: React.FC<{
                           onClick={onNavigateCatalog}
                           className="bg-[#0F3E7A] hover:bg-[#0A2E5C] text-white font-bold py-2.5 px-3 rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                         >
-                          <span>המשך לקטלוג המוצרים</span>
+                          <span>המשך לקטלוג</span>
                           <ArrowRight className="w-3.5 h-3.5 rotate-180" />
                         </button>
                       )}
