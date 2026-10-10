@@ -30,17 +30,22 @@ import { WhatsAppOrderButton } from '../../components/common/WhatsAppOrderButton
 import { WhatsAppOrderParams } from '../../lib/whatsappDeepLink';
 import { ProductPriceTrendChart } from '../../components/store/ProductPriceTrendChart';
 import { SealingCalculator } from '../../components/store/SealingCalculator';
+import { NoaAiCard } from '../../components/store/NoaAiCard';
+import { NoaAiFullScreenChatModal } from '../../components/store/NoaAiFullScreenChatModal';
+import { ColorTintingModal, TintingRequestData } from '../../components/store/ColorTintingModal';
 
 interface ProductLandingPageProps {
   sku?: string;
   onNavigateHome?: () => void;
   onSelectProduct?: (sku: string) => void;
+  onNavigateTrack?: () => void;
 }
 
 export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
   sku = '10701',
   onNavigateHome,
-  onSelectProduct
+  onSelectProduct,
+  onNavigateTrack
 }) => {
   const { addToCart, setIsCartOpen } = useCart();
   const { products } = useProducts();
@@ -60,6 +65,8 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
   } | undefined>(product.availableShades?.[0]);
   const [quantity, setQuantity] = useState<number>(1);
   const [isNoaModalOpen, setIsNoaModalOpen] = useState<boolean>(false);
+  const [isFullChatOpen, setIsFullChatOpen] = useState<boolean>(false);
+  const [isColorModalOpen, setIsColorModalOpen] = useState<boolean>(false);
   const [isQuickPickupOpen, setIsQuickPickupOpen] = useState<boolean>(false);
   const [showFloatingBar, setShowFloatingBar] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
@@ -645,6 +652,17 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
               />
             </div>
 
+            {/* Noa AI Intelligent Assistant & Tinting System for this Product */}
+            <div className="pt-2">
+              <NoaAiCard
+                product={product}
+                onOpenFullChat={() => setIsFullChatOpen(true)}
+                onOpenColorModal={() => setIsColorModalOpen(true)}
+                onSelectShade={(shade) => setSelectedShade(shade)}
+                onOpenOrderTrack={onNavigateTrack}
+              />
+            </div>
+
             {/* Engineering Specs & Standards Highlights Tabs */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
               <div className="flex border-b border-slate-200 text-xs font-bold overflow-x-auto">
@@ -909,6 +927,29 @@ export const ProductLandingPage: React.FC<ProductLandingPageProps> = ({
         onClose={() => setIsNoaModalOpen(false)}
         onSelectShade={(s) => setSelectedShade(s)}
         onSelectPackaging={(pkgId) => setSelectedPackagingId(pkgId)}
+      />
+
+      {/* Noa AI Full Screen Chat Modal (Desktop & Mobile) */}
+      <NoaAiFullScreenChatModal
+        isOpen={isFullChatOpen}
+        onClose={() => setIsFullChatOpen(false)}
+        product={product}
+        onNavigateOrderTrack={onNavigateTrack}
+      />
+
+      {/* Color Tinting Fan & Verification Modal */}
+      <ColorTintingModal
+        isOpen={isColorModalOpen}
+        onClose={() => setIsColorModalOpen(false)}
+        onConfirmTint={(tintData) => {
+          setSelectedShade({
+            name: tintData.shadeName,
+            code: tintData.shadeCode,
+            hex: tintData.shadeHex
+          });
+        }}
+        initialSupplier={product.title.includes('נירלט') ? 'נירלט' : 'טמבור'}
+        productTitle={product.title}
       />
 
       {/* Quick Pickup BOPIS Modal */}

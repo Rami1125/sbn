@@ -190,6 +190,18 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
               <span>סניפים ואודות</span>
             </button>
 
+            <button
+              onClick={() => onChangeView('product')}
+              className={`px-3.5 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 font-bold ${
+                currentView === 'product'
+                  ? 'bg-amber-400 text-slate-950 shadow-sm'
+                  : 'text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-300/60'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
+              <span>נועה Ai • ייעוץ וגיוון צבע</span>
+            </button>
+
             {isLoggedIn ? (
               <button
                 onClick={() => onChangeView('account')}
@@ -324,6 +336,17 @@ export const SabanHeader: React.FC<SabanHeaderProps> = ({
             }`}
           >
             קטלוג
+          </button>
+          <button
+            onClick={() => onChangeView('product')}
+            className={`py-1.5 px-2.5 rounded-xl whitespace-nowrap flex items-center gap-1 transition-colors ${
+              currentView === 'product'
+                ? 'bg-amber-400 text-slate-950 font-black shadow-xs'
+                : 'text-amber-800 bg-amber-50 font-bold'
+            }`}
+          >
+            <Sparkles className="w-3 h-3 text-amber-600" />
+            <span>נועה Ai</span>
           </button>
           <button
             onClick={() => onChangeView('branches')}

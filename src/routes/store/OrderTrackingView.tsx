@@ -27,6 +27,8 @@ import {
 import { playOrderReadyChime } from '../../lib/oneSignal';
 import { SABAN_WHATSAPP_PHONE } from '../../lib/whatsappDeepLink';
 import { WhatsAppIcon } from '../../components/common/WhatsAppOrderButton';
+import { NoaOrderStatusTimeline, NoaLogisticsStatus } from '../../components/store/NoaOrderStatusTimeline';
+import { NoaAiFullScreenChatModal } from '../../components/store/NoaAiFullScreenChatModal';
 
 export type FulfillmentType = 'bopis' | 'jobsite_delivery';
 export type BopisStep = 'received' | 'picking' | 'ready';
@@ -284,6 +286,8 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({
   const [searchInput, setSearchInput] = useState<string>(orderId);
   const [isChimePlayed, setIsChimePlayed] = useState<boolean>(false);
   const [showQrModal, setShowQrModal] = useState<boolean>(false);
+  const [noaLogisticsStatus, setNoaLogisticsStatus] = useState<NoaLogisticsStatus>('in_progress');
+  const [isNoaChatOpen, setIsNoaChatOpen] = useState<boolean>(false);
 
   // Synchronize state when orderId prop updates
   useEffect(() => {
@@ -548,6 +552,31 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({
             </button>
           </form>
         </div>
+
+        {/* Noa AI 7-Stage Visual Progress Bar and Order Tinting Logistics */}
+        <NoaOrderStatusTimeline
+          currentStatus={noaLogisticsStatus}
+          onChangeStatus={(st) => setNoaLogisticsStatus(st)}
+          orderId={order.orderId}
+          shadeDetails={
+            order.items.find((i) => i.colorShade)?.colorShade
+              ? {
+                  name: order.items.find((i) => i.colorShade)!.colorShade!.name,
+                  code: order.items.find((i) => i.colorShade)!.colorShade!.code,
+                  hex: order.items.find((i) => i.colorShade)!.colorShade!.hex,
+                  brand: 'טמבור'
+                }
+              : {
+                  name: 'אפור בטון אורבני (טמבור)',
+                  code: '0514',
+                  hex: '#B4B7B9',
+                  brand: 'טמבור'
+                }
+          }
+          branchName={order.bopisDetails?.branchName || 'סניף החרש 10 (מחסן 4 - מרכז לוגיסטי)'}
+          pickupCode={order.bopisDetails?.pickupCode || '8894'}
+          onOpenDeskChat={() => setIsNoaChatOpen(true)}
+        />
 
         {/* Hero Order Status Banner */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
@@ -1207,6 +1236,13 @@ export const OrderTrackingView: React.FC<OrderTrackingViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* Noa AI and Desk Agent Full Chat Room */}
+      <NoaAiFullScreenChatModal
+        isOpen={isNoaChatOpen}
+        onClose={() => setIsNoaChatOpen(false)}
+        initialMode="desk"
+      />
 
     </div>
   );

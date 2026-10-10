@@ -3,7 +3,8 @@ import { SABAN_ENTERPRISE } from '../config/sabanEnterpriseConfig';
 
 export const SABAN_BRANCHES: PickupBranch[] = [
   {
-    code: 'פתוח',
+    id: 'SABAN_HARASH',
+    code: 'SABAN_HARASH',
     name: 'סניף החרש 4 / 10',
     subName: 'מחסן 4 - מרכז לוגיסטי והפצה ראשי (בלוקים, מלט, איטום)',
     address: 'רחוב החרש, 10, אזור התעשייה נווה נאמן, הוד השרון',
@@ -12,7 +13,8 @@ export const SABAN_BRANCHES: PickupBranch[] = [
     dispatchBay: '/חניה ללקוחות הסניף חניה גדולה להעמסת משאיות  איסוף מהיר  (כניסה למשאיות ומלגזות)'
   },
   {
-    code: 'פתוח',
+    id: 'SABAN_TALMID',
+    code: 'SABAN_TALMID',
     name: 'סניף התלמיד 6',
     subName: 'מחסן 1 - גבס, צבע ומוסך פרזול',
     address: 'רחוב התלמיד 6, הוד השרון',

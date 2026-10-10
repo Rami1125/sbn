@@ -264,6 +264,7 @@ export default function App() {
               sku={currentSku}
               onNavigateHome={() => handleChangeView('catalog')}
               onSelectProduct={handleSelectProduct}
+              onNavigateTrack={() => handleChangeView('track')}
             />
           )}
 

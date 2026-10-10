@@ -80,6 +80,7 @@ export interface CartItem {
 export type BranchCode = 'SABAN_HARASH' | 'SABAN_TALMID' | string;
 
 export interface PickupBranch {
+  id?: string;
   code: BranchCode;
   name: string;
   subName: string;

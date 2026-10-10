@@ -19,6 +19,7 @@ import { SABAN_BRANCHES } from '../../data/initialProducts';
 import { useCart } from '../../context/CartContext';
 import { useProducts } from '../../context/ProductContext';
 import { NoaAiConsultantModal } from './NoaAiConsultantModal';
+import { NoaAiFullScreenChatModal } from './NoaAiFullScreenChatModal';
 import { WhatsAppOrderButton } from '../common/WhatsAppOrderButton';
 
 interface ProductCatalogProps {
@@ -362,9 +363,9 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
         </div>
       </div>
 
-      {/* Noa AI Modal for catalog products */}
+      {/* Noa AI Full Screen Chat Modal for catalog products */}
       {consultingProduct && (
-        <NoaAiConsultantModal
+        <NoaAiFullScreenChatModal
           product={consultingProduct}
           isOpen={!!consultingProduct}
           onClose={() => setConsultingProduct(null)}
